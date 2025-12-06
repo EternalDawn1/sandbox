@@ -23,19 +23,12 @@ public sealed class FleeSchedule : ScheduleBase
 
 		// Find a position away from the threat
 		var escape = FindEscapePosition();
+		if ( !escape.HasValue ) return;
 
-		if ( escape.HasValue )
-		{
-			await ExecuteParallel( 
-				ExecutionMode.SucceedOnOne,
-				new MoveTo( escape.Value )
-					.CancelWhen( "threat-gone" )
-					.CancelWhen( "new-threat" ),
-				new LookAt( _threatTarget )
-					.CancelWhen( "threat-gone" )
-					.CancelWhen( "new-threat" )
-			);
-		}
+		await ExecuteParallel( ExecutionMode.SucceedOnOne,
+			new MoveTo( escape.Value ).CancelWhen( "threat-gone", "new-threat" ),
+			new LookAt( _threatTarget ).CancelWhen( "threat-gone", "new-threat" )
+		);
 	}
 
 	/// <summary>
