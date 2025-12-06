@@ -48,18 +48,18 @@ public abstract class TaskBase
 	/// <summary>
 	/// Cancel the task when the specified condition becomes true
 	/// </summary>
-	public TaskBase CancelWhen( string condition )
+	public TaskBase CancelWhen( params string[] conditions )
 	{
-		_cancelWhenConditions.Add( condition );
+		_cancelWhenConditions.AddRange( conditions );
 		return this;
 	}
 
 	/// <summary>
 	/// Cancel the task when the specified condition becomes false
 	/// </summary>
-	public TaskBase CancelWhenNot( string condition )
+	public TaskBase CancelWhenNot( params string[] conditions )
 	{
-		_cancelWhenNotConditions.Add( condition );
+		_cancelWhenNotConditions.AddRange( conditions );
 		return this;
 	}
 
