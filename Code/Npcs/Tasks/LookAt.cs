@@ -2,19 +2,19 @@
 
 public sealed class LookAt : TaskBase
 {
-	public Vector3? TargetPosition { get; set; }
-	public GameObject TargetObject { get; set; }
+	public Vector3? Target { get; set; }
+	public GameObject Object { get; set; }
 	public float Speed { get; set; } = 8f;
 
-	public LookAt( Vector3 targetPosition, float speed = 8f )
+	public LookAt( Vector3 target, float speed = 8f )
 	{
-		TargetPosition = targetPosition;
+		Target = target;
 		Speed = speed;
 	}
 
-	public LookAt( GameObject gameObject, float speed = 8f )
+	public LookAt( GameObject target, float speed = 8f )
 	{
-		TargetObject = gameObject;
+		Object = target;
 		Speed = speed;
 	}
 
@@ -48,8 +48,8 @@ public sealed class LookAt : TaskBase
 
 	private Vector3? GetTargetPosition()
 	{
-		if ( TargetObject.IsValid() ) return TargetObject.WorldPosition;
-		if ( TargetPosition.HasValue ) return TargetPosition.Value;
+		if ( Object.IsValid() ) return Object.WorldPosition;
+		if ( Target.HasValue ) return Target.Value;
 		return null;
 	}
 }

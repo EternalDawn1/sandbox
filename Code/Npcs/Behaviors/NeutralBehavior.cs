@@ -19,7 +19,6 @@ public class NeutralBehavior : Behavior
 	protected override void OnUpdate()
 	{
 		if ( !_scanTime ) return;
-		
 		Scan();
 	}
 

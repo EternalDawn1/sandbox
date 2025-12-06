@@ -7,18 +7,18 @@ namespace Sandbox.Npcs.Schedules;
 /// </summary>
 public sealed class FleeSchedule : ScheduleBase
 {
-	private GameObject _threatTarget;
-	private float _fleeDistance;
+	private GameObject _target;
+	private float _distance;
 
-	public FleeSchedule( GameObject threatTarget, float fleeDistance = 512f )
+	public FleeSchedule( GameObject target, float distance = 512f )
 	{
-		_threatTarget = threatTarget;
-		_fleeDistance = fleeDistance;
+		_target = target;
+		_distance = distance;
 	}
 
 	public override async Task Execute()
 	{
-		if ( !_threatTarget.IsValid() )
+		if ( !_target.IsValid() )
 			return;
 
 		// Find a position away from the threat
@@ -27,7 +27,7 @@ public sealed class FleeSchedule : ScheduleBase
 
 		await ExecuteParallel( ExecutionMode.SucceedOnOne,
 			new MoveTo( escape.Value ).CancelWhen( "threat-gone", "new-threat" ),
-			new LookAt( _threatTarget ).CancelWhen( "threat-gone", "new-threat" )
+			new LookAt( _target ).CancelWhen( "threat-gone", "new-threat" )
 		);
 	}
 
@@ -36,14 +36,14 @@ public sealed class FleeSchedule : ScheduleBase
 	/// </summary>
 	private Vector3? FindEscapePosition()
 	{
-		var threatPos = _threatTarget.WorldPosition;
+		var threatPos = _target.WorldPosition;
 		var npcPos = Npc.WorldPosition;
 
 		// Calculate direction away from threat
 		var awayDirection = (npcPos - threatPos).Normal;
 
 		// Try multiple positions at increasing distances
-		for ( int distance = 100; distance <= _fleeDistance; distance += 50 )
+		for ( var distance = 100; distance <= _distance; distance += 50 )
 		{
 			// Try straight away
 			var testPos = npcPos + awayDirection * distance;
@@ -51,7 +51,7 @@ public sealed class FleeSchedule : ScheduleBase
 				return testPos;
 
 			// Try 45 degrees left and right
-			for ( float angle = -45f; angle <= 45f; angle += 45f )
+			for ( var angle = -45f; angle <= 45f; angle += 45f )
 			{
 				var rotatedDirection = awayDirection * Rotation.FromYaw( angle );
 				testPos = npcPos + rotatedDirection * distance;
@@ -79,8 +79,7 @@ public sealed class FleeSchedule : ScheduleBase
 		if ( !path.IsValid() || path.Points.Count < 1 )
 			return false;
 
-		var distanceFromThreat = position.Distance( _threatTarget.WorldPosition );
-		return distanceFromThreat >= _fleeDistance;
+		return position.Distance( _target.WorldPosition ) >= _distance;
 	}
 
 	protected override async Task OnTaskCancelled( TaskBase task, string condition, bool wasConditionPresent )

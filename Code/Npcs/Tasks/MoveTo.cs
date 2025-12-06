@@ -5,20 +5,20 @@
 /// </summary>
 public sealed class MoveTo : TaskBase
 {
-	public Vector3 TargetPosition { get; set; }
-	public float StopDistance { get; set; } = 10f;
+	public Vector3 Target { get; set; }
+	public float Distance { get; set; } = 10f;
 
 	public MoveTo( Vector3 targetPosition, float stopDistance = 10f )
 	{
-		TargetPosition = targetPosition;
-		StopDistance = stopDistance;
+		Target = targetPosition;
+		Distance = stopDistance;
 	}
 
 	public override async Task Execute()
 	{
-		Npc.Agent.MoveTo( TargetPosition );
+		Npc.Agent.MoveTo( Target );
 
-		while ( Npc.WorldPosition.Distance( TargetPosition ) > StopDistance )
+		while ( Npc.WorldPosition.Distance( Target ) > Distance )
 		{
 			await FrameEnd();
 		}
