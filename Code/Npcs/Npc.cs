@@ -42,6 +42,8 @@ public sealed class Npc : Component
 	{
 		var angles = rotation.Angles();
 		angles.pitch = 0;
+		angles.roll = 0;
+
 		WorldRotation = angles.ToRotation();
 	}
 
