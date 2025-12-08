@@ -12,6 +12,8 @@ public abstract class ScheduleBase
 	private int _currentTaskIndex = 0;
 	private bool _started;
 
+	public bool IsRunning => _started;
+
 	/// <summary>
 	/// Initialize the schedule with the Behavior context
 	/// </summary>
@@ -38,10 +40,15 @@ public abstract class ScheduleBase
 		StartCurrentTask();
 	}
 
+	internal virtual void OnUpdate()
+	{
+		//
+	}
+
 	/// <summary>
 	/// Called every frame while schedule is running
 	/// </summary>
-	internal TaskStatus OnUpdate()
+	internal TaskStatus InternalUpdate()
 	{
 		if ( _tasks.Count == 0 ) return TaskStatus.Failed;
 		if ( _currentTaskIndex >= _tasks.Count ) return TaskStatus.Success;
