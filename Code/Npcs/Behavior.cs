@@ -14,13 +14,12 @@ public abstract class Behavior : Component
 	/// </summary>
 	[Property, Range( 0, 16 )] public int Priority { get; set; } = 0;
 
-	/// <summary>
-	/// The Npc we're attached to
-	/// </summary>
-	public Npc Npc { get; private set; }
+	public Npc Npc => GetComponentInParent<Npc>();
 
 	[Property, JsonIgnore, ReadOnly, Group( "Debug" )]
 	protected ScheduleBase _currentSchedule;
+
+	public ScheduleBase CurrentSchedule => _currentSchedule;
 
 	[Property, JsonIgnore, ReadOnly, Group( "Debug" )]
 	protected Dictionary<Type, BehaviorLayer> _layers = new();
@@ -38,13 +37,12 @@ public abstract class Behavior : Component
 		var type = typeof( T );
 		if ( !_layers.TryGetValue( type, out var layer ) )
 		{
-			layer = new T()
-			{
-				Behavior = this
-			};
-
+			layer = new T();
 			_layers[type] = layer;
 		}
+
+		layer.Behavior = this;
+
 		return (T)layer;
 	}
 
@@ -63,11 +61,6 @@ public abstract class Behavior : Component
 			_schedules[type] = schedule;
 		}
 		return (T)schedule;
-	}
-
-	protected override void OnStart()
-	{
-		Npc = GetComponentInParent<Npc>();
 	}
 
 	/// <summary>
@@ -133,7 +126,9 @@ public abstract class Behavior : Component
 			_scheduleStarted = true;
 		}
 
-		if ( _currentSchedule.OnUpdate() is not TaskStatus.Running )
+		_currentSchedule.OnUpdate();
+
+		if ( _currentSchedule.InternalUpdate() is not TaskStatus.Running )
 		{
 			EndCurrentSchedule();
 		}
