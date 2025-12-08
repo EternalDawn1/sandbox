@@ -241,7 +241,7 @@
       "Rotation": "0,0,0,1",
       "Scale": "1,1,1",
       "Tags": "",
-      "Enabled": true,
+      "Enabled": false,
       "NetworkMode": 2,
       "NetworkInterpolation": true,
       "NetworkOrphaned": 0,
@@ -456,7 +456,7 @@
           ],
           "Children": [
             {
-              "__guid": "c1fb84aa-814a-445c-83ce-6330c975eb3a",
+              "__guid": "68aa1c72-a2aa-4417-bc8c-e622366a083f",
               "__version": 1,
               "Flags": 0,
               "Name": "Clothing - hair_long_bangs",
@@ -473,7 +473,7 @@
               "Components": [
                 {
                   "__type": "Sandbox.SkinnedModelRenderer",
-                  "__guid": "9d2c2c44-0474-450b-800a-981e2cffafac",
+                  "__guid": "4fb5fc4b-f563-42f3-9cb8-c079e920a927",
                   "__enabled": true,
                   "AnimationGraph": null,
                   "BodyGroups": 18446744073709551615,
@@ -524,7 +524,7 @@
               "Children": []
             },
             {
-              "__guid": "fc491f5d-f97b-49f3-9cd2-a639fcc875a8",
+              "__guid": "ea3d032b-c1cd-48cd-8d28-042aeb104e0b",
               "__version": 1,
               "Flags": 0,
               "Name": "Clothing - y_front_pants_red",
@@ -541,7 +541,7 @@
               "Components": [
                 {
                   "__type": "Sandbox.SkinnedModelRenderer",
-                  "__guid": "b3c82902-a3eb-42ff-967c-7d88a2461b73",
+                  "__guid": "6d6f45e8-5aa6-45b9-ab1b-033c77b11c2d",
                   "__enabled": true,
                   "AnimationGraph": null,
                   "BodyGroups": 18446744073709551615,
@@ -592,7 +592,7 @@
               "Children": []
             },
             {
-              "__guid": "ed9b284d-6c45-4e06-96b3-49ed22b47215",
+              "__guid": "f1d10cf5-1019-4cb8-84fd-46f76cc36914",
               "__version": 1,
               "Flags": 0,
               "Name": "Clothing - boxing_boots",
@@ -609,7 +609,7 @@
               "Components": [
                 {
                   "__type": "Sandbox.SkinnedModelRenderer",
-                  "__guid": "fcc1e042-7a56-448c-98c7-42fc6346c54d",
+                  "__guid": "8689f578-cb12-45e0-af19-0e9a1757f15f",
                   "__enabled": true,
                   "AnimationGraph": null,
                   "BodyGroups": 18446744073709551615,
@@ -660,7 +660,7 @@
               "Children": []
             },
             {
-              "__guid": "19d82acd-2b72-4cb0-b02c-bf60c89dd7d6",
+              "__guid": "b2c08b85-5a87-49c4-9ad3-667aa52610b3",
               "__version": 1,
               "Flags": 0,
               "Name": "Clothing - blue_shirt",
@@ -677,7 +677,7 @@
               "Components": [
                 {
                   "__type": "Sandbox.SkinnedModelRenderer",
-                  "__guid": "ff3443c1-92de-4d06-a7af-d606e43092f6",
+                  "__guid": "3f1301ed-e6f7-4bab-81fb-042a396b8dca",
                   "__enabled": true,
                   "AnimationGraph": null,
                   "BodyGroups": 18446744073709551615,
@@ -728,7 +728,7 @@
               "Children": []
             },
             {
-              "__guid": "d3bb2013-9c69-441f-b1c9-784cf069a5d8",
+              "__guid": "f42bbdef-3c70-460d-95bc-f474715a36f4",
               "__version": 1,
               "Flags": 0,
               "Name": "Clothing - labcoat",
@@ -745,7 +745,7 @@
               "Components": [
                 {
                   "__type": "Sandbox.SkinnedModelRenderer",
-                  "__guid": "f7aaa4ab-a9ef-4bc8-976f-cb5dda8c13db",
+                  "__guid": "c92cfb77-ddf2-40d3-8f22-02c590f23561",
                   "__enabled": true,
                   "AnimationGraph": null,
                   "BodyGroups": 18446744073709551615,
@@ -798,6 +798,46 @@
           ]
         }
       ]
+    },
+    {
+      "__guid": "fe95438d-2bf7-40c6-a784-150a108951f0",
+      "__version": 1,
+      "__Prefab": "prefabs/npc/crow.prefab",
+      "__PrefabInstancePatch": {
+        "AddedObjects": [],
+        "RemovedObjects": [],
+        "PropertyOverrides": [
+          {
+            "Target": {
+              "Type": "GameObject",
+              "IdValue": "1011dfe9-1e30-40af-a813-0381d1c34e6e"
+            },
+            "Property": "Position",
+            "Value": "367.1356,-131.5077,0.00009469874"
+          }
+        ],
+        "MovedObjects": []
+      },
+      "__PrefabIdToInstanceId": {
+        "1011dfe9-1e30-40af-a813-0381d1c34e6e": "fe95438d-2bf7-40c6-a784-150a108951f0",
+        "a0c33d80-2e80-4d8e-b759-a1fa6f307b68": "61439ceb-291e-453e-abd4-8e8099442524",
+        "3c8d459c-9695-4821-a53f-e84faebbb553": "f9be85a7-09c3-4ccf-8a50-807326d3434b",
+        "5a4a7a4d-0060-44bb-b1c2-77271472b3b3": "6f9cf0c8-b62b-4931-a40d-07320122c1b8",
+        "9dcc191c-cd9b-4539-98b5-1a0b7987b3cc": "fe8de70e-8618-419f-a789-538970ffae59",
+        "cb223f6c-fc20-4708-b084-86417438ff3c": "ed15f8af-6b23-4e38-8703-9a6869df505a",
+        "d31c14e8-99dc-4a3a-bf09-db14d4145985": "3fa9c9ae-448a-434f-9015-334d1fbf0e90",
+        "c9508786-0d36-4959-82f5-06d797bd1321": "2df6196c-dcbf-42c5-93a9-12d6a128fb0a",
+        "02882a1e-6402-44b2-8186-28919e2e4c74": "7411c5d0-05cc-4e9a-936b-62c9012207e7",
+        "2b029210-1ef0-40ab-902d-5f7ae8620e63": "be8eb80b-6008-4f8b-bf36-ae66ed2c266e",
+        "cb88e3de-73a9-474b-9c8e-0465bd324f00": "eb630fe5-7d99-4128-ae8f-14fb0a56b2bb",
+        "86effcf2-3027-4a56-a518-9b0bfd3b5c40": "defdf64f-258f-4b08-9248-26e0e0458dfc",
+        "37fad09a-cb6c-4b34-bb7d-97a2c95d320b": "87ff0ef1-43a5-4b4b-894c-cc1021069f39",
+        "d49d8a99-b31b-4e6a-8c8f-03c7dcbf9bbc": "a83409c3-a8a3-422e-b2fd-db68530ff643",
+        "1ef112db-9289-4bda-a8bc-a83c574a89ee": "b79f3231-fb88-492b-930c-3edee63bbc41",
+        "84ebff5d-ea8f-4b92-916a-cee9026ca252": "fee1b79a-8208-47a7-8060-de5432358a90",
+        "187df306-b60a-445d-a956-ef94e3330177": "bee4a3d9-9467-42e6-8a3f-baeaca704ca7",
+        "3d944704-3859-46ac-aeda-6139e851aa2b": "7b66c7b2-703c-4d83-8a07-8f00cb4bb936"
+      }
     },
     {
       "__guid": "b5677fed-b107-423b-8624-ef17ad823b48",
