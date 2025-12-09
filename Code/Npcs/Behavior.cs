@@ -16,15 +16,19 @@ public abstract class Behavior : Component
 
 	public Npc Npc => GetComponentInParent<Npc>();
 
+	/// <summary>
+	/// The current schedule
+	/// </summary>
 	[Property, JsonIgnore, ReadOnly, Group( "Debug" )]
-	protected ScheduleBase _currentSchedule;
+	public ScheduleBase CurrentSchedule { get; private set; }
 
-	public ScheduleBase CurrentSchedule => _currentSchedule;
+	/// <summary>
+	/// Is this behavior running a schedule right now?
+	/// </summary>
+	public bool IsScheduleStarted { get; private set; }
 
 	[Property, JsonIgnore, ReadOnly, Group( "Debug" )]
 	protected Dictionary<Type, ScheduleBase> _schedules = new();
-
-	private bool _scheduleStarted;
 
 	/// <summary>
 	/// Get a layer -- if it doesn't exist, one will be created
@@ -58,7 +62,7 @@ public abstract class Behavior : Component
 	/// </summary>
 	/// <param name="npc"></param>
 	/// <returns></returns>
-	internal bool Update( Npc npc )
+	internal bool InternalUpdate( Npc npc )
 	{
 		var newSchedule = Run();
 
@@ -66,15 +70,20 @@ public abstract class Behavior : Component
 		{
 			EndCurrentSchedule();
 
-			_currentSchedule = newSchedule;
-			_currentSchedule.InternalInit( this );
-			_scheduleStarted = false;
-
-			return true;
+			CurrentSchedule = newSchedule;
+			CurrentSchedule?.InternalInit( this );
+			CurrentSchedule?.InternalStart();
+			IsScheduleStarted = true;
 		}
 
-		UpdateCurrentSchedule();
-		return _currentSchedule is not null;
+		CurrentSchedule?.OnUpdate();
+
+		if ( CurrentSchedule is not null && CurrentSchedule.InternalUpdate() is not TaskStatus.Running )
+		{
+			EndCurrentSchedule();
+		}
+
+		return CurrentSchedule is not null;
 	}
 
 	private bool ShouldStartSchedule( ScheduleBase newSchedule )
@@ -82,32 +91,10 @@ public abstract class Behavior : Component
 		if ( newSchedule is null )
 			return false;
 
-		if ( _currentSchedule is null )
+		if ( CurrentSchedule is null )
 			return true;
 
-		return newSchedule != _currentSchedule;
-	}
-
-	/// <summary>
-	/// Updates the currently running schedule
-	/// </summary>
-	private void UpdateCurrentSchedule()
-	{
-		if ( _currentSchedule is null )
-			return;
-
-		if ( !_scheduleStarted )
-		{
-			_currentSchedule.InternalStart();
-			_scheduleStarted = true;
-		}
-
-		_currentSchedule.OnUpdate();
-
-		if ( _currentSchedule.InternalUpdate() is not TaskStatus.Running )
-		{
-			EndCurrentSchedule();
-		}
+		return newSchedule != CurrentSchedule;
 	}
 
 	protected override void OnDisabled()
@@ -120,17 +107,7 @@ public abstract class Behavior : Component
 	/// </summary>
 	private void EndCurrentSchedule()
 	{
-		if ( _currentSchedule is null )
-		{
-			return;
-		}
-
-		if ( _scheduleStarted )
-		{
-			_currentSchedule.InternalEnd();
-		}
-
-		_currentSchedule = null;
-		_scheduleStarted = false;
+		CurrentSchedule?.InternalEnd();
+		CurrentSchedule = null;
 	}
 }

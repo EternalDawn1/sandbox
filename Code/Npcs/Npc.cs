@@ -18,7 +18,7 @@ public sealed class Npc : Component
 
 		foreach ( var behavior in behaviors )
 		{
-			if ( behavior.Update( this ) )
+			if ( behavior.InternalUpdate( this ) )
 			{
 				break;
 			}
