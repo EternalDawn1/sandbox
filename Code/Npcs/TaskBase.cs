@@ -9,17 +9,12 @@ public abstract class TaskBase
 {
 	protected ScheduleBase Schedule { get; private set; }
 	protected Behavior Behavior => Schedule.Behavior;
-	protected Npc Npc => Schedule.Behavior.Npc;
-
-	private TaskStatus _currentStatus;
+	protected Npc Npc => Behavior.Npc;
 
 	/// <summary>
 	/// What is the current status of this task?
 	/// </summary>
-	protected TaskStatus Status
-	{
-		get => _currentStatus;
-	}
+	protected TaskStatus Status { get; private set; }
 
 	/// <inheritdoc cref="Behavior.GetLayer"/>
 	protected T GetLayer<T>() where T : BehaviorLayer, new() => Behavior?.GetLayer<T>();
@@ -32,23 +27,21 @@ public abstract class TaskBase
 
 	private void InternalStart()
 	{
-		_currentStatus = TaskStatus.Running;
+		Status = TaskStatus.Running;
 		OnStart();
 	}
 
 	internal TaskStatus InternalUpdate()
 	{
-		var status = OnUpdate();
-		_currentStatus = status;
-
-		return status;
+		Status = OnUpdate();
+		return Status;
 	}
 
 	internal void InternalEnd()
 	{
-		if ( _currentStatus == TaskStatus.Running )
+		if ( Status == TaskStatus.Running )
 		{
-			_currentStatus = TaskStatus.Success;
+			Status = TaskStatus.Success;
 		}
 
 		OnEnd();
