@@ -10,7 +10,7 @@ public class LookAt : TaskBase
 	public Vector3? TargetPosition { get; set; }
 	public GameObject TargetObject { get; set; }
 
-	private LookAtLayer _lookAt;
+	private AnimationLayer _animation;
 
 	public LookAt( Vector3 targetPosition )
 	{
@@ -24,21 +24,21 @@ public class LookAt : TaskBase
 
 	protected override void OnStart()
 	{
-		_lookAt ??= GetLayer<LookAtLayer>();
+		_animation ??= GetLayer<AnimationLayer>();
 	}
 
 	protected override TaskStatus OnUpdate()
 	{
-		if ( _lookAt is null )
+		if ( _animation is null )
 			return TaskStatus.Failed;
 
 		var targetPos = GetTargetPosition();
 		if ( !targetPos.HasValue )
 			return TaskStatus.Failed;
 
-		_lookAt.LookAt( targetPos.Value );
+		_animation.LookAt( targetPos.Value );
 
-		return _lookAt.IsFacingTarget() ? TaskStatus.Success : TaskStatus.Running;
+		return _animation.IsFacingTarget() ? TaskStatus.Success : TaskStatus.Running;
 	}
 
 	private Vector3? GetTargetPosition()

@@ -1,13 +1,15 @@
 namespace Sandbox.Npcs.Layers;
 
 /// <summary>
-/// Handles NPC movement - controlled by MoveTo tasks
+/// Handles Npc navigation
 /// </summary>
-public class LocomotionLayer : BehaviorLayer
+public class NavigationLayer : BehaviorLayer
 {
 	public NavMeshAgent Agent => Npc?.Agent;
 
 	public Vector3? MoveTarget { get; private set; }
+
+	[Property]
 	public float StopDistance { get; private set; } = 10f;
 
 	/// <summary>
@@ -24,16 +26,13 @@ public class LocomotionLayer : BehaviorLayer
 		}
 	}
 
-	/// <summary>
-	/// Stop movement
-	/// </summary>
-	public void Stop()
+	protected override void OnUpdate()
 	{
-		MoveTarget = null;
-
-		if ( Agent.IsValid() )
+		// TODO: is this suitable?
+		var animation = GetLayer<AnimationLayer>();
+		if ( animation.IsValid() )
 		{
-			Agent.Stop();
+			animation.SetMove( Agent.Velocity, Agent.WorldRotation );
 		}
 	}
 
@@ -48,10 +47,13 @@ public class LocomotionLayer : BehaviorLayer
 		return distance <= StopDistance;
 	}
 
-	public bool IsMoving => Agent.IsValid() && Agent.IsNavigating;
-
 	public override void Reset()
 	{
-		Stop();
+		MoveTarget = null;
+
+		if ( Agent.IsValid() )
+		{
+			Agent.Stop();
+		}
 	}
 }

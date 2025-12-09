@@ -6,4 +6,5 @@ namespace Sandbox.Npcs.Layers;
 public abstract class BehaviorLayer : Component
 {
 	protected Npc Npc => GetComponentInParent<Npc>();
+	protected T GetLayer<T>() => Npc.GetComponentInChildren<T>();
 }

@@ -260,23 +260,6 @@
           "OnComponentUpdate": null
         },
         {
-          "__type": "Sandbox.Npcs.NpcAnimator",
-          "__guid": "3eda4ad9-5e57-4b4c-b247-06aa6893c80d",
-          "__enabled": true,
-          "OnComponentDestroy": null,
-          "OnComponentDisabled": null,
-          "OnComponentEnabled": null,
-          "OnComponentFixedUpdate": null,
-          "OnComponentStart": null,
-          "OnComponentUpdate": null,
-          "Target": {
-            "_type": "component",
-            "component_id": "8eac3bab-f892-43ac-9aa1-5850fd5ae5cb",
-            "go": "78bfc3fd-cc81-4f48-b289-64ce74225fbe",
-            "component_type": "SkinnedModelRenderer"
-          }
-        },
-        {
           "__type": "Sandbox.Npcs.Behaviors.ScientistBehavior",
           "__guid": "0b24bdfd-6f9a-44ff-8fe0-6adc852cdb38",
           "__enabled": true,
@@ -286,10 +269,7 @@
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
           "OnComponentUpdate": null,
-          "PersonalSpace": 128,
-          "Priority": 0,
-          "SightRange": 8192,
-          "TargetTags": "player"
+          "Priority": 0
         },
         {
           "__type": "Sandbox.NavMeshAgent",
@@ -312,6 +292,58 @@
           "Separation": 0.25,
           "UpdatePosition": true,
           "UpdateRotation": false
+        },
+        {
+          "__type": "Sandbox.Npcs.Layers.SensesLayer",
+          "__guid": "ac9bfdad-33a7-4e7e-94dc-ad06951ec77f",
+          "__enabled": true,
+          "HearingRange": 300,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "PersonalSpace": 80,
+          "ScanInterval": 0.1,
+          "SightRange": 500,
+          "TargetTags": "player"
+        },
+        {
+          "__type": "Sandbox.Npcs.Layers.LocomotionLayer",
+          "__guid": "02518bc8-14ec-44e0-8efd-4e44d799456c",
+          "__enabled": true,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null
+        },
+        {
+          "__type": "Sandbox.Npcs.Layers.LookAtLayer",
+          "__guid": "cc9c6306-b200-4362-8ad1-752105b56b25",
+          "__enabled": true,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null
+        },
+        {
+          "__type": "Sandbox.Npcs.Layers.AnimationLayer",
+          "__guid": "29e73ec6-3d6d-463a-9ac2-67ab7fea7e40",
+          "__enabled": true,
+          "IsAttacking": false,
+          "IsGrounded": false,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "Speed": 1
         }
       ],
       "Children": [
@@ -456,7 +488,7 @@
           ],
           "Children": [
             {
-              "__guid": "c1fb84aa-814a-445c-83ce-6330c975eb3a",
+              "__guid": "a85cdcdf-9821-4366-b368-432311119e48",
               "__version": 1,
               "Flags": 0,
               "Name": "Clothing - hair_long_bangs",
@@ -473,7 +505,7 @@
               "Components": [
                 {
                   "__type": "Sandbox.SkinnedModelRenderer",
-                  "__guid": "9d2c2c44-0474-450b-800a-981e2cffafac",
+                  "__guid": "7995c402-178e-4d75-bf4f-2db977f777ae",
                   "__enabled": true,
                   "AnimationGraph": null,
                   "BodyGroups": 18446744073709551615,
@@ -524,7 +556,7 @@
               "Children": []
             },
             {
-              "__guid": "fc491f5d-f97b-49f3-9cd2-a639fcc875a8",
+              "__guid": "009ceaeb-6ab9-4a3e-924a-f4c26ffc9a4c",
               "__version": 1,
               "Flags": 0,
               "Name": "Clothing - y_front_pants_red",
@@ -541,7 +573,7 @@
               "Components": [
                 {
                   "__type": "Sandbox.SkinnedModelRenderer",
-                  "__guid": "b3c82902-a3eb-42ff-967c-7d88a2461b73",
+                  "__guid": "10a22a40-2541-44a5-9315-a7c38a1eb752",
                   "__enabled": true,
                   "AnimationGraph": null,
                   "BodyGroups": 18446744073709551615,
@@ -592,7 +624,7 @@
               "Children": []
             },
             {
-              "__guid": "ed9b284d-6c45-4e06-96b3-49ed22b47215",
+              "__guid": "3565d63f-7801-499f-b2ab-ff5fa9bad5ff",
               "__version": 1,
               "Flags": 0,
               "Name": "Clothing - boxing_boots",
@@ -609,7 +641,7 @@
               "Components": [
                 {
                   "__type": "Sandbox.SkinnedModelRenderer",
-                  "__guid": "fcc1e042-7a56-448c-98c7-42fc6346c54d",
+                  "__guid": "6e973d20-28c1-402a-97a8-38f9d81f4470",
                   "__enabled": true,
                   "AnimationGraph": null,
                   "BodyGroups": 18446744073709551615,
@@ -660,7 +692,7 @@
               "Children": []
             },
             {
-              "__guid": "19d82acd-2b72-4cb0-b02c-bf60c89dd7d6",
+              "__guid": "24cd2f86-a71d-4096-9cb0-960cd874f127",
               "__version": 1,
               "Flags": 0,
               "Name": "Clothing - blue_shirt",
@@ -677,7 +709,7 @@
               "Components": [
                 {
                   "__type": "Sandbox.SkinnedModelRenderer",
-                  "__guid": "ff3443c1-92de-4d06-a7af-d606e43092f6",
+                  "__guid": "eb94f4ef-5397-4c10-81e1-07c34e2058a7",
                   "__enabled": true,
                   "AnimationGraph": null,
                   "BodyGroups": 18446744073709551615,
@@ -728,7 +760,7 @@
               "Children": []
             },
             {
-              "__guid": "d3bb2013-9c69-441f-b1c9-784cf069a5d8",
+              "__guid": "4ca19c5f-a272-437e-a709-69ab79ad0247",
               "__version": 1,
               "Flags": 0,
               "Name": "Clothing - labcoat",
@@ -745,7 +777,7 @@
               "Components": [
                 {
                   "__type": "Sandbox.SkinnedModelRenderer",
-                  "__guid": "f7aaa4ab-a9ef-4bc8-976f-cb5dda8c13db",
+                  "__guid": "355ccc7d-dea4-4a01-b4bb-6dc3aedbd101",
                   "__enabled": true,
                   "AnimationGraph": null,
                   "BodyGroups": 18446744073709551615,

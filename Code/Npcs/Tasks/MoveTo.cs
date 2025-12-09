@@ -10,7 +10,7 @@ public class MoveTo : TaskBase
 	public Vector3 TargetPosition { get; set; }
 	public float StopDistance { get; set; } = 10f;
 
-	private LocomotionLayer _locomotion;
+	private NavigationLayer _locomotion;
 
 	public MoveTo( Vector3 targetPosition, float stopDistance = 10f )
 	{
@@ -20,7 +20,7 @@ public class MoveTo : TaskBase
 
 	protected override void OnStart()
 	{
-		_locomotion = GetLayer<LocomotionLayer>();
+		_locomotion = GetLayer<NavigationLayer>();
 
 		if ( _locomotion is not null )
 		{

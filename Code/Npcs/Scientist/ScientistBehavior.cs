@@ -12,10 +12,10 @@ public class ScientistBehavior : Behavior
 	public SensesLayer Senses { get; private set; }
 
 	[RequireComponent]
-	public LocomotionLayer Locomotion { get; private set; }
+	public NavigationLayer Locomotion { get; private set; }
 
 	[RequireComponent]
-	public LookAtLayer LookAt { get; private set; }
+	public AnimationLayer Animation { get; private set; }
 
 	public override ScheduleBase Run()
 	{
