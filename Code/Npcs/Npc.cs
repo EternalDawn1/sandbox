@@ -5,6 +5,9 @@ namespace Sandbox.Npcs;
 [Hide]
 public partial class Npc : Component
 {
+	[Property]
+	public bool ShowDebugOverlay { get; set; }
+
 	public Npc()
 	{
 		Senses = AddLayer<SensesLayer>();
@@ -33,5 +36,10 @@ public partial class Npc : Component
 		}
 
 		TickSchedule();
+
+		if ( ShowDebugOverlay )
+		{
+			DrawDebugString();
+		}
 	}
 }

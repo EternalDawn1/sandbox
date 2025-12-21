@@ -119,4 +119,17 @@ public abstract class ScheduleBase
 			task.Initialize( this );
 		}
 	}
+
+	/// <summary>
+	/// Information about this schedule for debugging purposes
+	/// </summary>
+	public string GetDebugString()
+	{
+		if ( _currentTaskIndex >= _tasks.Count )
+			return $"{GetType().Name}/(none)";
+
+		var task = _tasks[_currentTaskIndex];
+
+		return $"{GetType().Name}/{task.GetType().Name}";
+	}
 }
