@@ -31,50 +31,33 @@ public partial class Npc : Component
 	/// <summary>
 	/// Updates a behavior, returns if there is an active schedule - this will stop lower priority behaviors from running
 	/// </summary>
-	bool TickSchedule()
+	void TickSchedule()
 	{
-
-
-		var newSchedule = GetSchedule();
-
-		if ( ShouldStartSchedule( newSchedule ) )
-		{
-			EndCurrentSchedule();
-
-			ActiveSchedule = newSchedule;
-			ActiveSchedule?.InternalInit( this );
-			ActiveSchedule?.InternalStart();
-		}
-
+		// If we have a schedule, keep running it 
+		// until it's completely finished.
 		if ( ActiveSchedule is not null )
 		{
 			RunActiveSchedule();
+			return;
 		}
 
+		var newSchedule = GetSchedule();
+		if ( newSchedule is null ) return;
 
-
-
-		return ActiveSchedule is not null;
+		ActiveSchedule = newSchedule;
+		ActiveSchedule?.InternalInit( this );
 	}
 
 	private void RunActiveSchedule()
 	{
-		if ( ActiveSchedule.InternalUpdate() is not TaskStatus.Running )
+		var status = ActiveSchedule.InternalUpdate();
+
+		if ( status != TaskStatus.Running )
 		{
 			EndCurrentSchedule();
 		}
 	}
 
-	private bool ShouldStartSchedule( ScheduleBase newSchedule )
-	{
-		if ( newSchedule is null )
-			return false;
-
-		if ( ActiveSchedule is null )
-			return true;
-
-		return newSchedule != ActiveSchedule;
-	}
 
 	protected override void OnDisabled()
 	{

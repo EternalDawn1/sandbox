@@ -122,9 +122,10 @@ public sealed class AnimationLayer : BaseNpcLayer
 	public bool IsFacingTarget()
 	{
 		if ( !LookTarget.HasValue ) return true;
+		if ( _renderer is null ) return true;
 
-		var direction = (LookTarget.Value - Npc.WorldPosition).Normal;
-		var dot = Npc.WorldRotation.Forward.Dot( direction );
+		var direction = (LookTarget.Value.WithZ( 0 ) - Npc.WorldPosition.WithZ( 0 )).Normal;
+		var dot = Npc.WorldRotation.Forward.WithZ( 0 ).Dot( direction );
 		return dot > 0.90f;
 	}
 
@@ -145,7 +146,7 @@ public sealed class AnimationLayer : BaseNpcLayer
 		_renderer.Set( "aim_head", localDirection );
 		_renderer.Set( "aim_eyes", localDirection );
 
-		if ( angleToTarget > MaxHeadAngle || Speed > 1 )
+		//if ( angleToTarget > MaxHeadAngle || Speed > 1 )
 		{
 			var targetRotation = Rotation.LookAt( worldDirection, Vector3.Up );
 			var t = LookSpeed * Time.Delta;

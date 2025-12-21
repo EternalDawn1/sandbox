@@ -10,9 +10,6 @@ public abstract class ScheduleBase
 
 	private List<TaskBase> _tasks = new();
 	private int _currentTaskIndex = 0;
-	private bool _started;
-
-	public bool IsRunning => _started;
 
 	/// <summary>
 	/// Initialize the schedule with the Behavior context
@@ -22,16 +19,6 @@ public abstract class ScheduleBase
 		Npc = npc;
 		_tasks.Clear();
 		_currentTaskIndex = 0;
-		_started = false;
-	}
-
-	/// <summary>
-	/// Called once when schedule starts
-	/// </summary>
-	internal void InternalStart()
-	{
-		if ( _started ) return;
-		_started = true;
 
 		// Build task sequence
 		OnStart();
@@ -105,7 +92,6 @@ public abstract class ScheduleBase
 		}
 
 		_currentTaskIndex = 0;
-		_started = false;
 
 		OnEnd();
 	}
