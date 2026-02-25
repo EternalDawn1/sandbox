@@ -31,6 +31,11 @@ public partial class BaseCarryable : Component, IKillIcon
 	[Property, Feature( "Inventory" )] public string DisplayName { get; set; } = "My Weapon";
 	[Property, Feature( "Inventory" ), TextArea] public Texture DisplayIcon { get; set; }
 
+	/// <summary>
+	/// The prefab to spawn in the world when this item is dropped from the inventory.
+	/// </summary>
+	[Property, Feature( "Inventory" )] public GameObject ItemPrefab { get; set; }
+
 	public GameObject ViewModel { get; protected set; }
 	public GameObject WorldModel { get; protected set; }
 
@@ -93,7 +98,7 @@ public partial class BaseCarryable : Component, IKillIcon
 	/// The inventory slot this item is assigned to, or -1 if unassigned.
 	/// Set at runtime when picked up.
 	/// </summary>
-	[Sync] public int AssignedSlot { get; set; } = -1;
+	[Sync( SyncFlags.FromHost )] public int InventorySlot { get; set; } = -1;
 
 	/// <summary>
 	/// Can we switch to this?
@@ -158,22 +163,6 @@ public partial class BaseCarryable : Component, IKillIcon
 	public virtual void OnAdded( Player player )
 	{
 		// nothing
-	}
-
-	/// <summary>
-	/// Called when this is pulled out
-	/// </summary>
-	public virtual void OnEquipped( Player player )
-	{
-
-	}
-
-	/// <summary>
-	/// Called when this is put away
-	/// </summary>
-	public virtual void OnHolstered( Player player )
-	{
-
 	}
 
 	/// <summary>

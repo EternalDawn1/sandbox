@@ -6,6 +6,9 @@
 @if ( Player.IsValid() && Player.WantsHideHud )
     return;
 
+@if ( !inventory.IsValid() )
+    return;
+
 <root>
 	@for (int i = 0; i < inventory.MaxSlots; i++)
 	{
@@ -33,7 +36,7 @@
     protected override void OnUpdate()
     {
         inventory = Game.ActiveScene.GetAllComponents<PlayerInventory>().Where(x => x.Network.IsOwner).FirstOrDefault();
-        activeSlot = inventory?.ActiveWeapon?.AssignedSlot ?? -1;
+        activeSlot = inventory?.ActiveWeapon?.InventorySlot ?? -1;
     }
 
     public void HandleInput()
@@ -70,7 +73,7 @@
     /// </summary>
     public void SelectSlot( int slot )
     {
-        var weapon = inventory.GetWeaponInSlot( slot );
+        var weapon = inventory.GetSlot( slot );
 
         if ( weapon.IsValid() && !weapon.CanSwitch() )
             return;
