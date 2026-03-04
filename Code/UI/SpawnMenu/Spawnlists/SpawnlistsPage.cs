@@ -76,6 +76,8 @@ public class SpawnlistsPage : BaseSpawnMenu
 		var query = new Storage.Query();
 		query.KeyValues["package"] = "facepunch.sandbox";
 		query.KeyValues["type"] = "spawnlist";
+
+		// Directed search for current user
 		query.Author = Game.SteamId;
 
 		var result = await query.Run();

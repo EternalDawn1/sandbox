@@ -59,47 +59,7 @@
 
     protected override void OnClick( MousePanelEvent e )
     {
-        // TODO: dumb, make GameManager.Spawn parse the ident
-        if ( Type == "dupe" )
-        {
-            SpawnDupe();
-            return;
-        }
-
-        GameManager.Spawn( Path );
-    }
-
-    void SpawnDupe()
-    {
-	    // TODO: dumb, make GameManager.Spawn parse all of this
-
-        if ( Source == "workshop" )
-        {
-            _ = SpawnDupeFromWorkshop();
-            return;
-        }
-
-        // Local dupe
-        var dupeEntry = Storage.GetAll( "dupe" ).FirstOrDefault( x => x.Id.ToString() == Path );
-        if ( dupeEntry is not null )
-        {
-            Duplicator.FromStorage( dupeEntry );
-        }
-    }
-
-    // TODO: dumb dumb dumb
-    async Task SpawnDupeFromWorkshop()
-    {
-        var query = new Storage.Query();
-        query.KeyValues["package"] = "facepunch.sandbox";
-        query.KeyValues["type"] = "dupe";
-
-        var result = await query.Run();
-        var item = result.Items?.FirstOrDefault( x => x.Id.ToString() == Path );
-        if ( item is not null )
-        {
-            await Duplicator.FromWorkshop( item );
-        }
+        GameManager.Spawn( Ident );
     }
 
     protected override void OnRightClick( MousePanelEvent e )

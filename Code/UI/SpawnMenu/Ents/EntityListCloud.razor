@@ -43,7 +43,7 @@
 
     void Spawn( Package package )
     {
-        GameManager.Spawn( package.FullIdent );
+        GameManager.Spawn( $"entity:{package.FullIdent}" );
     }
 
     protected override void OnParametersSet()
