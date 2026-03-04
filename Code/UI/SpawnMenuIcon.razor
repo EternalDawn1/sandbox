@@ -13,10 +13,13 @@
 
 @code
 {
-    [Parameter] public string Type { get; set; }
+    [Parameter] public string Ident { get; set; }
     [Parameter] public string Icon { get; set; }
     [Parameter] public string Title { get; set; }
-    [Parameter] public string Path { get; set; }
+
+    string Type;
+    string Path;
+    string Source;
 
     /// <summary>
     /// We want to drag from this panel
@@ -27,7 +30,9 @@
     {
         base.OnParametersSet();
 
-        if (string.IsNullOrWhiteSpace( Icon ) )
+        (Type, Path, Source) = SpawnlistItem.ParseIdent( Ident );
+
+        if ( string.IsNullOrWhiteSpace( Icon ) )
         {
             Icon = $"thumb:{Path}";
         }
@@ -54,6 +59,77 @@
 
     protected override void OnClick( MousePanelEvent e )
     {
+        // TODO: dumb, make GameManager.Spawn parse the ident
+        if ( Type == "dupe" )
+        {
+            SpawnDupe();
+            return;
+        }
+
         GameManager.Spawn( Path );
+    }
+
+    void SpawnDupe()
+    {
+	    // TODO: dumb, make GameManager.Spawn parse all of this
+
+        if ( Source == "workshop" )
+        {
+            _ = SpawnDupeFromWorkshop();
+            return;
+        }
+
+        // Local dupe
+        var dupeEntry = Storage.GetAll( "dupe" ).FirstOrDefault( x => x.Id.ToString() == Path );
+        if ( dupeEntry is not null )
+        {
+            Duplicator.FromStorage( dupeEntry );
+        }
+    }
+
+    // TODO: dumb dumb dumb
+    async Task SpawnDupeFromWorkshop()
+    {
+        var query = new Storage.Query();
+        query.KeyValues["package"] = "facepunch.sandbox";
+        query.KeyValues["type"] = "dupe";
+
+        var result = await query.Run();
+        var item = result.Items?.FirstOrDefault( x => x.Id.ToString() == Path );
+        if ( item is not null )
+        {
+            await Duplicator.FromWorkshop( item );
+        }
+    }
+
+    protected override void OnRightClick( MousePanelEvent e )
+    {
+        var menu = MenuPanel.Open( this );
+
+        // If inside a spawnlist, offer removal
+        var spawnlistView = Ancestors.OfType<SpawnlistView>().FirstOrDefault();
+        if ( spawnlistView?.Entry is not null )
+        {
+            menu.AddOption( "delete", "Remove from List", () =>
+            {
+                var data = SpawnlistData.Load( spawnlistView.Entry );
+                var idx = data.Items.FindIndex( x => x.Ident == Ident );
+                if ( idx >= 0 )
+                {
+                    SpawnlistData.RemoveItem( spawnlistView.Entry, idx );
+                    spawnlistView.RefreshCache();
+                }
+            } );
+            menu.AddSpacer();
+        }
+
+        SpawnlistData.PopulateContextMenu( menu, new SpawnlistItem
+        {
+            Ident = Ident,
+            Title = Title,
+            Icon = Icon,
+        }, spawnlistView?.Entry );
+
+        e.StopPropagation();
     }
 }
