@@ -1,28 +1,24 @@
 public sealed class PostProcessManager : GameObjectSystem<PostProcessManager>
 {
 	private readonly Dictionary<string, GameObject> _active = new();
-	private readonly Dictionary<string, List<Component>> _components = new();
+	private readonly HashSet<string> _enabled = new();
 
 	public string SelectedPath { get; private set; }
-	public GameObject SelectedGo
-	{
-		get
-		{
-			if ( SelectedPath is null ) return null;
-			_active.TryGetValue( SelectedPath, out var go );
-			return go;
-		}
-	}
 
 	public IReadOnlyList<Component> GetSelectedComponents() =>
-		SelectedPath != null && _components.TryGetValue( SelectedPath, out var comps )
-			? comps
+		SelectedPath != null && _active.TryGetValue( SelectedPath, out var go )
+			? go.Components.GetAll<Component>().ToList()
 			: Array.Empty<Component>();
 
 	public PostProcessManager( Scene scene ) : base( scene ) { }
 
-	public bool IsEnabled( string resourcePath ) =>
-		_components.TryGetValue( resourcePath, out var comps ) && comps.Any( c => c.Enabled );
+	public bool IsEnabled( string resourcePath ) => _enabled.Contains( resourcePath );
+
+	private void SetEnabled( string resourcePath, bool enabled )
+	{
+		if ( !_active.TryGetValue( resourcePath, out var go ) ) return;
+		go.Enabled = enabled;
+	}
 
 	private void SpawnGo( string resourcePath, bool startEnabled )
 	{
@@ -32,12 +28,7 @@ public sealed class PostProcessManager : GameObjectSystem<PostProcessManager>
 		var camera = Scene.Camera?.GameObject;
 		if ( camera is null ) return;
 
-		var go = GameObject.Clone( resource.Prefab, new CloneConfig { StartEnabled = true, Parent = camera } );
-
-		var comps = go.Components.GetAll<Component>().ToList();
-		_components[resourcePath] = comps;
-		foreach ( var c in comps ) c.Enabled = startEnabled;
-
+		var go = GameObject.Clone( resource.Prefab, new CloneConfig { StartEnabled = startEnabled, Parent = camera } );
 		_active[resourcePath] = go;
 	}
 
@@ -60,17 +51,16 @@ public sealed class PostProcessManager : GameObjectSystem<PostProcessManager>
 
 		if ( !_active.ContainsKey( resourcePath ) )
 			SpawnGo( resourcePath, startEnabled: true );
-		else if ( _components.TryGetValue( resourcePath, out var comps ) )
-			foreach ( var c in comps ) c.Enabled = true;
+		else
+			SetEnabled( resourcePath, true );
 	}
 
 	public void Unpreview()
 	{
 		if ( _previewPath is null ) return;
 
-		if ( _previewPath != SelectedPath && !IsEnabled( _previewPath ) )
-			if ( _components.TryGetValue( _previewPath, out var comps ) )
-				foreach ( var c in comps ) c.Enabled = false;
+		if ( !IsEnabled( _previewPath ) )
+			SetEnabled( _previewPath, false );
 
 		_previewPath = null;
 	}
@@ -84,14 +74,32 @@ public sealed class PostProcessManager : GameObjectSystem<PostProcessManager>
 	{
 		SelectedPath = resourcePath;
 
-		if ( _active.ContainsKey( resourcePath ) )
+		if ( IsEnabled( resourcePath ) )
 		{
-			var enabled = IsEnabled( resourcePath );
-			if ( _components.TryGetValue( resourcePath, out var comps ) )
-				foreach ( var c in comps ) c.Enabled = !enabled;
+			_enabled.Remove( resourcePath );
+			SetEnabled( resourcePath, false );
 			return;
 		}
 
-		SpawnGo( resourcePath, startEnabled: true );
+		_enabled.Add( resourcePath );
+
+		if ( !_active.ContainsKey( resourcePath ) )
+			SpawnGo( resourcePath, startEnabled: true );
+		else
+			SetEnabled( resourcePath, true );
+	}
+
+	public void Remove( string resourcePath )
+	{
+		if ( _active.TryGetValue( resourcePath, out var go ) )
+		{
+			go.Destroy();
+			_active.Remove( resourcePath );
+		}
+
+		_enabled.Remove( resourcePath );
+
+		if ( SelectedPath == resourcePath )
+			SelectedPath = null;
 	}
 }

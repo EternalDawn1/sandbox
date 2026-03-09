@@ -5,23 +5,21 @@
 
 <VirtualGrid Items=@Effects ItemSize=@(160)>
     <Item Context="item">
-        @if (item is PostProcessResource entry)
-        {
+        @{
+            var entry = (PostProcessResource)item;
             var active = Manager?.IsEnabled( entry.ResourcePath ) ?? false;
             var selected = Manager?.SelectedPath == entry.ResourcePath;
-            <div class="postprocess-icon @(active ? "active" : "") @(selected ? "selected" : "")"
-                 onclick=@(() => OnSelect( entry ))
-                 onmouseenter=@(() => Manager?.Preview( entry.ResourcePath ))
-                 onmouseleave=@(() => Manager?.Unpreview())>
-                <div class="thumb" style="background-image: url(thumb:@entry.ResourcePath)"></div>
-                <div class="bottom-bar">
-                    <div class="title">@entry.Title</div>
-                    <div class="checkbox @(active ? "on" : "")" onclick:stopPropagation="true" @onclick=@(() => OnToggle( entry ))>
-                        @(active ? "ON" : "OFF")
-                    </div>
-                </div>
-            </div>
         }
+        <div class="postprocess-icon @(active ? "active" : "") @(selected ? "selected" : "")"
+             onclick=@(() => OnSelect( entry ))
+             onmouseenter=@(() => Manager?.Preview( entry.ResourcePath ))
+             onmouseleave=@(() => Manager?.Unpreview())>
+            <div class="thumb" style="background-image: url(thumb:@entry.ResourcePath)"></div>
+            <div class="title">@entry.Title</div>
+            <div class="checkbox @(active ? "on" : "")" @onclick=@(() => OnToggle( entry ))>
+                <div class="checkmark">✓</div>
+            </div>
+        </div>
     </Item>
 </VirtualGrid>
 
@@ -29,7 +27,7 @@
 {
     [Parameter] public PostProcessGroup? Group { get; set; }
 
-    List<PostProcessResource> Effects = [];
+    List<object> Effects = [];
     PostProcessManager Manager;
 
     protected override void OnParametersSet()
@@ -40,7 +38,7 @@
         Effects = ( Group is null
             ? all
             : all.Where( r => r.Group == Group )
-        ).ToList();
+        ).Cast<object>().ToList();
 
         Manager ??= Game.ActiveScene.GetSystem<PostProcessManager>();
     }
@@ -59,10 +57,4 @@
 
     protected override int BuildHash() =>
         HashCode.Combine( Effects.Count, Manager?.SelectedPath, Manager?.IsEnabled( Manager?.SelectedPath ?? "" ) );
-
-    public override void Tick()
-    {
-        base.Tick();
-        StateHasChanged();
-    }
 }

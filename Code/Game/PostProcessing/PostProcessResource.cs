@@ -34,7 +34,7 @@ public class PostProcessResource : GameResource, IDefinitionResource
 
 	protected override Bitmap CreateAssetTypeIcon( int width, int height )
 	{
-		return CreateSimpleAssetTypeIcon( "🎨", width, height, "#48b4f5" );
+		return CreateSimpleAssetTypeIcon( "🎨", width, height, "#35B851" );
 	}
 }
 

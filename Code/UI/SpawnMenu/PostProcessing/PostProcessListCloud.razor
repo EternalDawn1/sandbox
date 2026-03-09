@@ -3,7 +3,7 @@
 @inherits Panel
 @namespace Sandbox
 
-@if ( LastResult is null )
+@if ( FilteredPackages is null )
 {
     return;
 }
@@ -43,12 +43,10 @@
                              onmouseenter=@(() => { if ( resourcePath != null ) Manager?.Preview( resourcePath ); })
                              onmouseleave=@(() => Manager?.Unpreview())>
                             <div class="thumb" style="background-image: url(@thumbUrl)"></div>
-                            <div class="bottom-bar">
-                                <div class="title">@entry.Title</div>
-                                <div class="checkbox @(active ? "on" : "") @(mounting ? "loading" : "")"
-                                     onclick:stopPropagation="true" @onclick=@(() => OnToggle( entry ))>
-                                    @(mounting ? "..." : active ? "ON" : "OFF")
-                                </div>
+                            <div class="title">@entry.Title</div>
+                            <div class="checkbox @(active ? "on" : "") @(mounting ? "loading" : "")"
+                                     @onclick=@(() => OnToggle( entry ))>
+                                <div class="checkmark">✓</div>
                             </div>
                         </div>
                     }
@@ -73,8 +71,7 @@
         set { field = value; Rebuild(); }
     }
 
-    Package.FindResult LastResult;
-    IEnumerable<Package> FilteredPackages => LastResult?.Packages.Where( p => p.TypeName == "spp" ) ?? [];
+    List<object> FilteredPackages;
     Dictionary<string, PostProcessResource> MountedResources = new();
     HashSet<string> _mounting = new();
     PostProcessManager Manager;
@@ -91,7 +88,8 @@
         var query = $"sort:{SortOrder.ToIdentifier()}";
         if ( !string.IsNullOrEmpty( Filter ) ) query += $" {Filter}";
 
-        LastResult = await Package.FindAsync( query );
+        var result = await Package.FindAsync( query );
+        FilteredPackages = result?.Packages.Where( p => p.TypeName == "spp" ).Cast<object>().ToList();
         StateHasChanged();
     }
 

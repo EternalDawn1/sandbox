@@ -14,8 +14,7 @@ public class PostProcessPage : BaseSpawnMenu
 
 		foreach ( var group in groups )
 		{
-			var captured = group;
-			AddOption( "🎨", group.ToString(), () => new PostProcessList { Group = captured } );
+			AddOption( "🎨", group.ToString(), () => new PostProcessList { Group = group } );
 		}
 
 		AddHeader( "Workshop" );
