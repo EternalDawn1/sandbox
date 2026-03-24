@@ -1,4 +1,4 @@
-﻿@using Sandbox;
+@using Sandbox;
 @using Sandbox.UI;
 @namespace Sandbox
 @inherits Panel
@@ -7,16 +7,7 @@
 
 	<div class="canvas" @ref=_canvas></div>
 
-	@if (_selected.Any())
-	{
-		<div class="window" @onmousedown="@WindowPress">
-            <GameObjectInspector Target=@_selected></GameObjectInspector>
-		</div>
-	}
-	else
-	{
-		<div class="window empty-state" @onmousedown="@WindowPress">Click on an object to inspect it.</div>
-	}
+	<div class="window-stack" @ref=_windowStack @onmousedown="@WindowPress"></div>
 
 </root>
 
@@ -25,12 +16,113 @@
     public GameObject Hovered => hovered;
 
     Panel _canvas = default;
+    Panel _windowStack = default;
 
-    protected override int BuildHash() => HashCode.Combine(hovered, _selected.Count);
+    record EditorEntry( InspectorEditorBase Editor )
+    {
+        public bool WasVisible { get; set; }
+    }
+    List<EditorEntry> _editors;
+
+    void InitEditors()
+    {
+        if ( _editors != null || _windowStack == null ) return;
+        _editors = new();
+
+        var types = TypeLibrary.GetTypesWithAttribute<InspectorEditorAttribute>()
+            .OrderBy( t => t.Attribute.Type is null ? 1 : 0 );
+
+        foreach ( var (typeDesc, attr) in types )
+        {
+            var editor = typeDesc.Create<InspectorEditorBase>();
+            if ( editor == null ) continue;
+
+            editor.AddClass( "window" );
+            editor.SetClass( "hidden", true );
+            editor.Parent = _windowStack;
+
+            var entry = new EditorEntry( editor );
+            editor.OnToggleExpanded = () => AccordionToggle( editor );
+
+            _editors.Add( entry );
+        }
+    }
+
+    void AccordionToggle( InspectorEditorBase target )
+    {
+        bool expanding = !target.IsExpanded;
+        var visibleCount = _editors?.Count( e => e.WasVisible ) ?? 0;
+
+        if ( visibleCount >= 3 )
+        {
+            // Strict accordion — collapse all, expand only target
+            foreach ( var e in _editors )
+                e.Editor.IsExpanded = false;
+            target.IsExpanded = expanding;
+        }
+        else
+        {
+            // Free toggle — each panel independent
+            target.IsExpanded = expanding;
+        }
+    }
+
+    HashSet<GameObject> _lastSelected = new();
+
+    void UpdateEditors()
+    {
+        if ( _editors == null ) return;
+
+        bool changed = false;
+
+        foreach ( var entry in _editors )
+        {
+            bool visible = entry.Editor.TrySetTarget( _selected );
+            if ( visible != entry.WasVisible ) changed = true;
+            entry.Editor.SetClass( "hidden", !visible );
+            entry.WasVisible = visible;
+        }
+
+        if ( !_lastSelected.SetEquals( _selected ) )
+        {
+            changed = true;
+            _lastSelected = _selected.ToHashSet();
+        }
+
+        if ( changed )
+            ApplyExpansionRules();
+    }
+
+    void ApplyExpansionRules()
+    {
+        var visible = _editors.Where( e => e.WasVisible ).ToList();
+        bool accordion = visible.Count >= 3;
+
+        foreach ( var e in visible )
+            e.Editor.ShowAccordion = accordion;
+
+        if ( accordion )
+        {
+            // Collapse all except the last
+            foreach ( var e in visible )
+                e.Editor.IsExpanded = false;
+            visible[^1].Editor.IsExpanded = true;
+        }
+        else
+        {
+            // All expanded, no accordion chrome
+            foreach ( var e in visible )
+                e.Editor.IsExpanded = true;
+        }
+    }
+
+    protected override int BuildHash() => HashCode.Combine( hovered, _selected.Count );
 
     public override void Tick()
     {
         _selected.RemoveAll( x => !x.IsValid() );
+        InitEditors();
+        UpdateEditors();
         UpdateHighlights();
         UpdateCursor();
     }
@@ -110,7 +202,6 @@
 
         var go = tr.Collider?.GameObject ?? tr.GameObject;
         go = go.FindNetworkRoot();
-        //  Scene.DebugOverlay.Sphere(new Sphere(tr.EndPosition, 1), Color.Yellow );
 
         if (!_canvas.HasHovered) go = default;
         if (!CanSelect(go)) go = null;
@@ -165,13 +256,14 @@
             _selected.Add(o);
         }
 
-        //_selected.RemoveAll(x => !x.IsValid() );
         _selected = _selected.Distinct().ToList();
     }
-
 
 	void WindowPress( PanelEvent panelEvent )
 	{
 		panelEvent.StopPropagation();
 	}
 }
+
+
+
