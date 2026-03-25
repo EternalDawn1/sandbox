@@ -2,7 +2,7 @@
 
 Inspector
 {
-    font-size: 1.3rem;
+    font-size: 1.0rem;
     color: #ddd;
     transition: all 0.2s linear;
 
@@ -36,32 +36,39 @@ Inspector .inspector-panel
 Inspector .tab-bar
 {
     flex-direction: row;
-    gap: 2px;
-    padding: 0 8px;
+    margin-left: 8px;
+    z-index: 10;
+    flex-shrink: 0;
+    font-size: 14px;
+    font-weight: 650;
+    font-family: $subtitle-font;
     pointer-events: all;
 }
 
 Inspector .tab
 {
-    padding: 5px 14px;
-    border-radius: 6px 6px 0 0;
-    background-color: #222222c9;
-    border: 1px solid #444;
-    border-bottom: none;
+    padding: 0.5rem 1rem;
     cursor: pointer;
-    color: rgba( 255, 255, 255, 0.5 );
+    color: #D1D7E3AA;
+    border-radius: 8px 8px 0 0;
+    background-color: #0c202faa;
+    border-right: 1px solid $menu-surface-soft;
+    gap: 0.4rem;
+    align-items: center;
     pointer-events: all;
 
     &:hover
     {
-        background-color: #222222f1;
-        color: rgba( 255, 255, 255, 0.75 );
+        color: $menu-color;
+        sound-in: ui.hover;
     }
 
     &.active
     {
-        background-color: #222222ee;
-        color: white;
+        color: $menu-text-strong;
+        background-color: $menu-panel-bg;
+        pointer-events: none;
+        backdrop-filter: blur( 8px );
     }
 }
 
@@ -72,13 +79,13 @@ Inspector .window-stack
 
 Inspector .window-stack .window
 {
-    background-color: #222222ee;
-    border: 1px solid #444;
+    background-color: $menu-panel-bg;
+    backdrop-filter: blur( 8px );
+    border: 1px solid $menu-surface-soft;
     padding: 1rem;
     width: 500px;
-    border-radius: 8px 8px 8px 8px;
+    border-radius: 8px;
     pointer-events: all;
-    backdrop-filter: blur( 10px );
     z-index: 200;
 
     &.hidden
