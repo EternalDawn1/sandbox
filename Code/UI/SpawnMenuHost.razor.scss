@@ -114,6 +114,11 @@ SpawnMenuHost.theme-dark SpawnMenu .container > .spawnmenuleft > .body
 	background-color: transparent;
 }
 
+SpawnMenuHost.theme-dark SpawnMenu .container > .spawnmenuright > .body
+{
+	background-color: transparent;
+}
+
 SpawnMenuHost.theme-dark SpawnMenuPage > .left
 {
 	background-color: #ffffff;
@@ -123,6 +128,11 @@ SpawnMenuHost.theme-dark SpawnMenuPage > .left
 SpawnMenuHost.theme-dark SpawnMenuPage > .left > div
 {
 	background-color: #ffffff;
+}
+
+SpawnMenuHost.theme-dark SpawnMenuPage > .body
+{
+	background-color: transparent;
 }
 
 SpawnMenuHost.theme-dark SpawnMenuContent > .header,
