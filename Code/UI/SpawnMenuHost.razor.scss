@@ -73,27 +73,27 @@ SpawnMenuHost.theme-dark SpawnMenu .container .spawnmenuleft
 
 SpawnMenuHost.theme-dark SpawnMenu .container .spawnmenuright
 {
-	background-color: #FFFFFF00;
-	border-color: #8c8c8c;
+	background-color: #e7e7e7;
+	border-color: rgba( 0, 0, 0, 0.16 );
 }
 
 SpawnMenuHost.theme-dark SpawnMenu .tabs
 {
 	background-color: transparent;
-	border-bottom-color: rgba(255, 255, 255, 0.08);
+	border-bottom-color: rgba( 0, 0, 0, 0.16 );
 }
 
 SpawnMenuHost.theme-dark SpawnMenu .tabs > *
 {
-	color: #d0d0d0;
-	background-color: #262626;
-	border-right-color: rgba(255, 255, 255, 0.08);
+	color: #e6e6e6;
+	background-color: #5a5a5a;
+	border-right-color: rgba( 0, 0, 0, 0.16 );
 }
 
 SpawnMenuHost.theme-dark SpawnMenu .tabs > *.active
 {
 	color: #ffffff;
-	background-color: #2f2f2f;
+	background-color: #4b4b4b;
 	border-top-color: #4d8fc0;
 }
 
