@@ -1,5 +1,5 @@
 $menu-color:#cdf;
-$menu-text: #fffa;
+$menu-text: rgb(255, 255, 255);
 $menu-text-strong: #fff;
 $menu-surface-soft: #0004;
 $menu-accent: $color-accent;
@@ -17,7 +17,7 @@ $menu-panel-bg: #0c202fcc;
 .menu-input
 {
 	background-color: $menu-surface-soft;
-	border-radius: 8px;
+	
 	padding: 2px 10px;
 }
 
