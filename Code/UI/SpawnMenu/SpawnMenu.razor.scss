@@ -91,6 +91,11 @@ SpawnMenu .container .spawnmenuright
     padding: 4px 0 4px 12px;
 }
 
+.spawnmenuright > .tabs
+{
+    padding-left: 0;
+}
+
 .tabs > *
 {
     padding: 8px 14px;
