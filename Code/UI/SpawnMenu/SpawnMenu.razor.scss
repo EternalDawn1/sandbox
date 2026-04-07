@@ -35,8 +35,8 @@ SpawnMenu .container .spawnmenuleft
 {
     flex-grow: 1;
     flex-direction: column;
-    background-color: $g12-panel;
-    border: 1px solid $g12-border;
+    background-color: rgba( $g12-panel, 0.24 );
+    border: 1px solid rgba( 255, 255, 255, 0.08 );
 }
 
 SpawnMenu .container .spawnmenuright
@@ -44,8 +44,8 @@ SpawnMenu .container .spawnmenuright
     width: 586px;
     flex-shrink: 0;
     flex-direction: column;
-    background-color: $g12-panel;
-    border: 1px solid $g12-border;
+    background-color: #ffffff;
+    border: 1px solid rgba( 0, 0, 0, 0.08 );
 }
 
 .container .spawnmenuleft
@@ -159,7 +159,8 @@ SpawnMenu .container .spawnmenuright
 {
     > .body
     {
-        background-color: $g12-panel-inner;
+        background-color: rgba( $g12-panel-inner, 0.10 );
+        backdrop-filter: blur( 4px );
     }
 }
 
