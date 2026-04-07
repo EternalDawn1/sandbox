@@ -12,19 +12,34 @@ SpawnMenuIcon
 	background-position: center;
 	background-size: contain;
 	background-repeat: no-repeat;
+	overflow: hidden;
 
 	.title
 	{
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
 		background-color: rgba( 0, 0, 0, 0.72 );
-		padding: 2px 4px;
+		padding: 4px 6px;
 		font-size: 10px;
 		font-weight: 500;
-		width: 100%;
 		text-align: center;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		color: #d0d0d0;
 		border-radius: 0 0 2px 2px;
+		opacity: 0;
+		visibility: hidden;
+		transform: translateY(6px);
+		transition: opacity 0.16s ease, transform 0.16s ease, visibility 0.16s ease;
+	}
+
+	&:hover .title
+	{
+		opacity: 1;
+		visibility: visible;
+		transform: translateY(0);
 	}
 }
