@@ -1,14 +1,24 @@
 @import "/UI/Theme.scss";
 
+/* ===== GMod 12 colour palette ===== */
+$g12-panel:        #2d2d2d;
+$g12-panel-inner:  #252525;
+$g12-header:       #1c1c1c;
+$g12-border:       #484848;
+$g12-border-in:    #353535;
+$g12-text:         #d0d0d0;
+$g12-text-dim:     #6e6e6e;
+$g12-accent:       #4d8fc0;
+$g12-selection:    rgba( 77, 143, 192, 0.22 );
+
 SpawnMenu
 {
     width: 100%;
     height: 100%;
-    color: $menu-color;
-    justify-content: center;
+    color: $g12-text;
     font-family: $body-font;
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 400;
     z-index: 1000;
 }
 
@@ -16,55 +26,38 @@ SpawnMenu .container
 {
     width: 100%;
     height: 100%;
-    max-width: 1900px;
+    padding: 34px 8px 8px 8px;
+    gap: 6px;
+    align-items: stretch;
 }
 
 SpawnMenu .container .spawnmenuleft
 {
-    transform: translateX( -100px );
-    transition: all 0.2s ease-in;
+    flex-grow: 1;
+    flex-direction: column;
+    background-color: $g12-panel;
+    border: 1px solid $g12-border;
 }
 
 SpawnMenu .container .spawnmenuright
 {
-    transform: translateX( 100px );
-    transition: all 0.2s ease-in;
-}
-
-SpawnMenuHost.open SpawnMenu
-{
-    .container .spawnmenuleft
-    {
-        transform: translateX( 0px );
-        transition: all 0.1s ease-out;
-    }
-
-    .container .spawnmenuright
-    {
-        transform: translateX( 0px );
-        transition: all 0.1s ease-out;
-    }
+    width: 586px;
+    flex-shrink: 0;
+    flex-direction: column;
+    background-color: $g12-panel;
+    border: 1px solid $g12-border;
 }
 
 .container .spawnmenuleft
 {
     flex-grow: 1;
-    padding: 128px 64px;
-    padding-right: 16px;
-
-    PanelSwitcher
-    {
-        padding-bottom: 128px;
-    }
 }
 
 .container .spawnmenuright
 {
-    width: 700px;
+    width: 286px;
     flex-shrink: 0;
     flex-grow: 0;
-    padding: 128px 64px;
-    padding-left: 16px;
 }
 
 .container > .spawnmenuleft,
@@ -77,54 +70,57 @@ SpawnMenuHost.open SpawnMenu
 .container > .spawnmenuleft > .body,
 .container > .spawnmenuright > .body
 {
-    border-radius: 8px;
+    border-radius: 0;
     flex-grow: 1;
 }
 
 .tabs
 {
-    font-size: 14px;
-    color: white;
-    font-weight: 650;
-    font-family: $subtitle-font;
-    margin-left: 8px;
+    font-size: 12px;
+    color: $g12-text-dim;
+    font-weight: 600;
+    font-family: $body-font;
+    background-color: $g12-header;
+    border-bottom: 1px solid $g12-border;
     z-index: 10;
     flex-shrink: 0;
+    padding: 0;
 }
 
 .tabs > *
 {
-    padding: 0.5rem 1rem;
+    padding: 6px 12px;
     cursor: pointer;
-    color: #D1D7E3AA;
-    border-radius: 8px 8px 0 0;
-    background-color: #0c202faa;
-    opacity: 1;
-    border-right: 1px solid $menu-surface-soft;
-    gap: 0.4rem;
+    color: $g12-text-dim;
+    border-radius: 0;
+    background-color: $g12-header;
+    border-right: 1px solid $g12-border-in;
+    border-top: 2px solid transparent;
+    gap: 5px;
     align-items: center;
+    flex-shrink: 0;
 }
 
 .tabs > *:hover
 {
-    color: $menu-color;
+    color: $g12-text;
+    background-color: rgba( 255, 255, 255, 0.04 );
     sound-in: ui.hover;
 }
 
 .tabs > *:active
 {
-    color: $menu-text-strong;
     sound-in: ui.select;
 }
 
 .tabs > *.active
 {
-    opacity: 1;
-    color: $menu-text-strong;
-    cursor: pointer;
-    background-color: $menu-panel-bg;
+    color: $g12-text;
+    cursor: default;
+    background-color: $g12-panel;
     pointer-events: none;
-    backdrop-filter: blur( 8px );
+    border-top: 2px solid $g12-accent;
+    backdrop-filter: none;
 }
 
 
@@ -148,16 +144,14 @@ SpawnMenuHost.open SpawnMenu
 {
     opacity: 0;
     pointer-events: none;
-    transition: all 0.1s linear;
-    transform: translateY( 20px );
+    transition: opacity 0.08s linear;
 }
 
 .container > .spawnmenuleft > .body > .active,
 .container > .spawnmenuright > .body > .active
 {
     opacity: 1;
-    transition: all 0.1s linear;
-    transform: translateY( 0px );
+    transition: opacity 0.08s linear;
 }
 
 .container > .spawnmenuleft,
@@ -165,25 +159,27 @@ SpawnMenuHost.open SpawnMenu
 {
     > .body
     {
-        background-color: $menu-panel-bg;
-        backdrop-filter: blur( 2px );
+        background-color: $g12-panel-inner;
     }
 }
 
 
 .menuinner
 {
-    background-color: #13161a88;
-    border-radius: 8px;
+    background-color: transparent;
+    border-radius: 0;
 
     h1, h2
     {
         text-transform: uppercase;
-        font-size: 11px;
-        letter-spacing: 0.1em;
-        opacity: 0.5;
-        font-weight: 800;
-        padding: 8px 4px 2px 4px;
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        color: $g12-text-dim;
+        opacity: 1;
+        font-weight: 700;
+        padding: 5px 4px 2px 4px;
+        border-bottom: 1px solid $g12-border-in;
+        margin-bottom: 2px;
     }
 }
 
@@ -199,16 +195,17 @@ SpawnMenuHost.open SpawnMenu
             flex-grow: 0;
             flex-shrink: 0;
             flex-direction: column;
-            width: 180px;
-            padding: 8px;
+            width: 156px;
+            padding: 4px;
+            border-right: 1px solid $g12-border-in;
+            background-color: rgba( 0, 0, 0, 0.15 );
 
             .list
             {
                 flex-direction: column;
-                background-color: #2225;
-                padding: 0.5rem;
-                border-radius: 6px;
                 height: 100%;
+                overflow-y: scroll;
+                gap: 1px;
             }
         }
 
@@ -216,8 +213,8 @@ SpawnMenuHost.open SpawnMenu
         {
             flex-direction: column;
             flex-grow: 1;
-            padding: 8px;
-            margin: 8px;
+            padding: 6px;
+            margin: 0;
             overflow-y: scroll;
         }
 
@@ -255,14 +252,14 @@ SpawnMenuHost.open SpawnMenu
         controlsheetrow, .control-row
         {
             width: 100%;
-            background-color: #53698111;
-            padding: 8px;
-            border-radius: 4px;
+            background-color: rgba( 255, 255, 255, 0.025 );
+            padding: 5px 6px;
+            border-radius: 2px;
             max-height: auto;
 
             &:hover
             {
-                background-color: #53698122;
+                background-color: rgba( 255, 255, 255, 0.06 );
 
                 > .left
                 {
@@ -272,7 +269,7 @@ SpawnMenuHost.open SpawnMenu
 
             > .left
             {
-                width: 150px;
+                width: 120px;
                 overflow: hidden;
                 flex-shrink: 0;
             }
@@ -289,25 +286,26 @@ VirtualGrid
 {
     width: 100%;
     height: 100%;
-    gap: 5px;
+    gap: 2px;
+    padding: 4px;
 
     .cell
     {
-        background-color: #7771;
-        border-radius: $hud-radius-sm;
-        border: 1px solid transparent;
+        background-color: rgba( 255, 255, 255, 0.03 );
+        border-radius: 2px;
+        border: 1px solid $g12-border-in;
         cursor: pointer;
 
         &:hover
         {
-            background-color: $menu-accent-soft;
-            border-color: rgba($color-accent, 0.4);
+            background-color: $g12-selection;
+            border-color: rgba( $g12-accent, 0.55 );
         }
 
         &:active
         {
-            background-color: $menu-accent;
-            padding: 2px;
+            background-color: rgba( $g12-accent, 0.38 );
+            border-color: $g12-accent;
         }
     }
 }

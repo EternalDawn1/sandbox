@@ -7,11 +7,10 @@ SpawnMenuHost
 	left: 0;
 	right: 0;
 	bottom: 0;
-	color: $menu-color;
-	justify-content: center;
+	color: #d0d0d0;
 	font-family: $body-font;
-	font-size: 14px;
-	font-weight: 600;
+	font-size: 13px;
+	font-weight: 400;
 	z-index: 1000;
 	pointer-events: none;
 }
@@ -22,14 +21,14 @@ SpawnMenuHost .menu-wrapper
 	height: 100%;
 	opacity: 0;
 	pointer-events: none;
-	transition: opacity 0.15s ease-in;
+	transition: opacity 0.12s ease-in;
 }
 
 SpawnMenuHost.open .menu-wrapper
 {
 	opacity: 1;
 	pointer-events: all;
-	transition: opacity 0.15s ease-out;
+	transition: opacity 0.12s ease-out;
 }
 
 SpawnMenuHost .menu-backdrop
@@ -39,8 +38,7 @@ SpawnMenuHost .menu-backdrop
 	left: 0;
 	right: 0;
 	bottom: 0;
-	backdrop-filter: brightness( 0.4 ) contrast( 0.7 ) saturate( 0.7 );
-	transition: opacity 0.15s ease;
+	background-color: rgba( 0, 0, 0, 0.60 );
 }
 
 SpawnMenuHost.no-backdrop .menu-backdrop
@@ -55,15 +53,54 @@ SpawnMenuHost .menu-slide
 	left: 0;
 	right: 0;
 	bottom: 0;
-	transform: translateX( -60px );
-	transition: transform 0.15s ease-in;
 }
 
-SpawnMenuHost.open .menu-slide
+SpawnMenuHost.theme-light .menu-backdrop
 {
-	transform: translateX( 0px );
-	transition: transform 0.15s ease-out;
+	background-color: rgba( 255, 255, 255, 0.40 );
 }
 
+SpawnMenuHost.theme-light SpawnMenu
+{
+	color: #202020;
+}
 
+SpawnMenuHost.theme-light SpawnMenu .container .spawnmenuleft,
+SpawnMenuHost.theme-light SpawnMenu .container .spawnmenuright
+{
+	background-color: #f2f2f2;
+	border-color: #c8c8c8;
+}
+
+SpawnMenuHost.theme-light SpawnMenu .tabs
+{
+	background-color: #ececec;
+	border-bottom-color: #c8c8c8;
+}
+
+SpawnMenuHost.theme-light SpawnMenu .tabs > *
+{
+	color: #333333;
+	background-color: #ececec;
+	border-right-color: #d0d0d0;
+}
+
+SpawnMenuHost.theme-light SpawnMenu .tabs > *.active
+{
+	color: #111111;
+	background-color: #ffffff;
+	border-top-color: #4d8fc0;
+}
+
+SpawnMenuHost.theme-light SpawnMenu .body
+{
+	background-color: #fafafa;
+	color: #111111;
+}
+
+SpawnMenuHost.theme-light SpawnMenuIcon .title
+{
+	background-color: rgba( 255, 255, 255, 0.95 );
+	color: #111111;
+}
 

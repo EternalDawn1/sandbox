@@ -23,49 +23,51 @@ $menu-panel-bg: #0c202fcc;
 
 .menu-segmented-group
 {
-	background-color: #0008;
-	border-radius: 8px;
+	background-color: transparent;
+	border-radius: 0;
 	overflow: visible;
+	height: 30px;
+	align-items: stretch;
 }
 
 .menu-mode-button
 {
-	color: $menu-text;
-	font-size: 1rem;
+	color: #6e6e6e;
+	font-size: 12px;
 	font-weight: 600;
-	padding: 1rem;
-	font-family: $subtitle-font;
+	padding: 0 14px;
+	font-family: $body-font;
 	cursor: pointer;
 	pointer-events: all;
 	justify-content: center;
 	align-items: center;
-	overflow: visible;
-	border-radius: 8px;
+	gap: 5px;
+	border-radius: 0;
+	border-right: 1px solid #2a2a2a;
+	border-bottom: 2px solid transparent;
 
 	.icon
 	{
-		margin-left: -4px;
-		margin-top: -1.5px;
-		padding-right: 4px;
-		font-size: 1.5rem;
+		font-size: 13px;
 	}
 
 	.title
 	{
-		font-size: 1.1rem;
-		font-weight: 700;
+		font-size: 12px;
+		font-weight: 600;
 	}
 
 	&:hover
 	{
-		color: $menu-text-strong;
+		color: #d0d0d0;
+		background-color: rgba( 255, 255, 255, 0.05 );
 	}
 
 	&.active
 	{
-		outline: 1px solid $menu-accent;
-		background-color: rgba( $menu-accent, 0.2 );
-		color: $menu-text-strong;
+		color: #d0d0d0;
+		background-color: rgba( 255, 255, 255, 0.07 );
+		border-bottom: 2px solid #4d8fc0;
 	}
 }
 

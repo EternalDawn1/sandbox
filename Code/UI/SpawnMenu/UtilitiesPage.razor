@@ -8,7 +8,29 @@
 @attribute [Order( 0 )]
 
 <root class="page" style="flex-direction: column;">
-    <div class="control-row" @onclick=@(() => ConsoleSystem.Run( "kill" ))>
-        <label class="left">🚿 Kill Me</label>
+    <div class="control-row" @onclick=@(() => SetTheme( "dark" ))>
+        <label class="left">🌙 Dark Mode</label>
+        <label class="right">Dunkles UI-Theme aktivieren</label>
+    </div>
+    <div class="control-row" @onclick=@(() => SetTheme( "light" ))>
+        <label class="left">☀️ Light Mode</label>
+        <label class="right">Helles UI-Theme aktivieren</label>
+    </div>
+    <div class="control-row" @onclick=@(() => ResetTheme())>
+        <label class="left">♻️ Theme zurücksetzen</label>
+        <label class="right">Standard-Darstellung wiederherstellen</label>
     </div>
 </root>
+
+@code
+{
+    void SetTheme( string theme )
+    {
+        SpawnMenuHost.SetTheme( theme );
+    }
+
+    void ResetTheme()
+    {
+        SpawnMenuHost.SetTheme( "dark" );
+    }
+}

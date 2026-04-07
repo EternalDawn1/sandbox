@@ -20,6 +20,7 @@
     bool stickOpen = false;
     bool lastState;
     string _lastMode = "SpawnMenu";
+    string _currentTheme = "";
 
     PanelSwitcher PanelSwitcher = default;
 
@@ -32,6 +33,12 @@
         SetClass( "no-backdrop", activeType is "ContextMenuHost" or "SaveMenu" or "EffectsHost" );
 
         base.OnUpdate();
+    }
+
+    protected override void OnEnabled()
+    {
+        base.OnEnabled();
+        UpdateThemeClass();
     }
 
     void UpdateSpawnMenuState()
@@ -152,6 +159,32 @@
                 return;
             }
         }
+    }
+
+    public static void SetTheme( string theme )
+    {
+        var host = Game.ActiveScene.Get<SpawnMenuHost>();
+        host?.ApplyTheme( theme );
+    }
+
+    void ApplyTheme( string theme )
+    {
+        if ( string.IsNullOrWhiteSpace( theme ) )
+            theme = "dark";
+
+        Game.Cookies.Set( "spawnmenu.theme", theme );
+        _currentTheme = theme;
+        SetClass( "theme-light", theme == "light" );
+        SetClass( "theme-dark", theme != "light" );
+    }
+
+    void UpdateThemeClass()
+    {
+        var savedTheme = Game.Cookies.Get<string>( "spawnmenu.theme", "dark" );
+        if ( savedTheme == _currentTheme )
+            return;
+
+        ApplyTheme( savedTheme );
     }
 
     public static Panel GetActiveMode()

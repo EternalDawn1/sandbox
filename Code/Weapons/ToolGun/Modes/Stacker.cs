@@ -30,6 +30,12 @@ public class Stacker : ToolMode
 	public int Count { get; set; } = 5;
 
 	[Property, Sync, Group( "Stacker" )]
+	public Vector3 Offset { get; set; } = Vector3.Zero;
+
+	[Property, Sync, Group( "Stacker" )]
+	public Angles RotationStep { get; set; } = Angles.Zero;
+
+	[Property, Sync, Group( "Stacker" )]
 	public float Spacing { get; set; } = 0.1f;
 
 	[Property, Sync, Group( "Stacker" )]
@@ -47,7 +53,7 @@ public class Stacker : ToolMode
 	bool _isSnapping;
 	bool _isRotating;
 
-	public override string Description => "Copy an object and stack duplicates with a live preview.";
+	public override string Description => "Copy an object and stack duplicates with a live preview using Offset and RotationStep.";
 	public override string PrimaryAction => spawner is not null ? "Spawn stack" : null;
 	public override string SecondaryAction => "Copy object";
 	public override string ReloadAction => "Cycle stack count";
@@ -183,6 +189,8 @@ public class Stacker : ToolMode
 		{
 			var drawTx = tx;
 			drawTx.Position += step * i;
+			var rotation = Rotation.From( new Angles( RotationStep.pitch * i, RotationStep.yaw * i, RotationStep.roll * i ) );
+			drawTx.Rotation = tx.Rotation * rotation;
 			spawner.DrawPreview( drawTx, overlayMaterial );
 		}
 	}
@@ -192,6 +200,15 @@ public class Stacker : ToolMode
 		var target = select.GameObject.Network.RootGameObject ?? select.GameObject;
 		var targetBounds = target.GetBounds();
 		var targetRotation = AlignWithWorld ? Rotation.Identity : target.WorldTransform.Rotation;
+
+		var tx = new Transform();
+		tx.Rotation = targetRotation * _rotationOffset;
+
+		if ( Offset != Vector3.Zero )
+		{
+			tx.Position = targetBounds.Center + GetStackStep( tx, spawner.Bounds );
+			return tx;
+		}
 
 		var axis = Direction switch
 		{
@@ -224,8 +241,6 @@ public class Stacker : ToolMode
 			_ => -spawner.Bounds.Mins.z
 		};
 
-		var tx = new Transform();
-		tx.Rotation = targetRotation * _rotationOffset;
 		tx.Position = startPosition + axis * previewOffset;
 
 		return tx;
@@ -233,6 +248,11 @@ public class Stacker : ToolMode
 
 	Vector3 GetStackStep( Transform tx, BBox bounds )
 	{
+		if ( Offset != Vector3.Zero )
+		{
+			return AlignWithWorld ? Offset : tx.Rotation * Offset;
+		}
+
 		var axis = Direction switch
 		{
 			StackDirection.Up => AlignWithWorld ? Vector3.Up : tx.Rotation.Up,
@@ -319,6 +339,8 @@ public class Stacker : ToolMode
 		{
 			var tx = dest;
 			tx.Position += step * i;
+			var rotation = Rotation.From( new Angles( RotationStep.pitch * i, RotationStep.yaw * i, RotationStep.roll * i ) );
+			tx.Rotation = dest.Rotation * rotation;
 
 			var objects = await spawner.Spawn( tx, player );
 			foreach ( var go in objects )
