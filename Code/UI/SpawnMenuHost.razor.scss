@@ -38,7 +38,7 @@ SpawnMenuHost .menu-backdrop
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background-color: rgba( 0, 0, 0, 0.35 );
+	background-color: rgba(0, 0, 0, 0.014);
 }
 
 SpawnMenuHost.no-backdrop .menu-backdrop
@@ -57,7 +57,7 @@ SpawnMenuHost .menu-slide
 
 SpawnMenuHost.theme-dark .menu-backdrop
 {
-	background-color: rgba( 255, 255, 255, 0.16 );
+	background-color: rgba(255, 255, 255, 0);
 }
 
 SpawnMenuHost.theme-dark SpawnMenu
@@ -73,14 +73,14 @@ SpawnMenuHost.theme-dark SpawnMenu .container .spawnmenuleft
 
 SpawnMenuHost.theme-dark SpawnMenu .container .spawnmenuright
 {
-	background-color: #e7e7e7;
+	background-color: #E7E7E700;
 	border-color: rgba( 0, 0, 0, 0.16 );
 }
 
 SpawnMenuHost.theme-dark SpawnMenu .tabs
 {
 	background-color: transparent;
-	border-bottom-color: rgba( 0, 0, 0, 0.16 );
+	border-bottom-color: rgba(0, 0, 0, 0);
 }
 
 SpawnMenuHost.theme-dark SpawnMenu .tabs > *

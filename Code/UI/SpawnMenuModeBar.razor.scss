@@ -8,9 +8,42 @@ SpawnMenuModeBar
 	height: 30px;
 	justify-content: center;
 	align-items: stretch;
-	padding: 0;
+	padding: 0 8px;
 	gap: 0;
 	z-index: 9999;
-	background-color: #11111100;
-	
+	background-color: transparent;
+
+	.menu-segmented-group
+	{
+		height: 100%;
+		flex-direction: row;
+		align-items: center;
+		gap: 6px;
+		background-color: transparent;
+	}
+
+	.menu-mode-button
+	{
+		background-color: #4a4a4a;
+		color: #f0f0f0;
+		border: 1px solid rgba( 255, 255, 255, 0.08 );
+		border-radius: 4px;
+		padding: 0 10px;
+		height: 24px;
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+		cursor: pointer;
+	}
+
+	.menu-mode-button:hover
+	{
+		background-color: #5d5d5d;
+	}
+
+	.menu-mode-button.active
+	{
+		background-color: #2a2a2a;
+		border-color: rgba( 255, 255, 255, 0.14 );
+	}
 }
