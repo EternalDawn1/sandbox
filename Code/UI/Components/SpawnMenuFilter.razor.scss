@@ -1,1 +1,29 @@
+.search-field
+{
+	position: relative;
+	width: 100%;
+}
+
+.search-field TextEntry.menu-filter-input,
+.search-field .menu-filter-input
+{
+	color: #111;
+	padding-right: 32px;
+}
+
+.search-field TextEntry.menu-filter-input::placeholder,
+.search-field .menu-filter-input::placeholder
+{
+	color: rgba(0, 0, 0, 0.5);
+}
+
+.search-field .search-emoji
+{
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	pointer-events: none;
+	opacity: 0.7;
+}
 
