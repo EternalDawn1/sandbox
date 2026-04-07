@@ -36,15 +36,20 @@
 
     void UpdateSpawnMenuState()
     {
-        var openSpawnMenu = Input.Down("spawnmenu");
+        var toggledSpawnMenu = Input.Pressed("spawnmenu");
         var openInspectMenu = Input.Down("inspectmenu");
-        var openAnyMenu = openSpawnMenu || openInspectMenu;
 
         stickOpen = stickOpen || (Sandbox.UI.InputFocus.Current?.Ancestors.Contains(Panel) ?? false);
 
-        if (stickOpen && Input.Pressed("spawnmenu")) stickOpen = false;
+        if (toggledSpawnMenu)
+        {
+            if (stickOpen && !openInspectMenu)
+                stickOpen = false;
+            else
+                stickOpen = true;
+        }
 
-        bool state = stickOpen || openAnyMenu;
+        bool state = stickOpen || openInspectMenu;
 
         SetClass("open", state);
 
