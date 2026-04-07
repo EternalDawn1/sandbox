@@ -174,8 +174,8 @@
 
         Game.Cookies.Set( "spawnmenu.theme", theme );
         _currentTheme = theme;
-        SetClass( "theme-light", theme == "light" );
-        SetClass( "theme-dark", theme != "light" );
+        SetClass( "theme-dark", theme == "dark" );
+        SetClass( "theme-light", theme != "dark" );
     }
 
     void UpdateThemeClass()

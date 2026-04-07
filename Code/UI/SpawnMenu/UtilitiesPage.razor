@@ -9,16 +9,16 @@
 
 <root class="page" style="flex-direction: column;">
     <div class="control-row" @onclick=@(() => SetTheme( "dark" ))>
-        <label class="left">🌙 Dark Mode</label>
-        <label class="right">Dunkles UI-Theme aktivieren</label>
+        <label class="left">☀️ Light Mode</label>
+        <label class="right">Enable light UI theme</label>
     </div>
     <div class="control-row" @onclick=@(() => SetTheme( "light" ))>
-        <label class="left">☀️ Light Mode</label>
-        <label class="right">Helles UI-Theme aktivieren</label>
+        <label class="left">🌙 Dark Mode</label>
+        <label class="right">Enable dark UI theme</label>
     </div>
     <div class="control-row" @onclick=@(() => ResetTheme())>
-        <label class="left">♻️ Theme zurücksetzen</label>
-        <label class="right">Standard-Darstellung wiederherstellen</label>
+        <label class="left">♻️ Reset Theme</label>
+        <label class="right">Restore default appearance</label>
     </div>
 </root>
 

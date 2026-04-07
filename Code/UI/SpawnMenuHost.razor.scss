@@ -55,97 +55,102 @@ SpawnMenuHost .menu-slide
 	bottom: 0;
 }
 
-SpawnMenuHost.theme-light .menu-backdrop
+SpawnMenuHost.theme-dark .menu-backdrop
 {
 	background-color: rgba( 255, 255, 255, 0.16 );
 }
 
-SpawnMenuHost.theme-light SpawnMenu
+SpawnMenuHost.theme-dark SpawnMenu
 {
 	color: #222222;
 }
 
-SpawnMenuHost.theme-light SpawnMenu .container .spawnmenuleft,
-SpawnMenuHost.theme-light SpawnMenu .container .spawnmenuright
+SpawnMenuHost.theme-dark SpawnMenu .container .spawnmenuleft,
+SpawnMenuHost.theme-dark SpawnMenu .container .spawnmenuright
 {
 	background-color: #ffffff;
 	border-color: #8c8c8c;
 }
 
-SpawnMenuHost.theme-light SpawnMenu .tabs
+SpawnMenuHost.theme-dark SpawnMenu .tabs
 {
 	background-color: #9f9f9f;
 	border-bottom-color: #868686;
 }
 
-SpawnMenuHost.theme-light SpawnMenu .tabs > *
+SpawnMenuHost.theme-dark SpawnMenu .tabs > *
 {
 	color: #2b2b2b;
 	background-color: #9f9f9f;
 	border-right-color: #9a9a9a;
 }
 
-SpawnMenuHost.theme-light SpawnMenu .tabs > *.active
+SpawnMenuHost.theme-dark SpawnMenu .tabs > *.active
 {
 	color: #111111;
 	background-color: #d6d6d6;
 	border-top-color: #4d8fc0;
 }
 
-SpawnMenuHost.theme-light SpawnMenu .body
+SpawnMenuHost.theme-dark SpawnMenu .body
 {
 	background-color: transparent;
 	color: #111111;
 }
 
-SpawnMenuHost.theme-light SpawnMenuIcon .title
+SpawnMenuHost.theme-dark SpawnMenuIcon .title
 {
 	background-color: rgba( 245, 245, 245, 0.72 );
 	color: #111111;
 }
 
-SpawnMenuHost.theme-light SpawnMenuContent > .body
+SpawnMenuHost.theme-dark SpawnMenuContent > .body
 {
 	background-color: transparent;
 }
 
-SpawnMenuHost.theme-light SpawnMenu .container > .spawnmenuleft > .body
+SpawnMenuHost.theme-dark SpawnMenu .container > .spawnmenuleft > .body
 {
 	background-color: transparent;
 }
 
-SpawnMenuHost.theme-light SpawnMenuPage > .left
+SpawnMenuHost.theme-dark SpawnMenuPage > .left
 {
 	background-color: #ffffff;
 	border: 1px solid rgba( 0, 0, 0, 0.08 );
 }
 
-SpawnMenuHost.theme-light SpawnMenuContent > .header,
-SpawnMenuHost.theme-light SpawnMenuToolbar
+SpawnMenuHost.theme-dark SpawnMenuPage > .left > div
+{
+	background-color: #ffffff;
+}
+
+SpawnMenuHost.theme-dark SpawnMenuContent > .header,
+SpawnMenuHost.theme-dark SpawnMenuToolbar
 {
 	background-color: #c8c8c8;
 }
 
-SpawnMenuHost.theme-light .menu-input
+SpawnMenuHost.theme-dark .menu-input
 {
 	background-color: #d0d0d0;
 	border: 1px solid #a2a2a2;
 	color: #222222;
 }
 
-SpawnMenuHost.theme-light TextEntry
+SpawnMenuHost.theme-dark TextEntry
 {
 	color: #222222;
 }
 
-SpawnMenuHost.theme-light VerticalMenu
+SpawnMenuHost.theme-dark VerticalMenu
 {
 	background-color: #c4c4c4;
 	border: 1px solid #9b9b9b;
 	border-radius: 2px;
 }
 
-SpawnMenuHost.theme-light VerticalMenu h2
+SpawnMenuHost.theme-dark VerticalMenu h2
 {
 	color: #4a4a4a;
 	opacity: 1;
