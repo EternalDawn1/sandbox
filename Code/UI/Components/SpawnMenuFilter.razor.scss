@@ -5,16 +5,26 @@
 }
 
 .search-field TextEntry.menu-filter-input,
-.search-field .menu-filter-input
+.search-field .menu-filter-input,
+.search-field input,
+.search-field .textentry
 {
-	color: #111;
+	background-color: rgba(255, 255, 255, 0.92) !important;
+	border: 1px solid rgba(0, 0, 0, 0.12) !important;
+	border-radius: 6px;
+	color: #000 !important;
+	text-align: left;
+	font-weight: 600;
 	padding-right: 32px;
 }
 
 .search-field TextEntry.menu-filter-input::placeholder,
-.search-field .menu-filter-input::placeholder
+.search-field .menu-filter-input::placeholder,
+.search-field input::placeholder,
+.search-field .textentry::placeholder
 {
-	color: rgba(0, 0, 0, 0.5);
+	color: rgba(0, 0, 0, 0.7) !important;
+	text-align: left;
 }
 
 .search-field .search-emoji
