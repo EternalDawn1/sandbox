@@ -23,9 +23,6 @@ public class Stacker : ToolMode
 	[Property, Sync, Group( "Placement" )]
 	public StackDirection Direction { get; set; } = StackDirection.Up;
 
-	[Property, Sync, Group( "Placement" )]
-	public bool AlignWithWorld { get; set; }
-
 	[Property, Sync, Group( "Stacker" )]
 	public int Count { get; set; } = 5;
 
@@ -217,9 +214,8 @@ public class Stacker : ToolMode
 	{
 		var target = select.GameObject.Network.RootGameObject ?? select.GameObject;
 		var targetTransform = target.WorldTransform;
-		var targetRotation = AlignWithWorld ? Rotation.Identity : targetTransform.Rotation;
+		var targetRotation = targetTransform.Rotation;
 
-		var localBounds = GetLocalBounds( target );
 		var axis = Direction switch
 		{
 			StackDirection.Up => Vector3.Up,
@@ -231,7 +227,8 @@ public class Stacker : ToolMode
 			_ => Vector3.Up
 		};
 
-		var targetExtent = Direction switch
+		var localBounds = target.GetLocalBounds();
+		var localExtent = Direction switch
 		{
 			StackDirection.Up or StackDirection.Down => localBounds.Extents.z,
 			StackDirection.Forward or StackDirection.Backward => localBounds.Extents.x,
@@ -239,8 +236,7 @@ public class Stacker : ToolMode
 			_ => localBounds.Extents.z
 		};
 
-		var startLocalPos = localBounds.Center + axis * targetExtent;
-		var startPosition = targetTransform.ToWorld( new Transform( startLocalPos, Rotation.Identity ) ).Position;
+		var startPosition = targetTransform.ToWorld( new Transform( localBounds.Center + axis * localExtent, Rotation.Identity ) ).Position;
 
 		var tx = new Transform();
 		tx.Rotation = targetRotation * _rotationOffset;
@@ -250,8 +246,8 @@ public class Stacker : ToolMode
 			StackDirection.Down => bounds.Maxs.z,
 			StackDirection.Forward => -bounds.Mins.x,
 			StackDirection.Backward => bounds.Maxs.x,
-			StackDirection.Left => -bounds.Mins.y,
-			StackDirection.Right => bounds.Maxs.y,
+			StackDirection.Left => bounds.Maxs.y,
+			StackDirection.Right => -bounds.Mins.y,
 			_ => -bounds.Mins.z
 		};
 
@@ -259,9 +255,10 @@ public class Stacker : ToolMode
 		return tx;
 	}
 
-	BBox GetLocalBounds( GameObject target )
+	Vector3 GetBoundsExtremePoint( BBox bounds, Vector3 direction )
 	{
-		var worldBounds = target.GetBounds();
+		direction = direction.Normal;
+
 		var corners = new Vector3[8];
 		int i = 0;
 		for ( int x = 0; x < 2; x++ )
@@ -271,46 +268,45 @@ public class Stacker : ToolMode
 				for ( int z = 0; z < 2; z++ )
 				{
 					corners[i++] = new Vector3(
-						x == 0 ? worldBounds.Mins.x : worldBounds.Maxs.x,
-						y == 0 ? worldBounds.Mins.y : worldBounds.Maxs.y,
-						z == 0 ? worldBounds.Mins.z : worldBounds.Maxs.z
+						x == 0 ? bounds.Mins.x : bounds.Maxs.x,
+						y == 0 ? bounds.Mins.y : bounds.Maxs.y,
+						z == 0 ? bounds.Mins.z : bounds.Maxs.z
 					);
 				}
 			}
 		}
 
-		var localMin = Vector3.Zero;
-		var localMax = Vector3.Zero;
-		for ( int j = 0; j < corners.Length; j++ )
+		var bestPoint = corners[0];
+		var bestDot = bestPoint.Dot( direction );
+		for ( int j = 1; j < corners.Length; j++ )
 		{
-			var localPoint = target.WorldTransform.PointToLocal( corners[j] );
-			if ( j == 0 )
+			var dot = corners[j].Dot( direction );
+			if ( dot > bestDot )
 			{
-				localMin = localPoint;
-				localMax = localPoint;
+				bestDot = dot;
+				bestPoint = corners[j];
 			}
-			localMin = Vector3.Min( localMin, localPoint );
-			localMax = Vector3.Max( localMax, localPoint );
 		}
 
-		return new BBox( localMin, localMax );
+		return bestPoint;
 	}
+
 
 	Vector3 GetStackStep( Transform tx, BBox bounds )
 	{
 		if ( Offset != Vector3.Zero )
 		{
-			return AlignWithWorld ? Offset : tx.Rotation * Offset;
+			return tx.Rotation * Offset;
 		}
 
 		var axis = Direction switch
 		{
-			StackDirection.Up => AlignWithWorld ? Vector3.Up : tx.Rotation.Up,
-			StackDirection.Down => AlignWithWorld ? Vector3.Down : tx.Rotation.Down,
-			StackDirection.Forward => AlignWithWorld ? Vector3.Forward : tx.Rotation.Forward,
-			StackDirection.Backward => AlignWithWorld ? Vector3.Backward : tx.Rotation.Backward,
-			StackDirection.Left => AlignWithWorld ? Vector3.Left : tx.Rotation.Left,
-			StackDirection.Right => AlignWithWorld ? Vector3.Right : tx.Rotation.Right,
+			StackDirection.Up => tx.Rotation.Up,
+			StackDirection.Down => tx.Rotation.Down,
+			StackDirection.Forward => tx.Rotation.Forward,
+			StackDirection.Backward => tx.Rotation.Backward,
+			StackDirection.Left => tx.Rotation.Left,
+			StackDirection.Right => tx.Rotation.Right,
 			_ => Vector3.Up
 		};
 
