@@ -13,6 +13,8 @@ SpawnMenuPage > .left
 	padding: 8px;
 	white-space: nowrap;
 	overflow: hidden;
+	background-color: rgba( 45, 45, 45, 0.92 );
+	border: 1px solid rgba( 255, 255, 255, 0.08 );
 
 	> div
 	{
@@ -40,4 +42,5 @@ SpawnMenuPage > .body
 	flex-grow: 1;
 	margin: 8px;
 	margin-left: 0px;
+	background-color: transparent;
 }
