@@ -2,7 +2,7 @@ using Sandbox.UI;
 using System.Linq;
 using System.Text.Json;
 
-[Icon( "vertical_align_top" )]
+[Icon( "🧱" )]
 [ClassName( "stacker" )]
 [Group( "Building" )]
 public class Stacker : ToolMode
