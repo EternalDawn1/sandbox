@@ -67,7 +67,7 @@ SpawnMenuHost.theme-dark SpawnMenu
 
 SpawnMenuHost.theme-dark SpawnMenu .container .spawnmenuleft
 {
-	background-color: rgba( 255, 255, 255, 0.08 );
+	background-color: #FFFFFF00;
 	border-color: rgba( 0, 0, 0, 0.08 );
 }
 
@@ -87,14 +87,15 @@ SpawnMenuHost.theme-dark SpawnMenu .tabs > *
 {
 	color: #e6e6e6;
 	background-color: #5a5a5a;
-	border-right-color: rgba( 0, 0, 0, 0.16 );
+	border: none;
 }
 
 SpawnMenuHost.theme-dark SpawnMenu .tabs > *.active
 {
 	color: #ffffff;
 	background-color: #4b4b4b;
-	border-top-color: #4d8fc0;
+	border: none;
+	border-top: 2px solid #4d8fc0;
 }
 
 SpawnMenuHost.theme-dark SpawnMenu .body
