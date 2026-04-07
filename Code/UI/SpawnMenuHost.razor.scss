@@ -94,14 +94,37 @@ SpawnMenuHost.theme-light SpawnMenu .tabs > *.active
 
 SpawnMenuHost.theme-light SpawnMenu .body
 {
-	background-color: #d0d0d0;
+	background-color: rgba( 208, 208, 208, 0.80 );
 	color: #111111;
 }
 
 SpawnMenuHost.theme-light SpawnMenuIcon .title
 {
-	background-color: rgba( 245, 245, 245, 0.82 );
+	background-color: rgba( 245, 245, 245, 0.72 );
 	color: #111111;
+}
+
+SpawnMenuHost.theme-light SpawnMenuContent > .body
+{
+	background-color: rgba( 194, 194, 194, 0.70 );
+}
+
+SpawnMenuHost.theme-light SpawnMenuContent > .header,
+SpawnMenuHost.theme-light SpawnMenuToolbar
+{
+	background-color: #c8c8c8;
+}
+
+SpawnMenuHost.theme-light .menu-input
+{
+	background-color: #d0d0d0;
+	border: 1px solid #a2a2a2;
+	color: #222222;
+}
+
+SpawnMenuHost.theme-light TextEntry
+{
+	color: #222222;
 }
 
 SpawnMenuHost.theme-light VerticalMenu
