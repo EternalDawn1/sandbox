@@ -291,20 +291,20 @@ VirtualGrid
 
     .cell
     {
-        background-color: rgba( 255, 255, 255, 0.03 );
+        background-color: rgba( 255, 255, 255, 0.025 );
         border-radius: 2px;
-        border: 1px solid $g12-border-in;
+        border: 1px solid transparent;
         cursor: pointer;
 
         &:hover
         {
-            background-color: $g12-selection;
-            border-color: rgba( $g12-accent, 0.55 );
+            background-color: rgba( 77, 143, 192, 0.18 );
+            border-color: rgba( $g12-accent, 0.50 );
         }
 
         &:active
         {
-            background-color: rgba( $g12-accent, 0.38 );
+            background-color: rgba( $g12-accent, 0.32 );
             border-color: $g12-accent;
         }
     }
