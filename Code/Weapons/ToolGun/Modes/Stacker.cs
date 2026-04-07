@@ -72,7 +72,10 @@ public class Stacker : ToolMode
 	{
 		base.OnControl();
 
-		_isRotating = spawner is not null && Input.Down( "use" );
+		var select = TraceSelect();
+		var previewSpawner = spawner ?? GetPreviewSpawner( select );
+
+		_isRotating = previewSpawner is not null && Input.Down( "use" );
 		Toolgun.SetIsUsingJoystick( _isRotating );
 
 		var isSnapping = Input.Down( "run" );
@@ -108,19 +111,21 @@ public class Stacker : ToolMode
 			Toolgun.UpdateJoystick( new Angles( look.yaw, look.pitch, 0 ) );
 		}
 
-		var select = TraceSelect();
 		IsValidState = IsValidTarget( select );
 
 		if ( Input.Pressed( "attack1" ) )
 		{
-			var previewSpawner = spawner ?? GetPreviewSpawner( select );
-			if ( previewSpawner is null || !previewSpawner.IsReady || !IsValidPlacementTarget( select ) )
+			var spawnPreview = spawner ?? GetPreviewSpawner( select );
+			if ( spawnPreview is null || !spawnPreview.IsReady || !IsValidPlacementTarget( select ) )
 			{
 				return;
 			}
 
-			var tx = GetPlacementTransform( select, previewSpawner.Bounds );
-			DuplicateStack( tx, select.GameObject );
+			var target = select.GameObject.Network.RootGameObject ?? select.GameObject;
+			var selectionAngle = target.WorldTransform;
+
+			var tx = GetPlacementTransform( select, spawnPreview.Bounds );
+			DuplicateStack( tx, select.GameObject, selectionAngle );
 			ShootEffects( select );
 			return;
 		}
@@ -211,19 +216,84 @@ public class Stacker : ToolMode
 	Transform GetPlacementTransform( SelectionPoint select, BBox bounds )
 	{
 		var target = select.GameObject.Network.RootGameObject ?? select.GameObject;
-		var targetRotation = AlignWithWorld ? Rotation.Identity : target.WorldTransform.Rotation;
+		var targetTransform = target.WorldTransform;
+		var targetRotation = AlignWithWorld ? Rotation.Identity : targetTransform.Rotation;
+
+		var localBounds = GetLocalBounds( target );
+		var axis = Direction switch
+		{
+			StackDirection.Up => Vector3.Up,
+			StackDirection.Down => Vector3.Down,
+			StackDirection.Forward => Vector3.Forward,
+			StackDirection.Backward => Vector3.Backward,
+			StackDirection.Left => Vector3.Left,
+			StackDirection.Right => Vector3.Right,
+			_ => Vector3.Up
+		};
+
+		var targetExtent = Direction switch
+		{
+			StackDirection.Up or StackDirection.Down => localBounds.Extents.z,
+			StackDirection.Forward or StackDirection.Backward => localBounds.Extents.x,
+			StackDirection.Left or StackDirection.Right => localBounds.Extents.y,
+			_ => localBounds.Extents.z
+		};
+
+		var startLocalPos = localBounds.Center + axis * targetExtent;
+		var startPosition = targetTransform.ToWorld( new Transform( startLocalPos, Rotation.Identity ) ).Position;
 
 		var tx = new Transform();
 		tx.Rotation = targetRotation * _rotationOffset;
-
-		if ( Offset != Vector3.Zero )
+		var previewOffset = Direction switch
 		{
-			tx.Position = target.WorldTransform.Position + GetStackStep( tx, bounds );
-			return tx;
+			StackDirection.Up => -bounds.Mins.z,
+			StackDirection.Down => bounds.Maxs.z,
+			StackDirection.Forward => -bounds.Mins.x,
+			StackDirection.Backward => bounds.Maxs.x,
+			StackDirection.Left => -bounds.Mins.y,
+			StackDirection.Right => bounds.Maxs.y,
+			_ => -bounds.Mins.z
+		};
+
+		tx.Position = startPosition + tx.Rotation * axis * previewOffset;
+		return tx;
+	}
+
+	BBox GetLocalBounds( GameObject target )
+	{
+		var worldBounds = target.GetBounds();
+		var corners = new Vector3[8];
+		int i = 0;
+		for ( int x = 0; x < 2; x++ )
+		{
+			for ( int y = 0; y < 2; y++ )
+			{
+				for ( int z = 0; z < 2; z++ )
+				{
+					corners[i++] = new Vector3(
+						x == 0 ? worldBounds.Mins.x : worldBounds.Maxs.x,
+						y == 0 ? worldBounds.Mins.y : worldBounds.Maxs.y,
+						z == 0 ? worldBounds.Mins.z : worldBounds.Maxs.z
+					);
+				}
+			}
 		}
 
-		tx.Position = target.WorldTransform.Position;
-		return tx;
+		var localMin = Vector3.Zero;
+		var localMax = Vector3.Zero;
+		for ( int j = 0; j < corners.Length; j++ )
+		{
+			var localPoint = target.WorldTransform.PointToLocal( corners[j] );
+			if ( j == 0 )
+			{
+				localMin = localPoint;
+				localMax = localPoint;
+			}
+			localMin = Vector3.Min( localMin, localPoint );
+			localMax = Vector3.Max( localMax, localPoint );
+		}
+
+		return new BBox( localMin, localMax );
 	}
 
 	Vector3 GetStackStep( Transform tx, BBox bounds )
@@ -300,7 +370,7 @@ public class Stacker : ToolMode
 	}
 
 	[Rpc.Host]
-	public async void DuplicateStack( Transform dest, GameObject anchor = null )
+	public async void DuplicateStack( Transform dest, GameObject anchor = null, Transform selectionAngle = default )
 	{
 		var player = Player.FindForConnection( Rpc.Caller );
 		if ( player is null )
@@ -314,8 +384,11 @@ public class Stacker : ToolMode
 			builder.AddConnected( root );
 			builder.RemoveDeletedObjects();
 
-			var selectionAngle = root.WorldTransform;
-			var tempDupe = DuplicationData.CreateFromObjects( builder.Objects, selectionAngle );
+			var dupeCenter = selectionAngle.Position.IsNearlyZero() && selectionAngle.Rotation == Rotation.Identity
+				? new Transform( root.WorldTransform.Position, root.WorldTransform.Rotation )
+				: selectionAngle;
+
+			var tempDupe = DuplicationData.CreateFromObjects( builder.Objects, dupeCenter );
 			var json = Json.Serialize( tempDupe );
 			activeSpawner = new DuplicatorSpawner( tempDupe, json );
 		}
