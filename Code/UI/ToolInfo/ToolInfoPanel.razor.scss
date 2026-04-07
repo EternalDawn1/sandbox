@@ -15,6 +15,11 @@ ToolInfoPanel
 		opacity: 1;
 	}
 
+	&.spawnmenu-open
+	{
+		opacity: 0.1;
+	}
+
 	.panel
 	{
 		flex-direction: column;

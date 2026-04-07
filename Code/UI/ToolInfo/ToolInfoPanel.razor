@@ -75,8 +75,10 @@
 
 	protected override void OnUpdate()
 	{
+		var spawnMenuOpen = Game.ActiveScene.Get<SpawnMenuHost>()?.HasClass( "open" ) ?? false;
+		SetClass( "spawnmenu-open", spawnMenuOpen );
 		SetClass( "visible", CurrentToolInfo is not null );
 	}
 
-	protected override int BuildHash() => System.HashCode.Combine( Info?.Name, Info?.Description, Info?.PrimaryAction, Info?.SecondaryAction, Info?.ReloadAction, Player?.WantsHideHud );
+	protected override int BuildHash() => System.HashCode.Combine( Info?.Name, Info?.Description, Info?.PrimaryAction, Info?.SecondaryAction, Info?.ReloadAction, Player?.WantsHideHud, Game.ActiveScene.Get<SpawnMenuHost>()?.HasClass( "open" ) );
 }
