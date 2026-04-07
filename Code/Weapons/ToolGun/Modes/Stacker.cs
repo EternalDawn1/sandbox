@@ -55,9 +55,9 @@ public class Stacker : ToolMode
 	bool _isSnapping;
 	bool _isRotating;
 
-	public override string Description => "Copy an object and stack duplicates with a live preview using Offset and RotationStep.";
+	public override string Description => "Stack the selected object with a live preview using Offset and RotationStep.";
 	public override string PrimaryAction => spawner is not null || _previewSpawner is not null ? "Spawn stack" : null;
-	public override string SecondaryAction => "Copy object";
+	public override string SecondaryAction => null;
 	public override string ReloadAction => "Cycle stack count";
 
 	public override void OnCameraMove( Player player, ref Angles angles )
@@ -123,19 +123,6 @@ public class Stacker : ToolMode
 			DuplicateStack( tx, select.GameObject );
 			ShootEffects( select );
 			return;
-		}
-
-		if ( Input.Pressed( "attack2" ) )
-		{
-			if ( !IsValidState )
-			{
-				CopiedJson = default;
-				return;
-			}
-
-			var selectionAngle = new Transform( select.WorldPosition(), Player.EyeTransform.Rotation.Angles().WithPitch( 0 ) );
-			Copy( select.GameObject, selectionAngle, Input.Down( "run" ) );
-			ShootEffects( select );
 		}
 
 		if ( Input.Pressed( "reload" ) )
@@ -213,7 +200,7 @@ public class Stacker : ToolMode
 		builder.AddConnected( root );
 		builder.RemoveDeletedObjects();
 
-		var selectionAngle = new Transform( select.WorldPosition(), Player.EyeTransform.Rotation.Angles().WithPitch( 0 ) );
+		var selectionAngle = root.WorldTransform;
 		var tempDupe = DuplicationData.CreateFromObjects( builder.Objects, selectionAngle );
 		var json = Json.Serialize( tempDupe );
 		_previewSpawner = new DuplicatorSpawner( tempDupe, json );
@@ -224,7 +211,6 @@ public class Stacker : ToolMode
 	Transform GetPlacementTransform( SelectionPoint select, BBox bounds )
 	{
 		var target = select.GameObject.Network.RootGameObject ?? select.GameObject;
-		var targetBounds = target.GetBounds();
 		var targetRotation = AlignWithWorld ? Rotation.Identity : target.WorldTransform.Rotation;
 
 		var tx = new Transform();
@@ -232,43 +218,11 @@ public class Stacker : ToolMode
 
 		if ( Offset != Vector3.Zero )
 		{
-			tx.Position = targetBounds.Center + GetStackStep( tx, bounds );
+			tx.Position = target.WorldTransform.Position + GetStackStep( tx, bounds );
 			return tx;
 		}
 
-		var axis = Direction switch
-		{
-			StackDirection.Up => AlignWithWorld ? Vector3.Up : targetRotation.Up,
-			StackDirection.Down => AlignWithWorld ? Vector3.Down : targetRotation.Down,
-			StackDirection.Forward => AlignWithWorld ? Vector3.Forward : targetRotation.Forward,
-			StackDirection.Backward => AlignWithWorld ? Vector3.Backward : targetRotation.Backward,
-			StackDirection.Left => AlignWithWorld ? Vector3.Left : targetRotation.Left,
-			StackDirection.Right => AlignWithWorld ? Vector3.Right : targetRotation.Right,
-			_ => Vector3.Up
-		};
-
-		var targetExtent = Direction switch
-		{
-			StackDirection.Up or StackDirection.Down => targetBounds.Extents.z,
-			StackDirection.Forward or StackDirection.Backward => targetBounds.Extents.x,
-			StackDirection.Left or StackDirection.Right => targetBounds.Extents.y,
-			_ => targetBounds.Extents.z
-		};
-
-		var startPosition = targetBounds.Center + axis * targetExtent;
-		var previewOffset = Direction switch
-		{
-			StackDirection.Up => -bounds.Mins.z,
-			StackDirection.Down => bounds.Maxs.z,
-			StackDirection.Forward => -bounds.Mins.x,
-			StackDirection.Backward => bounds.Maxs.x,
-			StackDirection.Left => -bounds.Mins.y,
-			StackDirection.Right => bounds.Maxs.y,
-			_ => -bounds.Mins.z
-		};
-
-		tx.Position = startPosition + axis * previewOffset;
-
+		tx.Position = target.WorldTransform.Position;
 		return tx;
 	}
 
@@ -360,7 +314,7 @@ public class Stacker : ToolMode
 			builder.AddConnected( root );
 			builder.RemoveDeletedObjects();
 
-			var selectionAngle = new Transform( root.WorldTransform.Position, player.EyeTransform.Rotation.Angles().WithPitch( 0 ) );
+			var selectionAngle = root.WorldTransform;
 			var tempDupe = DuplicationData.CreateFromObjects( builder.Objects, selectionAngle );
 			var json = Json.Serialize( tempDupe );
 			activeSpawner = new DuplicatorSpawner( tempDupe, json );
