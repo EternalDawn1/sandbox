@@ -45,6 +45,8 @@ public class Stacker : ToolMode
 	public bool WeldToWorld { get; set; }
 
 	DuplicatorSpawner spawner;
+	DuplicatorSpawner _previewSpawner;
+	GameObject _previewSelection;
 	LinkedGameObjectBuilder builder = new() { RejectPlayers = true };
 
 	Rotation _rotationOffset = Rotation.Identity;
@@ -54,7 +56,7 @@ public class Stacker : ToolMode
 	bool _isRotating;
 
 	public override string Description => "Copy an object and stack duplicates with a live preview using Offset and RotationStep.";
-	public override string PrimaryAction => spawner is not null ? "Spawn stack" : null;
+	public override string PrimaryAction => spawner is not null || _previewSpawner is not null ? "Spawn stack" : null;
 	public override string SecondaryAction => "Copy object";
 	public override string ReloadAction => "Cycle stack count";
 
@@ -109,14 +111,15 @@ public class Stacker : ToolMode
 		var select = TraceSelect();
 		IsValidState = IsValidTarget( select );
 
-		if ( spawner is { IsReady: true } && Input.Pressed( "attack1" ) )
+		if ( Input.Pressed( "attack1" ) )
 		{
-			if ( !IsValidPlacementTarget( select ) )
+			var previewSpawner = spawner ?? GetPreviewSpawner( select );
+			if ( previewSpawner is null || !previewSpawner.IsReady || !IsValidPlacementTarget( select ) )
 			{
 				return;
 			}
 
-			var tx = GetPlacementTransform( select );
+			var tx = GetPlacementTransform( select, previewSpawner.Bounds );
 			DuplicateStack( tx, select.GameObject );
 			ShootEffects( select );
 			return;
@@ -173,17 +176,18 @@ public class Stacker : ToolMode
 
 	void DrawPreview()
 	{
-		if ( spawner is null || !spawner.IsReady )
-			return;
-
 		var select = TraceSelect();
 		if ( !IsValidPlacementTarget( select ) )
 			return;
 
-		var tx = GetPlacementTransform( select );
+		var previewSpawner = spawner ?? GetPreviewSpawner( select );
+		if ( previewSpawner is null || !previewSpawner.IsReady )
+			return;
+
+		var tx = GetPlacementTransform( select, previewSpawner.Bounds );
 
 		var overlayMaterial = IsProxy ? Material.Load( "materials/effects/duplicator_override_other.vmat" ) : Material.Load( "materials/effects/duplicator_override.vmat" );
-		var step = GetStackStep( tx, spawner.Bounds );
+		var step = GetStackStep( tx, previewSpawner.Bounds );
 
 		for ( int i = 0; i < Count; i++ )
 		{
@@ -191,11 +195,33 @@ public class Stacker : ToolMode
 			drawTx.Position += step * i;
 			var rotation = Rotation.From( new Angles( RotationStep.pitch * i, RotationStep.yaw * i, RotationStep.roll * i ) );
 			drawTx.Rotation = tx.Rotation * rotation;
-			spawner.DrawPreview( drawTx, overlayMaterial );
+			previewSpawner.DrawPreview( drawTx, overlayMaterial );
 		}
 	}
 
-	Transform GetPlacementTransform( SelectionPoint select )
+	DuplicatorSpawner GetPreviewSpawner( SelectionPoint select )
+	{
+		if ( !select.IsValid() || select.IsWorld || select.IsPlayer )
+			return null;
+
+		var root = select.GameObject.Network.RootGameObject ?? select.GameObject;
+		if ( _previewSelection == root && _previewSpawner is not null )
+			return _previewSpawner;
+
+		_previewSelection = root;
+		var builder = new LinkedGameObjectBuilder() { RejectPlayers = true };
+		builder.AddConnected( root );
+		builder.RemoveDeletedObjects();
+
+		var selectionAngle = new Transform( select.WorldPosition(), Player.EyeTransform.Rotation.Angles().WithPitch( 0 ) );
+		var tempDupe = DuplicationData.CreateFromObjects( builder.Objects, selectionAngle );
+		var json = Json.Serialize( tempDupe );
+		_previewSpawner = new DuplicatorSpawner( tempDupe, json );
+
+		return _previewSpawner;
+	}
+
+	Transform GetPlacementTransform( SelectionPoint select, BBox bounds )
 	{
 		var target = select.GameObject.Network.RootGameObject ?? select.GameObject;
 		var targetBounds = target.GetBounds();
@@ -206,7 +232,7 @@ public class Stacker : ToolMode
 
 		if ( Offset != Vector3.Zero )
 		{
-			tx.Position = targetBounds.Center + GetStackStep( tx, spawner.Bounds );
+			tx.Position = targetBounds.Center + GetStackStep( tx, bounds );
 			return tx;
 		}
 
@@ -232,13 +258,13 @@ public class Stacker : ToolMode
 		var startPosition = targetBounds.Center + axis * targetExtent;
 		var previewOffset = Direction switch
 		{
-			StackDirection.Up => -spawner.Bounds.Mins.z,
-			StackDirection.Down => spawner.Bounds.Maxs.z,
-			StackDirection.Forward => -spawner.Bounds.Mins.x,
-			StackDirection.Backward => spawner.Bounds.Maxs.x,
-			StackDirection.Left => -spawner.Bounds.Mins.y,
-			StackDirection.Right => spawner.Bounds.Maxs.y,
-			_ => -spawner.Bounds.Mins.z
+			StackDirection.Up => -bounds.Mins.z,
+			StackDirection.Down => bounds.Maxs.z,
+			StackDirection.Forward => -bounds.Mins.x,
+			StackDirection.Backward => bounds.Maxs.x,
+			StackDirection.Left => -bounds.Mins.y,
+			StackDirection.Right => bounds.Maxs.y,
+			_ => -bounds.Mins.z
 		};
 
 		tx.Position = startPosition + axis * previewOffset;
@@ -322,18 +348,32 @@ public class Stacker : ToolMode
 	[Rpc.Host]
 	public async void DuplicateStack( Transform dest, GameObject anchor = null )
 	{
-		if ( spawner is null )
-			return;
-
 		var player = Player.FindForConnection( Rpc.Caller );
 		if ( player is null )
+			return;
+
+		var activeSpawner = spawner;
+		if ( activeSpawner is null && anchor.IsValid() )
+		{
+			var root = anchor.Network.RootGameObject ?? anchor;
+			var builder = new LinkedGameObjectBuilder() { RejectPlayers = true };
+			builder.AddConnected( root );
+			builder.RemoveDeletedObjects();
+
+			var selectionAngle = new Transform( root.WorldTransform.Position, player.EyeTransform.Rotation.Angles().WithPitch( 0 ) );
+			var tempDupe = DuplicationData.CreateFromObjects( builder.Objects, selectionAngle );
+			var json = Json.Serialize( tempDupe );
+			activeSpawner = new DuplicatorSpawner( tempDupe, json );
+		}
+
+		if ( activeSpawner is null || !activeSpawner.IsReady )
 			return;
 
 		var undo = player.Undo.Create();
 		undo.Name = "Stacker";
 
 		GameObject previousRoot = null;
-		var step = GetStackStep( dest, spawner.Bounds );
+		var step = GetStackStep( dest, activeSpawner.Bounds );
 
 		for ( int i = 0; i < Count; i++ )
 		{
@@ -342,7 +382,7 @@ public class Stacker : ToolMode
 			var rotation = Rotation.From( new Angles( RotationStep.pitch * i, RotationStep.yaw * i, RotationStep.roll * i ) );
 			tx.Rotation = dest.Rotation * rotation;
 
-			var objects = await spawner.Spawn( tx, player );
+			var objects = await activeSpawner.Spawn( tx, player );
 			foreach ( var go in objects )
 			{
 				undo.Add( go );
