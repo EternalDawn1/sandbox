@@ -27,15 +27,6 @@ public class Stacker : ToolMode
 	public int Count { get; set; } = 5;
 
 	[Property, Sync, Group( "Stacker" )]
-	public Vector3 Offset { get; set; } = Vector3.Zero;
-
-	[Property, Sync, Group( "Stacker" )]
-	public Angles RotationStep { get; set; } = Angles.Zero;
-
-	[Property, Sync, Group( "Stacker" )]
-	public float Spacing { get; set; } = 0.1f;
-
-	[Property, Sync, Group( "Stacker" )]
 	public bool AutoWeld { get; set; }
 
 	[Property, Sync, Group( "Stacker" ), ShowIf( nameof( AutoWeld ), true )]
@@ -52,7 +43,7 @@ public class Stacker : ToolMode
 	bool _isSnapping;
 	bool _isRotating;
 
-	public override string Description => "Stack the selected object with a live preview using Offset and RotationStep.";
+	public override string Description => "Stack the selected object with a live preview.";
 	public override string PrimaryAction => spawner is not null || _previewSpawner is not null ? "Spawn stack" : null;
 	public override string SecondaryAction => null;
 	public override string ReloadAction => "Cycle stack count";
@@ -182,8 +173,6 @@ public class Stacker : ToolMode
 		{
 			var drawTx = tx;
 			drawTx.Position += step * i;
-			var rotation = Rotation.From( new Angles( RotationStep.pitch * i, RotationStep.yaw * i, RotationStep.roll * i ) );
-			drawTx.Rotation = tx.Rotation * rotation;
 			previewSpawner.DrawPreview( drawTx, overlayMaterial );
 		}
 	}
@@ -294,11 +283,6 @@ public class Stacker : ToolMode
 
 	Vector3 GetStackStep( Transform tx, BBox bounds )
 	{
-		if ( Offset != Vector3.Zero )
-		{
-			return tx.Rotation * Offset;
-		}
-
 		var axis = Direction switch
 		{
 			StackDirection.Up => tx.Rotation.Up,
@@ -318,8 +302,7 @@ public class Stacker : ToolMode
 			_ => bounds.Size.z
 		};
 
-		var offset = size + Spacing;
-		return axis.Normal * offset;
+		return axis.Normal * size;
 	}
 
 	void CreateWeld( GameObject a, GameObject b )
@@ -402,8 +385,6 @@ public class Stacker : ToolMode
 		{
 			var tx = dest;
 			tx.Position += step * i;
-			var rotation = Rotation.From( new Angles( RotationStep.pitch * i, RotationStep.yaw * i, RotationStep.roll * i ) );
-			tx.Rotation = dest.Rotation * rotation;
 
 			var objects = await activeSpawner.Spawn( tx, player );
 			foreach ( var go in objects )

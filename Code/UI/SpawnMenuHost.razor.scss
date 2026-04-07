@@ -149,7 +149,6 @@ SpawnMenuHost.theme-dark SpawnMenuToolbar
 
 SpawnMenuHost.theme-dark .menu-input
 {
-	
 	color: #000000;
 }
 
@@ -171,6 +170,22 @@ SpawnMenuHost.theme-dark VerticalMenu h2
 	opacity: 1;
 }
 
+SpawnMenuHost.theme-light .menu-input
+{
+	color: #000000;
+}
+
+SpawnMenuHost.theme-light TextEntry
+{
+	color: #000000;
+}
+
+SpawnMenuHost.theme-light VerticalMenu h2
+{
+	color: #000000;
+	opacity: 1;
+}
+
 /* ── theme-light = Dark Mode ────────────────────────────────────────── */
 
 SpawnMenuHost.theme-light .menu-backdrop
@@ -180,7 +195,7 @@ SpawnMenuHost.theme-light .menu-backdrop
 
 SpawnMenuHost.theme-light SpawnMenu
 {
-	color: #e0e0e0;
+	color: #000000;
 }
 
 
@@ -199,15 +214,15 @@ SpawnMenuHost.theme-light SpawnMenu .tabs
 
 SpawnMenuHost.theme-light SpawnMenu .tabs > *
 {
-	color: #e6e6e6;
-	background-color: #5a5a5a;
+	color: #000000;
+	background-color: #f0f0f0;
 	border: none;
 }
 
 SpawnMenuHost.theme-light SpawnMenu .tabs > *.active
 {
-	color: #ffffff;
-	background-color: #4b4b4b;
+	color: #000000;
+	background-color: #d0d0d0;
 	border: none;
 	border-top: 2px solid #4d8fc0;
 }
@@ -215,13 +230,13 @@ SpawnMenuHost.theme-light SpawnMenu .tabs > *.active
 SpawnMenuHost.theme-light SpawnMenu .body
 {
 	background-color: transparent;
-	color: #e0e0e0;
+	color: #000000;
 }
 
 SpawnMenuHost.theme-light SpawnMenuIcon .title
 {
 	background-color: rgba( 30, 30, 30, 0.85 );
-	color: #e0e0e0;
+	color: #000000;
 }
 
 SpawnMenuHost.theme-light SpawnMenuContent > .body
@@ -269,7 +284,7 @@ SpawnMenuHost.theme-light .menu-input
 
 SpawnMenuHost.theme-light TextEntry
 {
-	color: #e0e0e0;
+	color: #000000;
 }
 
 SpawnMenuHost.theme-light VerticalMenu
@@ -281,7 +296,7 @@ SpawnMenuHost.theme-light VerticalMenu
 
 SpawnMenuHost.theme-light VerticalMenu h2
 {
-	color: #909090;
+	color: #000000;
 	opacity: 1;
 }
 
