@@ -57,50 +57,63 @@ SpawnMenuHost .menu-slide
 
 SpawnMenuHost.theme-light .menu-backdrop
 {
-	background-color: rgba( 255, 255, 255, 0.40 );
+	background-color: rgba( 255, 255, 255, 0.16 );
 }
 
 SpawnMenuHost.theme-light SpawnMenu
 {
-	color: #202020;
+	color: #222222;
 }
 
 SpawnMenuHost.theme-light SpawnMenu .container .spawnmenuleft,
 SpawnMenuHost.theme-light SpawnMenu .container .spawnmenuright
 {
-	background-color: #f2f2f2;
-	border-color: #c8c8c8;
+	background-color: #b8b8b8;
+	border-color: #8c8c8c;
 }
 
 SpawnMenuHost.theme-light SpawnMenu .tabs
 {
-	background-color: #ececec;
-	border-bottom-color: #c8c8c8;
+	background-color: #9f9f9f;
+	border-bottom-color: #868686;
 }
 
 SpawnMenuHost.theme-light SpawnMenu .tabs > *
 {
-	color: #333333;
-	background-color: #ececec;
-	border-right-color: #d0d0d0;
+	color: #2b2b2b;
+	background-color: #9f9f9f;
+	border-right-color: #9a9a9a;
 }
 
 SpawnMenuHost.theme-light SpawnMenu .tabs > *.active
 {
 	color: #111111;
-	background-color: #ffffff;
+	background-color: #d6d6d6;
 	border-top-color: #4d8fc0;
 }
 
 SpawnMenuHost.theme-light SpawnMenu .body
 {
-	background-color: #fafafa;
+	background-color: #d0d0d0;
 	color: #111111;
 }
 
 SpawnMenuHost.theme-light SpawnMenuIcon .title
 {
-	background-color: rgba( 255, 255, 255, 0.95 );
+	background-color: rgba( 245, 245, 245, 0.82 );
 	color: #111111;
+}
+
+SpawnMenuHost.theme-light VerticalMenu
+{
+	background-color: #c4c4c4;
+	border: 1px solid #9b9b9b;
+	border-radius: 2px;
+}
+
+SpawnMenuHost.theme-light VerticalMenu h2
+{
+	color: #4a4a4a;
+	opacity: 1;
 }
 
