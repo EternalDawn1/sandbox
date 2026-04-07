@@ -68,7 +68,7 @@ SpawnMenuHost.theme-dark SpawnMenu
 SpawnMenuHost.theme-dark SpawnMenu .container .spawnmenuleft
 {
 	background-color: #FFFFFF00;
-	border-color: rgba( 0, 0, 0, 0.08 );
+	
 }
 
 SpawnMenuHost.theme-dark SpawnMenu .container .spawnmenuright
@@ -183,11 +183,7 @@ SpawnMenuHost.theme-light SpawnMenu
 	color: #e0e0e0;
 }
 
-SpawnMenuHost.theme-light SpawnMenu .container .spawnmenuleft
-{
-	background-color: #FFFFFF00;
-	border-color: rgba( 255, 255, 255, 0.08 );
-}
+
 
 SpawnMenuHost.theme-light SpawnMenu .container .spawnmenuright
 {
@@ -246,7 +242,7 @@ SpawnMenuHost.theme-light SpawnMenu .container > .spawnmenuright > .body
 SpawnMenuHost.theme-light SpawnMenuPage > .left
 {
 	background-color: transparent;
-	border: 1px solid rgba( 255, 255, 255, 0.08 );
+	
 }
 
 SpawnMenuHost.theme-light SpawnMenuPage > .left > div

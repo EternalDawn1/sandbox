@@ -76,6 +76,10 @@ SpawnMenu .container .spawnmenuright
 
 .tabs
 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
     font-size: 12px;
     color: $g12-text-dim;
     font-weight: 600;
@@ -84,12 +88,12 @@ SpawnMenu .container .spawnmenuright
     border-bottom: 1px solid $g12-border;
     z-index: 10;
     flex-shrink: 0;
-    padding: 0;
+    padding: 4px 0 4px 12px;
 }
 
 .tabs > *
 {
-    padding: 6px 12px;
+    padding: 8px 14px;
     cursor: pointer;
     color: $g12-text-dim;
     border-radius: 0;
