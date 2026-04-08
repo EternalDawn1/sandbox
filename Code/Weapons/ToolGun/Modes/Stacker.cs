@@ -203,34 +203,25 @@ public class Stacker : ToolMode
 	{
 		var target = select.GameObject.Network.RootGameObject ?? select.GameObject;
 		var targetTransform = target.WorldTransform;
-		var axis = GetDirectionAxis();
-		var targetWorldAxis = (targetTransform.Rotation * axis).Normal;
+		var targetRotation = targetTransform.Rotation;
 
+		var axis = GetLocalDirection();
 		var localBounds = target.GetLocalBounds();
-		var targetSupportPoint = targetTransform.PointToWorld( GetBoundsExtremePoint( localBounds, axis ) );
-
-		var tx = new Transform
+		var localExtent = Direction switch
 		{
-			Rotation = targetTransform.Rotation * _rotationOffset
+			StackDirection.Up or StackDirection.Down => localBounds.Extents.z,
+			StackDirection.Forward or StackDirection.Backward => localBounds.Extents.x,
+			StackDirection.Left or StackDirection.Right => localBounds.Extents.y,
+			_ => localBounds.Extents.z
 		};
-		var previewSupportPoint = GetBoundsExtremePoint( bounds, tx.Rotation.Inverse * -targetWorldAxis );
 
-		tx.Position = targetSupportPoint - tx.Rotation * previewSupportPoint;
+		var startPosition = targetTransform.ToWorld( new Transform( localBounds.Center + axis * localExtent, Rotation.Identity ) ).Position;
+
+		var tx = new Transform();
+		tx.Rotation = targetRotation * _rotationOffset;
+		var previewOffsetPoint = GetBoundsExtremePoint( bounds, -axis );
+		tx.Position = startPosition - tx.Rotation * previewOffsetPoint;
 		return tx;
-	}
-
-	Vector3 GetDirectionAxis()
-	{
-		return Direction switch
-		{
-			StackDirection.Up => Vector3.Up,
-			StackDirection.Down => Vector3.Down,
-			StackDirection.Forward => Vector3.Forward,
-			StackDirection.Backward => Vector3.Backward,
-			StackDirection.Left => Vector3.Left,
-			StackDirection.Right => Vector3.Right,
-			_ => Vector3.Up
-		};
 	}
 
 	Vector3 GetBoundsExtremePoint( BBox bounds, Vector3 direction )
@@ -269,15 +260,34 @@ public class Stacker : ToolMode
 		return bestPoint;
 	}
 
+	Vector3 GetLocalDirection()
+	{
+		return Direction switch
+		{
+			StackDirection.Up => Vector3.Up,
+			StackDirection.Down => Vector3.Down,
+			StackDirection.Forward => Vector3.Forward,
+			StackDirection.Backward => Vector3.Backward,
+			StackDirection.Left => Vector3.Left,
+			StackDirection.Right => Vector3.Right,
+			_ => Vector3.Up
+		};
+	}
+
 
 	Vector3 GetStackStep( Transform tx, BBox bounds )
 	{
-		var axis = (tx.Rotation * GetDirectionAxis()).Normal;
-		var maxPoint = GetBoundsExtremePoint( bounds, tx.Rotation.Inverse * axis );
-		var minPoint = GetBoundsExtremePoint( bounds, tx.Rotation.Inverse * -axis );
-		var span = Vector3.Dot( tx.Rotation * (maxPoint - minPoint), axis );
+		var axis = tx.Rotation * GetLocalDirection();
 
-		return axis * span;
+		var size = Direction switch
+		{
+			StackDirection.Up or StackDirection.Down => bounds.Size.z,
+			StackDirection.Forward or StackDirection.Backward => bounds.Size.x,
+			StackDirection.Left or StackDirection.Right => bounds.Size.y,
+			_ => bounds.Size.z
+		};
+
+		return axis.Normal * size;
 	}
 
 	void CreateWeld( GameObject a, GameObject b )
