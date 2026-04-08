@@ -1,0 +1,59 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits UtilityPage
+@namespace Sandbox
+@attribute [Icon( "📋" )]
+@attribute [Title( "Logs" )]
+@attribute [Group( "Admin" )]
+@attribute [Order( 3 )]
+
+<root class="page admin-page" style="flex-direction: column;">
+
+    <div class="admin-log-toolbar">
+        <label class="admin-log-count">@(Log?.Count ?? 0) entries</label>
+        <button class="admin-btn-reset admin-log-clear" @onclick=@ClearLog title="Clear log">
+            <i>delete_sweep</i> Clear
+        </button>
+    </div>
+
+    @{
+        var entries = Log;
+    }
+
+    @if ( entries is null || entries.Count == 0 )
+    {
+        <div class="admin-empty">No admin actions logged yet.</div>
+    }
+    else
+    {
+        <div class="admin-log-list">
+            @for ( int i = entries.Count - 1; i >= 0; i-- )
+            {
+                var e = entries[i];
+                <div class="admin-log-entry">
+                    <span class="admin-log-time">@e.Time.ToString("HH:mm:ss")</span>
+                    <span class="admin-log-admin">@e.Admin</span>
+                    <span class="admin-log-action">@e.Action</span>
+                    @if ( !string.IsNullOrEmpty( e.Target ) )
+                    {
+                        <span class="admin-log-target">→ @e.Target</span>
+                    }
+                </div>
+            }
+        </div>
+    }
+
+</root>
+
+@code
+{
+    public override bool IsVisible() => Connection.Local.IsHost;
+
+    List<AdminSystem.LogEntry> Log => AdminSystem.Current?.ActionLog;
+
+    void ClearLog()
+    {
+        AdminSystem.Current?.ClearLog();
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,435 @@
+@import "/UI/Theme.scss";
+
+/* ─── Shared Variables ─────────────────────────────────────────── */
+$admin-bg:         #0c1a25cc;
+$admin-row:        #ffffff08;
+$admin-row-hover:  #ffffff12;
+$admin-row-self:   #0094ff18;
+$admin-border:     #1a3045;
+$admin-accent:     $color-accent;
+$admin-red:        #c0392b;
+$admin-yellow:     #f39c12;
+$admin-green:      #27ae60;
+$admin-cyan:       #1abc9c;
+$admin-purple:     #9b59b6;
+$admin-text:       #cdf;
+$admin-text-dim:   #6e8fa8;
+$admin-radius:     6px;
+
+/* ─── Page Container ───────────────────────────────────────────── */
+.admin-page
+{
+    padding: 8px 10px;
+    gap: 2px;
+    overflow-y: scroll;
+}
+
+.admin-empty
+{
+    padding: 20px;
+    opacity: 0.4;
+    font-size: 13px;
+    color: $admin-text-dim;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ─── Player Row ───────────────────────────────────────────────── */
+.admin-player-row
+{
+    flex-direction: row;
+    align-items: center;
+    padding: 7px 8px;
+    border-radius: $admin-radius;
+    background-color: $admin-row;
+    margin: 2px 0;
+    gap: 10px;
+
+    &:hover
+    {
+        background-color: $admin-row-hover;
+    }
+}
+
+.admin-player-self
+{
+    background-color: $admin-row-self;
+    border: 1px solid rgba($admin-accent, 0.3);
+}
+
+.admin-avatar
+{
+    width: 38px;
+    height: 38px;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.admin-player-info
+{
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: center;
+    gap: 2px;
+    min-width: 0;
+}
+
+.admin-player-name
+{
+    font-size: 13px;
+    font-weight: 600;
+    color: $admin-text;
+}
+
+.admin-player-meta
+{
+    font-size: 10px;
+    color: $admin-text-dim;
+}
+
+.admin-badge-row
+{
+    flex-direction: row;
+    gap: 4px;
+    margin-top: 2px;
+}
+
+.admin-badge
+{
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+}
+
+.badge-self   { background-color: rgba($admin-accent, 0.25); color: $admin-accent; }
+.badge-god    { background-color: rgba($admin-yellow, 0.25); color: $admin-yellow; }
+.badge-frozen { background-color: rgba($admin-cyan,   0.25); color: $admin-cyan;   }
+.badge-noclip { background-color: rgba($admin-purple, 0.25); color: $admin-purple; }
+
+/* ─── Action Buttons ───────────────────────────────────────────── */
+.admin-player-actions
+{
+    flex-direction: row;
+    flex-shrink: 0;
+    gap: 4px;
+    align-items: center;
+    flex-wrap: wrap;
+    max-width: 260px;
+    justify-content: flex-end;
+}
+
+/* Base icon button */
+.admin-player-actions button
+{
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    pointer-events: all;
+    background-color: #ffffff10;
+    color: $admin-text;
+    transition: background-color 0.1s, color 0.1s;
+
+    i { font-size: 16px; line-height: 1; }
+
+    &:hover { background-color: #ffffff22; }
+    &.active { background-color: rgba($admin-accent, 0.3); color: $admin-accent; }
+}
+
+/* Colour-coded button variants */
+.admin-btn-heal    { &:hover { background-color: rgba($admin-green,  0.35) !important; } }
+.admin-btn-armour  { &:hover { background-color: rgba($admin-cyan,   0.35) !important; } }
+.admin-btn-god     { &:hover { background-color: rgba($admin-yellow, 0.35) !important; } }
+.admin-btn-freeze  { &:hover { background-color: rgba($admin-cyan,   0.35) !important; } }
+.admin-btn-noclip  { &:hover { background-color: rgba($admin-purple, 0.35) !important; } }
+.admin-btn-goto    { &:hover { background-color: rgba($admin-accent, 0.35) !important; } }
+.admin-btn-bring   { &:hover { background-color: rgba($admin-accent, 0.35) !important; } }
+.admin-btn-strip   { &:hover { background-color: rgba($admin-yellow, 0.35) !important; } }
+.admin-btn-respawn { &:hover { background-color: rgba($admin-green,  0.35) !important; } }
+.admin-btn-slay    { &:hover { background-color: rgba($admin-red,    0.35) !important; } }
+.admin-btn-kick    { &:hover { background-color: rgba($admin-red,    0.35) !important; } }
+.admin-btn-ban     { background-color: rgba($admin-red, 0.18);
+                     &:hover { background-color: rgba($admin-red, 0.45) !important; } }
+
+/* Confirm / reset buttons used on server page */
+.admin-btn-confirm
+{
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    pointer-events: all;
+    background-color: rgba($admin-accent, 0.2);
+    color: $admin-accent;
+    font-size: 12px;
+    font-weight: 600;
+
+    i { font-size: 14px; }
+    &:hover { background-color: rgba($admin-accent, 0.4); }
+}
+
+.admin-btn-reset
+{
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    pointer-events: all;
+    background-color: #ffffff10;
+    color: $admin-text-dim;
+    font-size: 12px;
+
+    i { font-size: 14px; }
+    &:hover { background-color: #ffffff20; color: $admin-text; }
+}
+
+.admin-step-btn
+{
+    width: 28px;
+    height: 28px;
+    border-radius: 5px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    pointer-events: all;
+    background-color: #ffffff10;
+    color: $admin-text-dim;
+    flex-shrink: 0;
+
+    i { font-size: 14px; }
+    &:hover { background-color: rgba($admin-accent, 0.3); color: $admin-accent; }
+}
+
+.admin-num-input
+{
+    width: 70px;
+    flex-shrink: 0;
+    background-color: #ffffff0a;
+    padding: 5px 8px;
+    border-radius: 5px;
+    font-size: 13px;
+    text-align: center;
+    color: $admin-text;
+    border: 1px solid $admin-border;
+}
+
+/* ─── Server Page Controls ─────────────────────────────────────── */
+.admin-inline-right
+{
+    flex-direction: row;
+    flex-grow: 1;
+    gap: 6px;
+    align-items: center;
+}
+
+.admin-text-input
+{
+    flex-grow: 1;
+    background-color: #ffffff0a;
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    color: $admin-text;
+    border: 1px solid $admin-border;
+}
+
+.admin-value-badge
+{
+    font-size: 11px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background-color: rgba($admin-accent, 0.18);
+    color: $admin-accent;
+}
+
+.admin-slider-row
+{
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.admin-slider-label
+{
+    font-size: 11px;
+    color: $admin-text-dim;
+    width: 28px;
+    text-align: center;
+}
+
+.admin-slider
+{
+    flex-grow: 1;
+    height: 4px;
+    border-radius: 2px;
+    background-color: $admin-border;
+    accent-color: $admin-accent;
+    cursor: pointer;
+    pointer-events: all;
+}
+
+.admin-preset-row
+{
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 2px 0;
+}
+
+.admin-preset
+{
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    pointer-events: all;
+    background-color: #ffffff0c;
+    color: $admin-text-dim;
+
+    &:hover
+    {
+        background-color: rgba($admin-accent, 0.2);
+        color: $admin-accent;
+    }
+}
+
+/* ─── Fun Page – Mass Action Grid ──────────────────────────────── */
+.admin-action-grid
+{
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 4px 0;
+}
+
+.admin-mass-btn
+{
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    min-width: 100px;
+    cursor: pointer;
+    pointer-events: all;
+    font-size: 12px;
+    font-weight: 600;
+    flex-grow: 1;
+    flex-basis: 100px;
+    max-width: 180px;
+
+    i { font-size: 22px; }
+}
+
+.admin-mass-btn--good
+{
+    background-color: rgba($admin-green,  0.15);
+    color: darken($admin-green, 5%);
+    &:hover { background-color: rgba($admin-green, 0.3); }
+}
+
+.admin-mass-btn--danger
+{
+    background-color: rgba($admin-red, 0.15);
+    color: lighten($admin-red, 15%);
+    &:hover { background-color: rgba($admin-red, 0.3); }
+}
+
+.admin-mass-btn--info
+{
+    background-color: rgba($admin-cyan, 0.15);
+    color: $admin-cyan;
+    &:hover { background-color: rgba($admin-cyan, 0.3); }
+}
+
+.admin-mass-btn--neutral
+{
+    background-color: rgba($admin-yellow, 0.12);
+    color: $admin-yellow;
+    &:hover { background-color: rgba($admin-yellow, 0.25); }
+}
+
+/* ─── Logs Page ────────────────────────────────────────────────── */
+.admin-log-toolbar
+{
+    flex-direction: row;
+    align-items: center;
+    padding: 4px 0 8px 0;
+    gap: 8px;
+}
+
+.admin-log-count
+{
+    flex-grow: 1;
+    font-size: 11px;
+    color: $admin-text-dim;
+}
+
+.admin-log-clear
+{
+    padding: 4px 8px;
+    font-size: 11px;
+}
+
+.admin-log-list
+{
+    flex-direction: column;
+    gap: 2px;
+    overflow-y: scroll;
+}
+
+.admin-log-entry
+{
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 8px;
+    border-radius: 4px;
+    background-color: $admin-row;
+    font-size: 11px;
+
+    &:nth-child(even) { background-color: #ffffff05; }
+}
+
+.admin-log-time
+{
+    color: $admin-text-dim;
+    width: 52px;
+    flex-shrink: 0;
+    font-size: 10px;
+}
+
+.admin-log-admin
+{
+    color: $admin-accent;
+    font-weight: 600;
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.admin-log-action
+{
+    color: $admin-text;
+    flex-grow: 1;
+}
+
+.admin-log-target
+{
+    color: $admin-yellow;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-style: italic;
+}

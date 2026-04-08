@@ -15,6 +15,11 @@ public sealed partial class PlayerData : Component, ISaveEvents
 
 	[Sync] public bool IsGodMode { get; set; }
 
+	/// <summary>
+	/// When true, movement input for this player is suppressed (set by AdminSystem).
+	/// </summary>
+	[Sync( SyncFlags.FromHost )] public bool IsFrozen { get; set; }
+
 	public Connection Connection => Connection.Find( PlayerId );
 
 	/// <summary>

@@ -1,0 +1,152 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits UtilityPage
+@namespace Sandbox
+@attribute [Icon( "🌍" )]
+@attribute [Title( "Server" )]
+@attribute [Group( "Admin" )]
+@attribute [Order( 1 )]
+
+<root class="page admin-page" style="flex-direction: column;">
+
+    <!-- ── Map Change ─────────────────────────────────────────── -->
+    <div class="section-header">🗺️ Map</div>
+    <div class="control-row">
+        <label class="left">Change Map</label>
+        <div class="admin-inline-right">
+            <TextEntry class="admin-text-input" Placeholder="e.g. facepunch.flatgrass" Value:bind=@_mapInput />
+            <button class="admin-btn-confirm" @onclick=@DoChangeMap title="Load map">
+                <i>map</i> Change
+            </button>
+        </div>
+    </div>
+
+    <!-- ── Gravity ────────────────────────────────────────────── -->
+    <div class="section-header">🌐 Physics</div>
+
+    <div class="control-row">
+        <label class="left">Gravity Scale</label>
+        <div class="admin-inline-right">
+            <button class="admin-step-btn" @onclick=@(() => StepGravity(-0.1f))><i>remove</i></button>
+            <TextEntry class="admin-num-input" Placeholder="1.00" Value:bind=@_gravityScaleStr />
+            <button class="admin-step-btn" @onclick=@(() => StepGravity(0.1f))><i>add</i></button>
+            <button class="admin-btn-confirm" @onclick=@ApplyGravity title="Apply">
+                <i>check</i>
+            </button>
+            <button class="admin-btn-reset" @onclick=@ResetGravity title="Reset">
+                <i>restart_alt</i>
+            </button>
+        </div>
+    </div>
+
+    <div class="control-row">
+        <div class="admin-preset-row">
+            <button class="admin-preset" @onclick=@(() => SetGravityPreset(0))>Zero-G</button>
+            <button class="admin-preset" @onclick=@(() => SetGravityPreset(0.1f))>Moon</button>
+            <button class="admin-preset" @onclick=@(() => SetGravityPreset(0.38f))>Mars</button>
+            <button class="admin-preset" @onclick=@(() => SetGravityPreset(1.0f))>Normal</button>
+            <button class="admin-preset" @onclick=@(() => SetGravityPreset(2.0f))>Heavy</button>
+            <button class="admin-preset" @onclick=@(() => SetGravityPreset(-1.0f))>Reverse</button>
+        </div>
+    </div>
+
+    <!-- ── Timescale ──────────────────────────────────────────── -->
+    <div class="section-header">⏱️ Timescale</div>
+
+    <div class="control-row">
+        <label class="left">Time Scale</label>
+        <div class="admin-inline-right">
+            <button class="admin-step-btn" @onclick=@(() => StepTimescale(-0.1f))><i>remove</i></button>
+            <TextEntry class="admin-num-input" Placeholder="1.00" Value:bind=@_timescaleStr />
+            <button class="admin-step-btn" @onclick=@(() => StepTimescale(0.1f))><i>add</i></button>
+            <button class="admin-btn-confirm" @onclick=@ApplyTimescale title="Apply">
+                <i>check</i>
+            </button>
+            <button class="admin-btn-reset" @onclick=@ResetTimescale title="Reset to 1×">
+                <i>restart_alt</i>
+            </button>
+        </div>
+    </div>
+
+    <div class="control-row">
+        <div class="admin-preset-row">
+            <button class="admin-preset" @onclick=@(() => SetTimescalePreset(0.1f))>0.1×</button>
+            <button class="admin-preset" @onclick=@(() => SetTimescalePreset(0.25f))>0.25×</button>
+            <button class="admin-preset" @onclick=@(() => SetTimescalePreset(0.5f))>0.5×</button>
+            <button class="admin-preset" @onclick=@(() => SetTimescalePreset(1.0f))>Normal</button>
+            <button class="admin-preset" @onclick=@(() => SetTimescalePreset(2.0f))>2×</button>
+            <button class="admin-preset" @onclick=@(() => SetTimescalePreset(5.0f))>5×</button>
+        </div>
+    </div>
+
+    <!-- ── Broadcast ──────────────────────────────────────────── -->
+    <div class="section-header">📢 Broadcast</div>
+    <div class="control-row">
+        <div class="admin-inline-right">
+            <TextEntry class="admin-text-input" Placeholder="Message to all players…" Value:bind=@_broadcastInput />
+            <button class="admin-btn-confirm" @onclick=@DoBroadcast title="Send to all">
+                <i>send</i> Send
+            </button>
+        </div>
+    </div>
+
+</root>
+
+@code
+{
+    public override bool IsVisible() => Connection.Local.IsHost;
+
+    private AdminSystem Admin => AdminSystem.Current;
+
+    string _mapInput = "";
+    string _broadcastInput = "";
+    string _gravityScaleStr = "1.00";
+    string _timescaleStr = "1.00";
+
+    protected override void OnAfterTreeRender( bool firstTime )
+    {
+        if ( !firstTime ) return;
+        var g = Game.ActiveScene?.PhysicsWorld?.Gravity ?? new Vector3( 0, 0, -800f );
+        _gravityScaleStr = (-g.z / 800f).ToString( "F2" );
+        _timescaleStr = (Game.ActiveScene?.TimeScale ?? 1f).ToString( "F2" );
+    }
+
+    float ParseFloat( string s, float fallback ) =>
+        float.TryParse( s, System.Globalization.NumberStyles.Float,
+            System.Globalization.CultureInfo.InvariantCulture, out var v ) ? v : fallback;
+
+    void StepGravity( float delta )
+    {
+        var v = MathF.Round( Math.Clamp( ParseFloat( _gravityScaleStr, 1f ) + delta, -3f, 5f ), 2 );
+        _gravityScaleStr = v.ToString( "F2" );
+    }
+
+    void StepTimescale( float delta )
+    {
+        var v = MathF.Round( Math.Clamp( ParseFloat( _timescaleStr, 1f ) + delta, 0.1f, 5f ), 2 );
+        _timescaleStr = v.ToString( "F2" );
+    }
+
+    void ApplyGravity()   => Admin?.SetGravityScale( ParseFloat( _gravityScaleStr, 1f ) );
+    void ResetGravity()   { _gravityScaleStr = "1.00"; Admin?.SetGravityScale( 1f ); }
+
+    void ApplyTimescale() => Admin?.SetTimescale( ParseFloat( _timescaleStr, 1f ) );
+    void ResetTimescale() { _timescaleStr = "1.00"; Admin?.SetTimescale( 1f ); }
+
+    void SetGravityPreset( float v )   { _gravityScaleStr = v.ToString( "F2" ); Admin?.SetGravityScale( v ); }
+    void SetTimescalePreset( float v ) { _timescaleStr = v.ToString( "F2" ); Admin?.SetTimescale( v ); }
+
+    void DoChangeMap()
+    {
+        if ( string.IsNullOrWhiteSpace( _mapInput ) ) return;
+        Admin?.ChangeMap( _mapInput.Trim() );
+    }
+
+    void DoBroadcast()
+    {
+        if ( string.IsNullOrWhiteSpace( _broadcastInput ) ) return;
+        Admin?.BroadcastMessage( _broadcastInput.Trim() );
+        _broadcastInput = "";
+        StateHasChanged();
+    }
+}

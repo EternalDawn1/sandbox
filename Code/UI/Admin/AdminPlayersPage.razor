@@ -1,0 +1,191 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits UtilityPage
+@namespace Sandbox
+@attribute [Icon( "👑" )]
+@attribute [Title( "Players" )]
+@attribute [Group( "Admin" )]
+@attribute [Order( 0 )]
+
+<root class="page admin-page" style="flex-direction: column;">
+
+    @{
+        var players = PlayerData.All.OrderBy( x => x.DisplayName ).ToList();
+    }
+
+    @if ( players.Count == 0 )
+    {
+        <div class="admin-empty">No players connected.</div>
+    }
+    else
+    {
+        @foreach ( var pd in players )
+        {
+            var data = pd;
+            var isSelf = data.IsMe;
+            var isGod  = data.IsGodMode;
+            var isFroz = data.IsFrozen;
+            var player = Player.For( data.PlayerId );
+            var ncActive = player.IsValid() && (player.GetComponent<NoclipMoveMode>( true )?.Enabled ?? false);
+
+            <div class="admin-player-row @(isSelf ? "admin-player-self" : "")">
+
+                <img class="admin-avatar" src="avatar:@data.SteamId" />
+
+                <div class="admin-player-info">
+                    <label class="admin-player-name">@data.DisplayName</label>
+                    <label class="admin-player-meta">
+                        SteamID: @data.SteamId
+                        &nbsp;|&nbsp; Ping: @((int)data.Ping)ms
+                        &nbsp;|&nbsp; Kills: @data.Kills
+                        &nbsp;|&nbsp; Deaths: @data.Deaths
+                    </label>
+                    <div class="admin-badge-row">
+                        @if ( isSelf )  { <span class="admin-badge badge-self">You</span> }
+                        @if ( isGod )   { <span class="admin-badge badge-god">GOD</span> }
+                        @if ( isFroz )  { <span class="admin-badge badge-frozen">FROZEN</span> }
+                        @if ( ncActive ){ <span class="admin-badge badge-noclip">NOCLIP</span> }
+                    </div>
+                </div>
+
+                <div class="admin-player-actions">
+
+                    <button class="admin-btn-heal"
+                            title="Heal to full"
+                            @onclick=@(() => Cmd( d => d.HealFull( data.PlayerId ) ))>
+                        <i>favorite</i>
+                    </button>
+
+                    <button class="admin-btn-armour"
+                            title="Give armour"
+                            @onclick=@(() => Cmd( d => d.GiveArmour( data.PlayerId ) ))>
+                        <i>shield</i>
+                    </button>
+
+                    <button class="admin-btn-god @(isGod ? "active" : "")"
+                            title="Toggle god mode"
+                            @onclick=@(() => Cmd( d => d.ToggleGodMode( data.PlayerId ) ))>
+                        <i>auto_fix_high</i>
+                    </button>
+
+                    <button class="admin-btn-freeze @(isFroz ? "active" : "")"
+                            title="Toggle freeze"
+                            @onclick=@(() => Cmd( d => d.ToggleFreeze( data.PlayerId ) ))>
+                        <i>ac_unit</i>
+                    </button>
+
+                    <button class="admin-btn-noclip @(ncActive ? "active" : "")"
+                            title="Toggle noclip"
+                            @onclick=@(() => Cmd( d => d.SetNoclip( data.PlayerId, !ncActive ) ))>
+                        <i>flight</i>
+                    </button>
+
+                    <button class="admin-btn-goto"
+                            title="Teleport me to player"
+                            @onclick=@(() => Cmd( d => d.TeleportAdminToPlayer( data.PlayerId ) ))>
+                        <i>near_me</i>
+                    </button>
+
+                    <button class="admin-btn-bring"
+                            title="Bring player to me"
+                            @onclick=@(() => Cmd( d => d.TeleportToAdmin( data.PlayerId ) ))>
+                        <i>move_up</i>
+                    </button>
+
+                    <button class="admin-btn-strip"
+                            title="Strip weapons"
+                            @onclick=@(() => Cmd( d => d.StripWeapons( data.PlayerId ) ))>
+                        <i>sports_martial_arts</i>
+                    </button>
+
+                    <button class="admin-btn-respawn"
+                            title="Respawn player"
+                            @onclick=@(() => Cmd( d => d.RespawnPlayer( data.PlayerId ) ))>
+                        <i>restart_alt</i>
+                    </button>
+
+                    @if ( !isSelf )
+                    {
+                        <button class="admin-btn-slay"
+                                title="Slay player"
+                                @onclick=@(() => ConfirmSlay( data.PlayerId, data.DisplayName ))>
+                            <i>skull</i>
+                        </button>
+
+                        <button class="admin-btn-kick"
+                                title="Kick player"
+                                @onclick=@(() => OpenKickDialog( data.PlayerId, data.DisplayName ))>
+                            <i>sports_soccer</i>
+                        </button>
+
+                        <button class="admin-btn-ban"
+                                title="Ban player"
+                                @onclick=@(() => OpenBanDialog( data.PlayerId, data.DisplayName ))>
+                            <i>gavel</i>
+                        </button>
+                    }
+                </div>
+
+            </div>
+        }
+    }
+
+</root>
+
+@code
+{
+    public override bool IsVisible() => Connection.Local.IsHost;
+
+    private AdminSystem Admin => AdminSystem.Current;
+
+    void Cmd( Action<AdminSystem> action )
+    {
+        if ( Admin is null ) return;
+        action( Admin );
+        StateHasChanged();
+    }
+
+    void ConfirmSlay( Guid playerId, string playerName )
+    {
+        var menu = MenuPanel.Open( this );
+        menu.AddOption( "skull", $"Slay {playerName}?", () =>
+        {
+            Cmd( d => d.SlayPlayer( playerId ) );
+        } );
+        menu.AddOption( "close", "Cancel", () => { } );
+    }
+
+    void OpenKickDialog( Guid playerId, string playerName )
+    {
+        var popup = new StringQueryPopup
+        {
+            Title = $"Kick {playerName}",
+            Prompt = "Enter a reason (optional):",
+            Placeholder = "Kicked by admin",
+            ConfirmLabel = "Kick",
+            ShowInput = true,
+            OnConfirm = reason =>
+            {
+                Cmd( d => d.KickPlayer( playerId, string.IsNullOrWhiteSpace( reason ) ? "Kicked by admin" : reason ) );
+            }
+        };
+        popup.Parent = FindPopupPanel();
+    }
+
+    void OpenBanDialog( Guid playerId, string playerName )
+    {
+        var popup = new StringQueryPopup
+        {
+            Title = $"Ban {playerName}",
+            Prompt = "Enter a reason (optional):",
+            Placeholder = "Banned by admin",
+            ConfirmLabel = "Ban",
+            ShowInput = true,
+            OnConfirm = reason =>
+            {
+                Cmd( d => d.BanPlayer( playerId, string.IsNullOrWhiteSpace( reason ) ? "Banned by admin" : reason ) );
+            }
+        };
+        popup.Parent = FindPopupPanel();
+    }
+}

@@ -231,6 +231,10 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 	void OnControl()
 	{
+		// Admin freeze: block all movement input
+		if ( PlayerData.IsValid() && PlayerData.IsFrozen )
+			return;
+
 		if ( Input.Pressed( "die" ) )
 		{
 			KillSelf();

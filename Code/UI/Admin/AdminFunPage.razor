@@ -1,0 +1,122 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits UtilityPage
+@namespace Sandbox
+@attribute [Icon( "🎭" )]
+@attribute [Title( "Fun" )]
+@attribute [Group( "Admin" )]
+@attribute [Order( 2 )]
+
+<root class="page admin-page" style="flex-direction: column;">
+
+    <!-- ── Mass God Mode ─────────────────────────────────────── -->
+    <div class="section-header">⚡ Mass God Mode</div>
+
+    <div class="admin-action-grid">
+        <button class="admin-mass-btn admin-mass-btn--good" @onclick=@(() => Cmd( d => d.SetGodAll(true) ))>
+            <i>auto_fix_high</i>
+            <span>God All ON</span>
+        </button>
+        <button class="admin-mass-btn admin-mass-btn--danger" @onclick=@(() => Cmd( d => d.SetGodAll(false) ))>
+            <i>auto_fix_off</i>
+            <span>God All OFF</span>
+        </button>
+    </div>
+
+    <!-- ── Mass Freeze ────────────────────────────────────────── -->
+    <div class="section-header">🧊 Mass Freeze</div>
+
+    <div class="admin-action-grid">
+        <button class="admin-mass-btn admin-mass-btn--info" @onclick=@(() => Cmd( d => d.FreezeAll(true) ))>
+            <i>ac_unit</i>
+            <span>Freeze All</span>
+        </button>
+        <button class="admin-mass-btn admin-mass-btn--good" @onclick=@(() => Cmd( d => d.FreezeAll(false) ))>
+            <i>local_fire_department</i>
+            <span>Unfreeze All</span>
+        </button>
+    </div>
+
+    <!-- ── Mass Noclip ────────────────────────────────────────── -->
+    <div class="section-header">✈️ Mass Noclip</div>
+
+    <div class="admin-action-grid">
+        <button class="admin-mass-btn admin-mass-btn--info" @onclick=@(() => Cmd( d => d.SetNoclipAll(true) ))>
+            <i>flight</i>
+            <span>Noclip All ON</span>
+        </button>
+        <button class="admin-mass-btn admin-mass-btn--neutral" @onclick=@(() => Cmd( d => d.SetNoclipAll(false) ))>
+            <i>flight_land</i>
+            <span>Noclip All OFF</span>
+        </button>
+    </div>
+
+    <!-- ── Mass Health ────────────────────────────────────────── -->
+    <div class="section-header">❤️ Mass Health &amp; Weapons</div>
+
+    <div class="admin-action-grid">
+        <button class="admin-mass-btn admin-mass-btn--good" @onclick=@(() => Cmd( d => d.HealAll() ))>
+            <i>favorite</i>
+            <span>Heal All</span>
+        </button>
+        <button class="admin-mass-btn admin-mass-btn--neutral" @onclick=@ConfirmStripAll>
+            <i>sports_martial_arts</i>
+            <span>Strip All Weapons</span>
+        </button>
+    </div>
+
+    <!-- ── Mass Respawn / Slay ─────────────────────────────────── -->
+    <div class="section-header">💀 Mass Respawn / Slay</div>
+
+    <div class="admin-action-grid">
+        <button class="admin-mass-btn admin-mass-btn--good" @onclick=@(() => Cmd( d => d.RespawnAll() ))>
+            <i>restart_alt</i>
+            <span>Respawn All</span>
+        </button>
+        <button class="admin-mass-btn admin-mass-btn--danger" @onclick=@ConfirmSlayAll>
+            <i>skull</i>
+            <span>Slay All</span>
+        </button>
+    </div>
+
+</root>
+
+@code
+{
+    public override bool IsVisible() => Connection.Local.IsHost;
+
+    private AdminSystem Admin => AdminSystem.Current;
+
+    void Cmd( Action<AdminSystem> action )
+    {
+        if ( Admin is null ) return;
+        action( Admin );
+        StateHasChanged();
+    }
+
+    void ConfirmSlayAll()
+    {
+        var popup = new StringQueryPopup
+        {
+            Title = "Slay ALL Players",
+            Prompt = "Really slay every player on the server?",
+            ShowInput = false,
+            ConfirmLabel = "Slay All",
+            OnConfirm = _ => Cmd( d => d.SlayAll() )
+        };
+        popup.Parent = FindPopupPanel();
+    }
+
+    void ConfirmStripAll()
+    {
+        var popup = new StringQueryPopup
+        {
+            Title = "Strip All Weapons",
+            Prompt = "Remove all weapons from every player?",
+            ShowInput = false,
+            ConfirmLabel = "Strip All",
+            OnConfirm = _ => Cmd( d => d.StripAll() )
+        };
+        popup.Parent = FindPopupPanel();
+    }
+}
