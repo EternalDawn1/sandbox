@@ -1,0 +1,91 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits UtilityPage
+@namespace Sandbox
+
+@attribute [Icon( "admin_panel_settings" )]
+@attribute [Title( "Admin Menu" )]
+@attribute [Group( "Admin" )]
+@attribute [Order( 0 )]
+
+<root class="xgui-opener-page">
+    <div class="xgui-opener-card">
+        <label class="xgui-opener-icon">admin_panel_settings</label>
+        <label class="xgui-opener-title">ULX Admin Mod</label>
+        <label class="xgui-opener-sub">Server Administration Panel</label>
+        <button class="xgui-opener-btn" @onclick=@OpenAdminWindow>
+            <i>open_in_new</i>
+            Open Admin Panel
+        </button>
+    </div>
+</root>
+
+<style>
+.xgui-opener-page {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    flex-grow: 1;
+}
+
+.xgui-opener-card {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 30px 40px;
+    background-color: rgba(0,0,0,0.25);
+    border-radius: 8px;
+    border: 1px solid #2a4060;
+}
+
+.xgui-opener-icon {
+    font-family: 'Material Icons';
+    font-size: 48px;
+    color: #4d8fc0;
+    opacity: 0.8;
+}
+
+.xgui-opener-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #cde4f8;
+}
+
+.xgui-opener-sub {
+    font-size: 12px;
+    color: #6a8fa8;
+    margin-bottom: 12px;
+}
+
+.xgui-opener-btn {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    border-radius: 6px;
+    background-color: #1a4b7a;
+    color: #cde4f8;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    pointer-events: all;
+
+    i { font-size: 18px; }
+    &:hover { background-color: #2560a0; }
+}
+</style>
+
+@code
+{
+    public override bool IsVisible() => Connection.Local.IsHost;
+
+    void OpenAdminWindow()
+    {
+        // Only show one window at a time
+        if ( FindRootPanel()?.Descendants.OfType<AdminWindow>().Any() ?? false ) return;
+
+        var window = new AdminWindow();
+        window.Parent = FindPopupPanel();
+    }
+}

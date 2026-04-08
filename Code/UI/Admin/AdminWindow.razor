@@ -1,0 +1,553 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+@namespace Sandbox
+
+<root class="xgui-backdrop">
+
+    <div class="xgui-window" onclick:preventDefault=@true>
+
+        <!-- ══ Title Bar + Tabs ══════════════════════════════════ -->
+        <div class="xgui-titlebar">
+            <label class="xgui-title">⚙️ ULX Admin Mod :: XGUI</label>
+            <div class="xgui-tabbar">
+                @foreach ( var tab in _tabs )
+                {
+                    var t = tab;
+                    <div class="xgui-tab @( _activeTab == t ? "xgui-tab-active" : "" )"
+                         @onclick=@(() => SwitchTab( t ))>@t</div>
+                }
+            </div>
+            <div class="xgui-close-btn" @onclick=@OnClose><i>close</i></div>
+        </div>
+
+        <!-- ══ Body ═════════════════════════════════════════════ -->
+        <div class="xgui-body">
+
+            @* ── Cmds Tab ──────────────────────────────────────── *@
+            @if ( _activeTab == "Cmds" )
+            {
+                <div class="xgui-cmds-layout">
+
+                    <!-- Category list -->
+                    <div class="xgui-cat-panel">
+                        @foreach ( var kv in _cmdCategories )
+                        {
+                            var key = kv.Key;
+                            var label = kv.Value;
+                            <div class="xgui-cat-btn @( _selectedCat == key ? "active" : "" )"
+                                 @onclick=@(() => SelectCat( key ))>@label</div>
+                        }
+                    </div>
+
+                    <!-- Player list (only for player-targeted categories) -->
+                    @if ( _playerCats.Contains( _selectedCat ) )
+                    {
+                        <div class="xgui-player-panel">
+                            <div class="xgui-panel-header">Players</div>
+                            @foreach ( var pd in PlayerData.All.OrderBy( x => x.DisplayName ) )
+                            {
+                                var data = pd;
+                                <div class="xgui-player-row @( _selectedPlayerId == data.PlayerId ? "active" : "" )"
+                                     @onclick=@(() => _selectedPlayerId = data.PlayerId)>
+                                    <img class="xgui-mini-avatar" src="avatar:@data.SteamId" />
+                                    <div class="xgui-player-col">
+                                        <label class="xgui-player-name">@data.DisplayName</label>
+                                        <label class="xgui-player-group">@( data.IsMe ? "Host" : "Player" )</label>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <!-- Action area -->
+                    <div class="xgui-action-panel">
+
+                        @* ── Chat ─────────────────────────────── *@
+                        @if ( _selectedCat == "Chat" )
+                        {
+                            <div class="xgui-panel-header">Chat Commands</div>
+
+                            <div class="xgui-section-label">Broadcast to all (tsay)</div>
+                            <div class="xgui-input-row">
+                                <TextEntry class="xgui-input" Placeholder="Message to all players…" Value:bind=@_broadcastMsg />
+                                <button class="xgui-action-btn xgui-btn-confirm" @onclick=@DoBroadcast>
+                                    <i>send</i> Send
+                                </button>
+                            </div>
+
+                            <div class="xgui-section-label">Private Message (psay) — select player first</div>
+                            <div class="xgui-input-row">
+                                <TextEntry class="xgui-input" Placeholder="Private message…" Value:bind=@_privMsg />
+                                <button class="xgui-action-btn xgui-btn-confirm"
+                                        @onclick=@DoPrivMsg>
+                                    <i>mail</i> PSay
+                                </button>
+                            </div>
+                            @if ( _playerCats.Contains( _selectedCat ) && !_selectedPlayerId.HasValue )
+                            {  <div class="xgui-hint">← Select a player for PSay</div>  }
+                        }
+
+                        @* ── Fun ──────────────────────────────── *@
+                        @if ( _selectedCat == "Fun" )
+                        {
+                            <div class="xgui-panel-header">Fun — @SelectedName()</div>
+
+                            @if ( _selectedPlayerId.HasValue )
+                            {
+                                var pid  = _selectedPlayerId.Value;
+                                var pd   = PlayerData.For( pid );
+                                var plr  = Player.For( pid );
+                                var god  = pd?.IsGodMode ?? false;
+                                var frz  = pd?.IsFrozen ?? false;
+                                var nc   = plr.IsValid() && (plr.GetComponent<NoclipMoveMode>(true)?.Enabled ?? false);
+
+                                <button class="xgui-cmd-btn xgui-btn-danger"
+                                        @onclick=@(() => Exec( d => d.SlayPlayer( pid ) ))>
+                                    <i>skull</i> Slay
+                                </button>
+                                <button class="xgui-cmd-btn @(god ? "xgui-btn-active" : "")"
+                                        @onclick=@(() => Exec( d => d.ToggleGodMode( pid ) ))>
+                                    <i>auto_fix_high</i> God Mode  @(god ? "OFF" : "ON")
+                                </button>
+                                <button class="xgui-cmd-btn @(frz ? "xgui-btn-active" : "")"
+                                        @onclick=@(() => Exec( d => d.ToggleFreeze( pid ) ))>
+                                    <i>ac_unit</i> @(frz ? "Unfreeze" : "Freeze")
+                                </button>
+                                <button class="xgui-cmd-btn @(nc ? "xgui-btn-active" : "")"
+                                        @onclick=@(() => Exec( d => d.SetNoclip( pid, !nc ) ))>
+                                    <i>flight</i> Noclip @(nc ? "OFF" : "ON")
+                                </button>
+                                <button class="xgui-cmd-btn xgui-btn-good"
+                                        @onclick=@(() => Exec( d => d.HealFull( pid ) ))>
+                                    <i>favorite</i> Heal
+                                </button>
+                                <button class="xgui-cmd-btn xgui-btn-good"
+                                        @onclick=@(() => Exec( d => d.GiveArmour( pid ) ))>
+                                    <i>shield</i> Give Armour
+                                </button>
+                                <button class="xgui-cmd-btn"
+                                        @onclick=@(() => Exec( d => d.RespawnPlayer( pid ) ))>
+                                    <i>restart_alt</i> Respawn
+                                </button>
+                                <button class="xgui-cmd-btn xgui-btn-warn"
+                                        @onclick=@(() => Exec( d => d.StripWeapons( pid ) ))>
+                                    <i>sports_martial_arts</i> Strip Weapons
+                                </button>
+                            }
+                            else
+                            {  <div class="xgui-hint">← Select a player first</div>  }
+                        }
+
+                        @* ── Teleport ─────────────────────────── *@
+                        @if ( _selectedCat == "Teleport" )
+                        {
+                            <div class="xgui-panel-header">Teleport — @SelectedName()</div>
+
+                            @if ( _selectedPlayerId.HasValue )
+                            {
+                                var pid = _selectedPlayerId.Value;
+                                <button class="xgui-cmd-btn xgui-btn-info"
+                                        @onclick=@(() => Exec( d => d.TeleportAdminToPlayer( pid ) ))>
+                                    <i>near_me</i> Goto Player
+                                </button>
+                                <button class="xgui-cmd-btn xgui-btn-info"
+                                        @onclick=@(() => Exec( d => d.TeleportToAdmin( pid ) ))>
+                                    <i>move_up</i> Bring to Me
+                                </button>
+                            }
+                            else
+                            {  <div class="xgui-hint">← Select a player first</div>  }
+                        }
+
+                        @* ── User Management ──────────────────── *@
+                        @if ( _selectedCat == "UserMgmt" )
+                        {
+                            <div class="xgui-panel-header">User Management — @SelectedName()</div>
+
+                            @if ( _selectedPlayerId.HasValue )
+                            {
+                                var pid   = _selectedPlayerId.Value;
+                                var pname = PlayerData.For( pid )?.DisplayName ?? "?";
+                                var isSelf = PlayerData.For( pid )?.IsMe ?? false;
+
+                                @if ( !isSelf )
+                                {
+                                    <button class="xgui-cmd-btn xgui-btn-warn"
+                                            @onclick=@(() => OpenKickDialog( pid, pname ))>
+                                        <i>sports_soccer</i> Kick
+                                    </button>
+                                    <button class="xgui-cmd-btn xgui-btn-danger"
+                                            @onclick=@(() => OpenBanDialog( pid, pname ))>
+                                        <i>gavel</i> Ban
+                                    </button>
+                                }
+                                else
+                                {  <div class="xgui-hint">Cannot manage yourself.</div>  }
+                            }
+                            else
+                            {  <div class="xgui-hint">← Select a player first</div>  }
+                        }
+
+                        @* ── Utility ──────────────────────────── *@
+                        @if ( _selectedCat == "Utility" )
+                        {
+                            <div class="xgui-panel-header">Utility — Mass Actions</div>
+
+                            <div class="xgui-section-label">Health</div>
+                            <button class="xgui-cmd-btn xgui-btn-good"
+                                    @onclick=@(() => Exec( d => d.HealAll() ))>
+                                <i>favorite</i> Heal All
+                            </button>
+                            <button class="xgui-cmd-btn"
+                                    @onclick=@(() => Exec( d => d.RespawnAll() ))>
+                                <i>restart_alt</i> Respawn All
+                            </button>
+
+                            <div class="xgui-section-label">Weapons</div>
+                            <button class="xgui-cmd-btn xgui-btn-warn"
+                                    @onclick=@ConfirmStripAll>
+                                <i>sports_martial_arts</i> Strip All Weapons
+                            </button>
+
+                            <div class="xgui-section-label">Kill</div>
+                            <button class="xgui-cmd-btn xgui-btn-danger"
+                                    @onclick=@ConfirmSlayAll>
+                                <i>skull</i> Slay All
+                            </button>
+
+                            <div class="xgui-section-label">God Mode</div>
+                            <button class="xgui-cmd-btn"
+                                    @onclick=@(() => Exec( d => d.SetGodAll(true) ))>
+                                <i>auto_fix_high</i> God All ON
+                            </button>
+                            <button class="xgui-cmd-btn"
+                                    @onclick=@(() => Exec( d => d.SetGodAll(false) ))>
+                                <i>auto_fix_off</i> God All OFF
+                            </button>
+
+                            <div class="xgui-section-label">Freeze</div>
+                            <button class="xgui-cmd-btn"
+                                    @onclick=@(() => Exec( d => d.FreezeAll(true) ))>
+                                <i>ac_unit</i> Freeze All
+                            </button>
+                            <button class="xgui-cmd-btn"
+                                    @onclick=@(() => Exec( d => d.FreezeAll(false) ))>
+                                <i>local_fire_department</i> Unfreeze All
+                            </button>
+
+                            <div class="xgui-section-label">Noclip</div>
+                            <button class="xgui-cmd-btn"
+                                    @onclick=@(() => Exec( d => d.SetNoclipAll(true) ))>
+                                <i>flight</i> Noclip All ON
+                            </button>
+                            <button class="xgui-cmd-btn"
+                                    @onclick=@(() => Exec( d => d.SetNoclipAll(false) ))>
+                                <i>flight_land</i> Noclip All OFF
+                            </button>
+                        }
+
+                    </div><!-- /xgui-action-panel -->
+
+                </div><!-- /xgui-cmds-layout -->
+            }
+
+            @* ── Groups Tab ─────────────────────────────────────── *@
+            @if ( _activeTab == "Groups" )
+            {
+                <div class="xgui-groups-layout">
+                    <div class="xgui-panel-header">Connected Players</div>
+                    @foreach ( var pd in PlayerData.All.OrderBy( x => x.DisplayName ) )
+                    {
+                        var data = pd;
+                        <div class="xgui-group-row">
+                            <img class="xgui-mini-avatar" src="avatar:@data.SteamId" />
+                            <label class="xgui-player-name">@data.DisplayName</label>
+                            <span class="xgui-group-badge @( data.IsMe ? "badge-host" : "badge-member" )">
+                                @( data.IsMe ? "Host" : "Player" )
+                            </span>
+                            <label class="xgui-player-meta">
+                                SteamID: @data.SteamId  &nbsp;|&nbsp;
+                                Kills: @data.Kills  &nbsp;|&nbsp;
+                                Deaths: @data.Deaths  &nbsp;|&nbsp;
+                                Ping: @((int)data.Ping)ms
+                            </label>
+                        </div>
+                    }
+                </div>
+            }
+
+            @* ── Maps Tab ────────────────────────────────────────── *@
+            @if ( _activeTab == "Maps" )
+            {
+                <div class="xgui-maps-layout">
+                    <div class="xgui-panel-header">Map Management</div>
+                    <div class="xgui-section-label">Change Map</div>
+                    <div class="xgui-input-row">
+                        <TextEntry class="xgui-input" Placeholder="Map ident (e.g. facepunch.flatgrass)" Value:bind=@_mapInput />
+                        <button class="xgui-action-btn xgui-btn-confirm" @onclick=@DoChangeMap>
+                            <i>map</i> Change
+                        </button>
+                    </div>
+                </div>
+            }
+
+            @* ── Settings Tab ────────────────────────────────────── *@
+            @if ( _activeTab == "Settings" )
+            {
+                <div class="xgui-settings-layout">
+                    <div class="xgui-panel-header">Physics</div>
+
+                    <div class="xgui-setting-row">
+                        <label class="xgui-setting-label">Gravity Scale</label>
+                        <div class="xgui-input-row">
+                            <button class="xgui-step-btn" @onclick=@(() => StepGravity(-0.1f))><i>remove</i></button>
+                            <TextEntry class="xgui-num-input" Placeholder="1.00" Value:bind=@_gravityStr />
+                            <button class="xgui-step-btn" @onclick=@(() => StepGravity(0.1f))><i>add</i></button>
+                            <button class="xgui-action-btn xgui-btn-confirm" @onclick=@ApplyGravity><i>check</i></button>
+                            <button class="xgui-action-btn xgui-btn-reset"   @onclick=@ResetGravity><i>restart_alt</i></button>
+                        </div>
+                    </div>
+                    <div class="xgui-preset-row">
+                        <button class="xgui-preset-btn" @onclick=@(() => SetGravityPreset( 0f    ))>Zero-G</button>
+                        <button class="xgui-preset-btn" @onclick=@(() => SetGravityPreset( 0.1f  ))>Moon</button>
+                        <button class="xgui-preset-btn" @onclick=@(() => SetGravityPreset( 0.38f ))>Mars</button>
+                        <button class="xgui-preset-btn" @onclick=@(() => SetGravityPreset( 1.0f  ))>Normal</button>
+                        <button class="xgui-preset-btn" @onclick=@(() => SetGravityPreset( 2.0f  ))>Heavy</button>
+                        <button class="xgui-preset-btn" @onclick=@(() => SetGravityPreset( -1.0f ))>Reverse</button>
+                    </div>
+
+                    <div class="xgui-panel-header">Timescale</div>
+
+                    <div class="xgui-setting-row">
+                        <label class="xgui-setting-label">Time Scale</label>
+                        <div class="xgui-input-row">
+                            <button class="xgui-step-btn" @onclick=@(() => StepTimescale(-0.1f))><i>remove</i></button>
+                            <TextEntry class="xgui-num-input" Placeholder="1.00" Value:bind=@_timescaleStr />
+                            <button class="xgui-step-btn" @onclick=@(() => StepTimescale(0.1f))><i>add</i></button>
+                            <button class="xgui-action-btn xgui-btn-confirm" @onclick=@ApplyTimescale><i>check</i></button>
+                            <button class="xgui-action-btn xgui-btn-reset"   @onclick=@ResetTimescale><i>restart_alt</i></button>
+                        </div>
+                    </div>
+                    <div class="xgui-preset-row">
+                        <button class="xgui-preset-btn" @onclick=@(() => SetTimescalePreset( 0.1f  ))>0.1×</button>
+                        <button class="xgui-preset-btn" @onclick=@(() => SetTimescalePreset( 0.25f ))>0.25×</button>
+                        <button class="xgui-preset-btn" @onclick=@(() => SetTimescalePreset( 0.5f  ))>0.5×</button>
+                        <button class="xgui-preset-btn" @onclick=@(() => SetTimescalePreset( 1.0f  ))>Normal</button>
+                        <button class="xgui-preset-btn" @onclick=@(() => SetTimescalePreset( 2.0f  ))>2×</button>
+                        <button class="xgui-preset-btn" @onclick=@(() => SetTimescalePreset( 5.0f  ))>5×</button>
+                    </div>
+                </div>
+            }
+
+            @* ── Bans Tab ─────────────────────────────────────────── *@
+            @if ( _activeTab == "Bans" )
+            {
+                var bans = BanSystem.Current?.GetBannedList();
+                <div class="xgui-bans-layout">
+
+                    <div class="xgui-bans-toolbar">
+                        <div class="xgui-panel-header" style="flex-grow: 1;">
+                            Ban List &nbsp;
+                            <span class="xgui-badge-count">@( bans?.Count ?? 0 )</span>
+                        </div>
+                        <button class="xgui-action-btn xgui-btn-danger" @onclick=@OpenManualBanDialog>
+                            <i>person_add_disabled</i> Add Ban
+                        </button>
+                    </div>
+
+                    @if ( bans is null || bans.Count == 0 )
+                    {
+                        <div class="xgui-empty">No bans on record.</div>
+                    }
+                    else
+                    {
+                        <div class="xgui-ban-header-row">
+                            <span style="width:34px; flex-shrink:0;"></span>
+                            <span class="xgui-ban-col-name">Name / Steam ID</span>
+                            <span class="xgui-ban-col-reason">Reason</span>
+                            <span style="width:70px; flex-shrink:0;"></span>
+                        </div>
+                        @foreach ( var (steamId, entry) in bans )
+                        {
+                            var sid = steamId;
+                            var e = entry;
+                            <div class="xgui-ban-row">
+                                <img class="xgui-mini-avatar" src="avatar:@sid" />
+                                <div class="xgui-ban-info">
+                                    <label class="xgui-player-name">@e.DisplayName</label>
+                                    <label class="xgui-player-meta">@sid</label>
+                                </div>
+                                <label class="xgui-ban-reason">@e.Reason</label>
+                                <button class="xgui-action-btn xgui-btn-confirm"
+                                        @onclick=@(() => DoUnban( sid ))>
+                                    <i>person_add</i> Unban
+                                </button>
+                            </div>
+                        }
+                    }
+
+                </div>
+            }
+
+        </div><!-- /xgui-body -->
+
+        <!-- ══ Status Bar ══════════════════════════════════════════ -->
+        <div class="xgui-statusbar">
+            <label>ULX Admin Mod :: XGUI</label>
+            <span class="xgui-status-sep">|</span>
+            <label>v1.0</label>
+            <span class="xgui-status-sep">|</span>
+            <label>@Connection.Local.DisplayName</label>
+        </div>
+
+    </div><!-- /xgui-window -->
+
+</root>
+
+@code
+{
+    // ── Tabs ──────────────────────────────────────────────────────
+    static readonly string[] _tabs = { "Cmds", "Groups", "Maps", "Settings", "Bans" };
+    string _activeTab = "Cmds";
+    void SwitchTab( string tab ) { _activeTab = tab; _selectedPlayerId = null; StateHasChanged(); }
+
+    // ── Cmd categories ────────────────────────────────────────────
+    static readonly Dictionary<string, string> _cmdCategories = new()
+    {
+        { "Chat",     "Chat"            },
+        { "Fun",      "Fun"             },
+        { "Teleport", "Teleport"        },
+        { "UserMgmt", "User Management" },
+        { "Utility",  "Utility"         },
+    };
+    static readonly HashSet<string> _playerCats = new() { "Chat", "Fun", "Teleport", "UserMgmt" };
+
+    string _selectedCat = "Fun";
+    Guid?  _selectedPlayerId = null;
+
+    void SelectCat( string cat ) { _selectedCat = cat; _selectedPlayerId = null; StateHasChanged(); }
+    string SelectedName() => _selectedPlayerId.HasValue
+        ? PlayerData.For( _selectedPlayerId.Value )?.DisplayName ?? "?"
+        : "(select player)";
+
+    // ── Chat ──────────────────────────────────────────────────────
+    string _broadcastMsg = "";
+    string _privMsg = "";
+
+    void DoBroadcast()
+    {
+        if ( string.IsNullOrWhiteSpace( _broadcastMsg ) ) return;
+        AdminSystem.Current?.BroadcastMessage( _broadcastMsg.Trim() );
+        _broadcastMsg = "";
+        StateHasChanged();
+    }
+
+    void DoPrivMsg()
+    {
+        if ( !_selectedPlayerId.HasValue || string.IsNullOrWhiteSpace( _privMsg ) ) return;
+        var target = PlayerData.For( _selectedPlayerId.Value );
+        if ( target is null ) return;
+        Game.ActiveScene.Get<Chat>()?.AddSystemText( $"[Admin → {target.DisplayName}] {_privMsg.Trim()}", "📨" );
+        _privMsg = "";
+        StateHasChanged();
+    }
+
+    // ── Admin helper ──────────────────────────────────────────────
+    AdminSystem Admin => AdminSystem.Current;
+    void Exec( Action<AdminSystem> action ) { if (Admin != null) action( Admin ); StateHasChanged(); }
+
+    // ── Confirm dialogs ───────────────────────────────────────────
+    void OpenKickDialog( Guid pid, string name )
+    {
+        var p = new StringQueryPopup
+        {
+            Title = $"Kick {name}", Prompt = "Reason:", Placeholder = "Kicked by admin",
+            ConfirmLabel = "Kick",
+            OnConfirm = r => Exec( d => d.KickPlayer( pid, string.IsNullOrWhiteSpace(r) ? "Kicked by admin" : r ) )
+        };
+        p.Parent = FindPopupPanel();
+    }
+
+    void OpenBanDialog( Guid pid, string name )
+    {
+        var p = new StringQueryPopup
+        {
+            Title = $"Ban {name}", Prompt = "Reason:", Placeholder = "Banned by admin",
+            ConfirmLabel = "Ban",
+            OnConfirm = r => Exec( d => d.BanPlayer( pid, string.IsNullOrWhiteSpace(r) ? "Banned by admin" : r ) )
+        };
+        p.Parent = FindPopupPanel();
+    }
+
+    void ConfirmSlayAll()
+    {
+        var p = new StringQueryPopup { Title = "Slay ALL", Prompt = "Kill every player?", ShowInput = false, ConfirmLabel = "Slay All", OnConfirm = _ => Exec( d => d.SlayAll() ) };
+        p.Parent = FindPopupPanel();
+    }
+
+    void ConfirmStripAll()
+    {
+        var p = new StringQueryPopup { Title = "Strip All Weapons", Prompt = "Remove weapons from everyone?", ShowInput = false, ConfirmLabel = "Strip All", OnConfirm = _ => Exec( d => d.StripAll() ) };
+        p.Parent = FindPopupPanel();
+    }
+
+    // ── Maps ──────────────────────────────────────────────────────
+    string _mapInput = "";
+    void DoChangeMap() { if ( !string.IsNullOrWhiteSpace( _mapInput ) ) Admin?.ChangeMap( _mapInput.Trim() ); }
+
+    // ── Bans ──────────────────────────────────────────────────────
+    void DoUnban( SteamId sid ) { BanSystem.Current?.Unban( sid ); StateHasChanged(); }
+
+    void OpenManualBanDialog()
+    {
+        var p = new StringQueryPopup
+        {
+            Title = "Add Manual Ban", Prompt = "Enter SteamID64:", Placeholder = "76561198xxxxxxxxx",
+            ConfirmLabel = "Ban",
+            OnConfirm = s =>
+            {
+                if ( ulong.TryParse( s.Trim(), out var sid ) )
+                    BanSystem.Current?.Ban( sid, "Manually banned by admin" );
+                StateHasChanged();
+            }
+        };
+        p.Parent = FindPopupPanel();
+    }
+
+    // ── Settings ──────────────────────────────────────────────────
+    string _gravityStr  = "1.00";
+    string _timescaleStr = "1.00";
+
+    float ParseF( string s, float fb ) =>
+        float.TryParse( s, System.Globalization.NumberStyles.Float,
+            System.Globalization.CultureInfo.InvariantCulture, out var v ) ? v : fb;
+
+    void StepGravity( float d )   => _gravityStr   = MathF.Round( Math.Clamp( ParseF(_gravityStr,  1f)+d, -3f, 5f  ), 2 ).ToString("F2");
+    void StepTimescale( float d ) => _timescaleStr  = MathF.Round( Math.Clamp( ParseF(_timescaleStr,1f)+d, 0.1f,5f ), 2 ).ToString("F2");
+
+    void ApplyGravity()    => Admin?.SetGravityScale( ParseF(_gravityStr, 1f) );
+    void ResetGravity()    { _gravityStr  = "1.00"; Admin?.SetGravityScale( 1f ); }
+    void ApplyTimescale()  => Admin?.SetTimescale( ParseF(_timescaleStr, 1f) );
+    void ResetTimescale()  { _timescaleStr = "1.00"; Admin?.SetTimescale( 1f ); }
+
+    void SetGravityPreset( float v )   { _gravityStr  = v.ToString("F2"); Admin?.SetGravityScale( v ); }
+    void SetTimescalePreset( float v ) { _timescaleStr = v.ToString("F2"); Admin?.SetTimescale( v ); }
+
+    // ── Lifecycle ─────────────────────────────────────────────────
+    protected override void OnAfterTreeRender( bool firstTime )
+    {
+        if ( !firstTime ) return;
+        var g = Game.ActiveScene?.PhysicsWorld?.Gravity ?? new Vector3( 0, 0, -800f );
+        _gravityStr  = (-g.z / 800f).ToString("F2");
+        _timescaleStr = (Game.ActiveScene?.TimeScale ?? 1f).ToString("F2");
+    }
+
+    protected override void OnMouseDown( MousePanelEvent e )
+    {
+        base.OnMouseDown( e );
+        if ( e.Target == this ) OnClose();
+    }
+
+    void OnClose() => Delete();
+}

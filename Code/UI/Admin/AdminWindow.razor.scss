@@ -1,0 +1,494 @@
+// ── XGUI colour palette ──────────────────────────────────────────
+$xg-bg:        #1e2a35;
+$xg-panel:     #172030;
+$xg-border:    #2a4060;
+$xg-titlebar:  #0a1520;
+$xg-tabbar:    #0e1d2e;
+$xg-tab-hover: #1e3350;
+$xg-tab-act:   #1a4b7a;
+$xg-accent:    #4d8fc0;
+$xg-text:      #cde4f8;
+$xg-text-dim:  #6a8fa8;
+$xg-green:     #27ae60;
+$xg-red:       #c0392b;
+$xg-yellow:    #d68910;
+$xg-cyan:      #1abc9c;
+
+// ── Backdrop ─────────────────────────────────────────────────────
+.xgui-backdrop {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    background-color: #00000088;
+    backdrop-filter: blur(4px);
+    z-index: 99000;
+    align-items: center;
+    justify-content: center;
+    pointer-events: all;
+}
+
+// ── Main Window ──────────────────────────────────────────────────
+.xgui-window {
+    width: 640px;
+    height: 520px;
+    flex-direction: column;
+    background-color: $xg-bg;
+    border: 1px solid $xg-border;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px #000000cc;
+    overflow: hidden;
+}
+
+// ── Title Bar ────────────────────────────────────────────────────
+.xgui-titlebar {
+    flex-direction: row;
+    align-items: center;
+    background-color: $xg-titlebar;
+    border-bottom: 1px solid $xg-border;
+    height: 38px;
+    padding: 0 6px 0 12px;
+    flex-shrink: 0;
+    gap: 0;
+}
+
+.xgui-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: $xg-accent;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.xgui-tabbar {
+    flex-direction: row;
+    flex-grow: 1;
+    height: 100%;
+    gap: 1px;
+    align-items: stretch;
+}
+
+.xgui-tab {
+    padding: 0 16px;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: $xg-text-dim;
+    cursor: pointer;
+    pointer-events: all;
+    border-bottom: 2px solid transparent;
+
+    &:hover {
+        background-color: $xg-tab-hover;
+        color: $xg-text;
+    }
+}
+
+.xgui-tab-active {
+    background-color: $xg-tab-act;
+    color: $xg-text;
+    border-bottom: 2px solid $xg-accent;
+}
+
+.xgui-close-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 3px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    pointer-events: all;
+    color: $xg-text-dim;
+    flex-shrink: 0;
+
+    i { font-size: 18px; }
+
+    &:hover {
+        background-color: rgba($xg-red, 0.6);
+        color: #ffffff;
+    }
+}
+
+// ── Body ─────────────────────────────────────────────────────────
+.xgui-body {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+// ── Status Bar ───────────────────────────────────────────────────
+.xgui-statusbar {
+    flex-direction: row;
+    flex-shrink: 0;
+    background-color: $xg-titlebar;
+    border-top: 1px solid $xg-border;
+    padding: 4px 12px;
+    gap: 6px;
+    align-items: center;
+    font-size: 10px;
+    color: $xg-text-dim;
+}
+
+.xgui-status-sep { opacity: 0.4; }
+
+// ── Shared ───────────────────────────────────────────────────────
+.xgui-panel-header {
+    font-size: 11px;
+    font-weight: 700;
+    color: $xg-accent;
+    padding: 6px 10px;
+    background-color: $xg-tabbar;
+    border-bottom: 1px solid $xg-border;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+}
+
+.xgui-badge-count {
+    background-color: rgba($xg-accent, 0.25);
+    color: $xg-accent;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+}
+
+.xgui-empty, .xgui-hint {
+    padding: 30px 20px;
+    opacity: 0.4;
+    font-size: 12px;
+    color: $xg-text-dim;
+    align-items: center;
+    justify-content: center;
+    font-style: italic;
+}
+
+.xgui-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: $xg-text-dim;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 8px 10px 2px 10px;
+    flex-shrink: 0;
+}
+
+// ── Cmds layout ──────────────────────────────────────────────────
+.xgui-cmds-layout {
+    flex-direction: row;
+    height: 100%;
+}
+
+// Category sidebar
+.xgui-cat-panel {
+    width: 145px;
+    flex-shrink: 0;
+    flex-direction: column;
+    background-color: $xg-panel;
+    border-right: 1px solid $xg-border;
+    padding: 4px 0;
+    overflow-y: scroll;
+}
+
+.xgui-cat-btn {
+    padding: 8px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #aac4df;
+    cursor: pointer;
+    pointer-events: all;
+    background-color: rgba(#4a92c5, 0.2);
+    border-left: 3px solid #4a92c5;
+    margin: 2px 5px;
+    border-radius: 2px;
+
+    &:hover {
+        background-color: rgba(#4a92c5, 0.35);
+        color: #ffffff;
+    }
+
+    &.active {
+        background-color: #4a92c5;
+        color: #ffffff;
+        border-left-color: #ffffff;
+    }
+}
+
+// Player list
+.xgui-player-panel {
+    width: 155px;
+    flex-shrink: 0;
+    flex-direction: column;
+    background-color: #14202e;
+    border-right: 1px solid $xg-border;
+    overflow-y: scroll;
+}
+
+.xgui-player-row {
+    flex-direction: row;
+    align-items: center;
+    padding: 5px 8px;
+    gap: 7px;
+    cursor: pointer;
+    pointer-events: all;
+
+    &:hover  { background-color: #1e3350; }
+    &.active { background-color: #1a4b7a; }
+}
+
+// Action area
+.xgui-action-panel {
+    flex-grow: 1;
+    flex-direction: column;
+    background-color: $xg-bg;
+    overflow-y: scroll;
+    min-width: 0;
+}
+
+// ── Player meta ──────────────────────────────────────────────────
+.xgui-mini-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.xgui-player-col {
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 0;
+    justify-content: center;
+}
+
+.xgui-player-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: $xg-text;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.xgui-player-group {
+    font-size: 10px;
+    color: $xg-text-dim;
+}
+
+.xgui-player-meta {
+    font-size: 10px;
+    color: $xg-text-dim;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+// ── Command buttons ───────────────────────────────────────────────
+.xgui-cmd-btn {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    margin: 2px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    pointer-events: all;
+    font-size: 12px;
+    font-weight: 600;
+    color: $xg-text;
+    background-color: rgba(#ffffff, 0.05);
+    flex-shrink: 0;
+
+    i { font-size: 16px; color: $xg-text-dim; }
+    &:hover { background-color: rgba(#ffffff, 0.10); }
+}
+
+.xgui-btn-danger  { background-color: rgba($xg-red,    0.16); i { color: #e74c3c; } &:hover { background-color: rgba($xg-red,    0.30); } }
+.xgui-btn-good    { background-color: rgba($xg-green,  0.16); i { color: #2ecc71; } &:hover { background-color: rgba($xg-green,  0.30); } }
+.xgui-btn-warn    { background-color: rgba($xg-yellow, 0.16); i { color: #f1c40f; } &:hover { background-color: rgba($xg-yellow, 0.30); } }
+.xgui-btn-info    { background-color: rgba($xg-cyan,   0.16); i { color: $xg-cyan; } &:hover { background-color: rgba($xg-cyan,  0.30); } }
+.xgui-btn-active  { background-color: rgba($xg-accent, 0.25); i { color: $xg-accent; } &:hover { background-color: rgba($xg-accent, 0.40); } }
+.xgui-btn-confirm { flex-direction: row; align-items: center; gap: 5px; background-color: rgba($xg-accent, 0.18); color: $xg-accent; padding: 5px 10px; border-radius: 4px; cursor: pointer; pointer-events: all; font-size: 12px; font-weight: 600; flex-shrink: 0; i { font-size: 14px; } &:hover { background-color: rgba($xg-accent, 0.35); } }
+.xgui-btn-reset   { flex-direction: row; align-items: center; gap: 5px; background-color: rgba(#ffffff, 0.08); color: $xg-text-dim; padding: 5px 8px; border-radius: 4px; cursor: pointer; pointer-events: all; font-size: 12px; flex-shrink: 0; i { font-size: 14px; } &:hover { background-color: rgba(#ffffff, 0.15); } }
+
+// ── Input rows ────────────────────────────────────────────────────
+.xgui-input-row {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+}
+
+.xgui-input {
+    flex-grow: 1;
+    background-color: rgba(#ffffff, 0.06);
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: $xg-text;
+    border: 1px solid $xg-border;
+    min-width: 0;
+}
+
+.xgui-step-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    pointer-events: all;
+    background-color: rgba(#ffffff, 0.08);
+    color: $xg-text-dim;
+    flex-shrink: 0;
+
+    i { font-size: 14px; }
+    &:hover { background-color: rgba($xg-accent, 0.3); color: $xg-accent; }
+}
+
+.xgui-num-input {
+    width: 65px;
+    flex-shrink: 0;
+    background-color: rgba(#ffffff, 0.06);
+    padding: 5px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: $xg-text;
+    border: 1px solid $xg-border;
+}
+
+// ── Groups Tab ───────────────────────────────────────────────────
+.xgui-groups-layout {
+    flex-direction: column;
+    overflow-y: scroll;
+    padding: 4px 8px;
+    gap: 2px;
+}
+
+.xgui-group-row {
+    flex-direction: row;
+    align-items: center;
+    padding: 6px 10px;
+    gap: 10px;
+    border-radius: 4px;
+    background-color: rgba(#ffffff, 0.04);
+
+    &:hover { background-color: rgba(#ffffff, 0.08); }
+}
+
+.xgui-group-badge {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+}
+
+.badge-host   { background-color: rgba($xg-accent, 0.25); color: $xg-accent; }
+.badge-member { background-color: rgba(#ffffff,    0.10); color: $xg-text-dim; }
+
+// ── Maps Tab ─────────────────────────────────────────────────────
+.xgui-maps-layout {
+    flex-direction: column;
+    gap: 4px;
+    padding: 4px 0;
+}
+
+// ── Settings Tab ─────────────────────────────────────────────────
+.xgui-settings-layout {
+    flex-direction: column;
+    overflow-y: scroll;
+    padding: 4px 0;
+}
+
+.xgui-setting-row {
+    flex-direction: row;
+    align-items: center;
+    padding: 4px 10px;
+    gap: 10px;
+}
+
+.xgui-setting-label {
+    font-size: 12px;
+    color: $xg-text;
+    width: 90px;
+    flex-shrink: 0;
+}
+
+.xgui-preset-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px 10px 10px 10px;
+}
+
+.xgui-preset-btn {
+    padding: 4px 11px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    pointer-events: all;
+    background-color: rgba(#ffffff, 0.07);
+    color: $xg-text-dim;
+
+    &:hover { background-color: rgba($xg-accent, 0.22); color: $xg-accent; }
+}
+
+// ── Bans Tab ─────────────────────────────────────────────────────
+.xgui-bans-layout {
+    flex-direction: column;
+    overflow-y: scroll;
+}
+
+.xgui-bans-toolbar {
+    flex-direction: row;
+    align-items: center;
+    padding: 0 8px 0 0;
+    flex-shrink: 0;
+}
+
+.xgui-ban-header-row {
+    flex-direction: row;
+    padding: 4px 10px;
+    gap: 8px;
+    background-color: $xg-tabbar;
+    border-bottom: 1px solid $xg-border;
+    font-size: 10px;
+    font-weight: 700;
+    color: $xg-text-dim;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+    align-items: center;
+}
+
+.xgui-ban-col-name   { width: 160px; flex-shrink: 0; }
+.xgui-ban-col-reason { flex-grow: 1; }
+
+.xgui-ban-row {
+    flex-direction: row;
+    align-items: center;
+    padding: 6px 10px;
+    gap: 8px;
+    border-bottom: 1px solid rgba(#ffffff, 0.05);
+    flex-shrink: 0;
+
+    &:hover { background-color: rgba(#ffffff, 0.04); }
+}
+
+.xgui-ban-info {
+    width: 160px;
+    flex-shrink: 0;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+}
+
+.xgui-ban-reason {
+    flex-grow: 1;
+    font-size: 11px;
+    color: $xg-text-dim;
+    font-style: italic;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
