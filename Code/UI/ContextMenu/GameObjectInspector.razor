@@ -242,7 +242,9 @@
         var mat = accessor.HasOverride(index) ? accessor.GetOverride(index) : accessor.GetOriginal(index);
 
         var popup = new ResourceSelectPopup();
-        popup.Extension = "material";
+        popup.Title = "Select Material";
+        popup.Extension = "vmat";
+        popup.PackageType = "material";
         popup.CurrentValue = mat?.ResourcePath;
         popup.AllowPackages = true;
         popup.Parent = FindPopupPanel();

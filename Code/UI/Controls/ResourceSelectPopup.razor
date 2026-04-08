@@ -70,6 +70,7 @@
 {
     public string Title { get; set; } = "Select Resource";
     public string Extension { get; set; } = "vmdl";
+    public string PackageType { get; set; }
     public string CurrentValue { get; set; }
     public bool AllowPackages { get; set; }
     public Action<string> OnSelectedFile;
@@ -113,7 +114,11 @@
 
     async Task LoadCloudPackages()
     {
-        var query = $"sort:{SortMode.ToIdentifier()} type:{Extension}";
+        var packageType = string.IsNullOrWhiteSpace( PackageType ) ? Extension : PackageType;
+        if ( string.IsNullOrWhiteSpace( packageType ) )
+            return;
+
+        var query = $"sort:{SortMode.ToIdentifier()} type:{packageType}";
 
         var result = await Package.FindAsync( query );
 

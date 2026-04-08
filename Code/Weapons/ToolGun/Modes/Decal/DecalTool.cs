@@ -26,11 +26,6 @@ public class DecalTool : ToolMode
 		var resource = ResourceLibrary.Get<DecalDefinition>( Decal );
 		if ( resource == null ) return;
 
-		var def = Decal;
-		if ( def == null ) return;
-
-		var pos = select.WorldTransform();
-
 		if ( Input.Pressed( "attack1" ) )
 		{
 			SpawnDecal( select, resource );
@@ -49,7 +44,6 @@ public class DecalTool : ToolMode
 	public void SpawnDecal( SelectionPoint point, DecalDefinition def )
 	{
 		if ( def == null ) return;
-
 		var pos = point.WorldTransform();
 
 		var go = new GameObject( true, "decal" );
