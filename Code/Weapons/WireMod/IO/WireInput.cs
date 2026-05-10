@@ -1,3 +1,4 @@
+[Group("IO Inputs")]
 [Alias( "wire_input_button" )]
 public class WireInputButton : WireComponent, IPlayerControllable
 {
@@ -20,6 +21,7 @@ public class WireInputButton : WireComponent, IPlayerControllable
 	}
 }
 
+[Group("IO Inputs")]
 [Alias( "wire_input_lever" )]
 public class WireInputLever : WireComponent, IPlayerControllable
 {
@@ -46,6 +48,7 @@ public class WireInputLever : WireComponent, IPlayerControllable
 	}
 }
 
+[Group("IO Inputs")]
 [Alias( "wire_input_keypad" )]
 public class WireInputKeypad : WireComponent
 {
@@ -103,6 +106,7 @@ public class WireInputKeypad : WireComponent
 	}
 }
 
+[Group("IO Inputs")]
 [Alias( "wire_input_constant" )]
 public class WireInputConstant : WireComponent
 {
@@ -120,6 +124,7 @@ public class WireInputConstant : WireComponent
 	}
 }
 
+[Group("IO Inputs")]
 [Alias( "wire_input_toggle" )]
 public class WireInputToggleSwitch : WireComponent, IPlayerControllable
 {

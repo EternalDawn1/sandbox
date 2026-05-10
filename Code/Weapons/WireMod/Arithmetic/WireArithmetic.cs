@@ -1,3 +1,4 @@
+[Group("Arithmetic")]
 [Alias( "wire_arithmetic_add" )]
 public class WireArithmeticAdd : WireComponent
 {
@@ -16,6 +17,7 @@ public class WireArithmeticAdd : WireComponent
 	}
 }
 
+[Group("Arithmetic")]
 [Alias( "wire_arithmetic_sub" )]
 public class WireArithmeticSub : WireComponent
 {
@@ -34,6 +36,7 @@ public class WireArithmeticSub : WireComponent
 	}
 }
 
+[Group("Arithmetic")]
 [Alias( "wire_arithmetic_mul" )]
 public class WireArithmeticMul : WireComponent
 {
@@ -52,6 +55,7 @@ public class WireArithmeticMul : WireComponent
 	}
 }
 
+[Group("Arithmetic")]
 [Alias( "wire_arithmetic_div" )]
 public class WireArithmeticDiv : WireComponent
 {
@@ -70,6 +74,7 @@ public class WireArithmeticDiv : WireComponent
 	}
 }
 
+[Group("Arithmetic")]
 [Alias( "wire_arithmetic_mod" )]
 public class WireArithmeticMod : WireComponent
 {
@@ -88,6 +93,7 @@ public class WireArithmeticMod : WireComponent
 	}
 }
 
+[Group("Arithmetic")]
 [Alias( "wire_arithmetic_abs" )]
 public class WireArithmeticAbs : WireComponent
 {
@@ -104,6 +110,7 @@ public class WireArithmeticAbs : WireComponent
 	}
 }
 
+[Group("Arithmetic")]
 [Alias( "wire_arithmetic_clamp" )]
 public class WireArithmeticClamp : WireComponent
 {
@@ -124,6 +131,7 @@ public class WireArithmeticClamp : WireComponent
 	}
 }
 
+[Group("Arithmetic")]
 [Alias( "wire_arithmetic_round" )]
 public class WireArithmeticRound : WireComponent
 {
@@ -143,6 +151,7 @@ public class WireArithmeticRound : WireComponent
 	}
 }
 
+[Group("Arithmetic")]
 [Alias( "wire_arithmetic_sqrt" )]
 public class WireArithmeticSqrt : WireComponent
 {
@@ -159,6 +168,7 @@ public class WireArithmeticSqrt : WireComponent
 	}
 }
 
+[Group("Arithmetic")]
 [Alias( "wire_arithmetic_pow" )]
 public class WireArithmeticPow : WireComponent
 {
@@ -177,6 +187,7 @@ public class WireArithmeticPow : WireComponent
 	}
 }
 
+[Group("Arithmetic")]
 [Alias( "wire_arithmetic_sin" )]
 public class WireArithmeticSin : WireComponent
 {
@@ -193,6 +204,7 @@ public class WireArithmeticSin : WireComponent
 	}
 }
 
+[Group("Arithmetic")]
 [Alias( "wire_arithmetic_cos" )]
 public class WireArithmeticCos : WireComponent
 {
@@ -209,6 +221,7 @@ public class WireArithmeticCos : WireComponent
 	}
 }
 
+[Group("Arithmetic")]
 [Alias( "wire_arithmetic_tan" )]
 public class WireArithmeticTan : WireComponent
 {
@@ -225,6 +238,7 @@ public class WireArithmeticTan : WireComponent
 	}
 }
 
+[Group("Arithmetic")]
 [Alias( "wire_arithmetic_min" )]
 public class WireArithmeticMin : WireComponent
 {
@@ -243,6 +257,7 @@ public class WireArithmeticMin : WireComponent
 	}
 }
 
+[Group("Arithmetic")]
 [Alias( "wire_arithmetic_max" )]
 public class WireArithmeticMax : WireComponent
 {
@@ -261,6 +276,7 @@ public class WireArithmeticMax : WireComponent
 	}
 }
 
+[Group("Arithmetic")]
 [Alias( "wire_arithmetic_negate" )]
 public class WireArithmeticNegate : WireComponent
 {
@@ -277,6 +293,7 @@ public class WireArithmeticNegate : WireComponent
 	}
 }
 
+[Group("Arithmetic")]
 [Alias( "wire_arithmetic_increment" )]
 public class WireArithmeticIncrement : WireComponent
 {
@@ -293,6 +310,7 @@ public class WireArithmeticIncrement : WireComponent
 	}
 }
 
+[Group("Arithmetic")]
 [Alias( "wire_arithmetic_decrement" )]
 public class WireArithmeticDecrement : WireComponent
 {

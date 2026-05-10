@@ -1,3 +1,4 @@
+[Group("Display")]
 [Alias( "wire_screen_text" )]
 public class WireScreenText : WireComponent
 {
@@ -30,6 +31,7 @@ public class WireScreenText : WireComponent
 	}
 }
 
+[Group("Display")]
 [Alias( "wire_screen_number" )]
 public class WireScreenNumber : WireComponent
 {
@@ -60,6 +62,7 @@ public class WireScreenNumber : WireComponent
 	}
 }
 
+[Group("Display")]
 [Alias( "wire_screen_graph" )]
 public class WireScreenGraph : WireComponent
 {

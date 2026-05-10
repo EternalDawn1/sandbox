@@ -1,3 +1,4 @@
+[Group("CPU")]
 [Alias( "wire_cpu" )]
 public class WireCPU : WireComponent
 {

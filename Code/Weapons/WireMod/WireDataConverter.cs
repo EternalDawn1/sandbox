@@ -1,3 +1,4 @@
+[Group("Converter")]
 [Alias( "wire_converter_num2str" )]
 public class WireConverterNumberToString : WireComponent
 {
@@ -13,6 +14,7 @@ public class WireConverterNumberToString : WireComponent
 	}
 }
 
+[Group("Converter")]
 [Alias( "wire_converter_str2num" )]
 public class WireConverterStringToNumber : WireComponent
 {
@@ -28,6 +30,7 @@ public class WireConverterStringToNumber : WireComponent
 	}
 }
 
+[Group("Converter")]
 [Alias( "wire_converter_vec2num" )]
 public class WireConverterVectorToNumber : WireComponent
 {
@@ -48,6 +51,7 @@ public class WireConverterVectorToNumber : WireComponent
 	}
 }
 
+[Group("Converter")]
 [Alias( "wire_converter_num2vec" )]
 public class WireConverterNumberToVector : WireComponent
 {
@@ -68,6 +72,7 @@ public class WireConverterNumberToVector : WireComponent
 	}
 }
 
+[Group("Converter")]
 [Alias( "wire_converter_bool2num" )]
 public class WireConverterBooleanToNumber : WireComponent
 {
@@ -83,6 +88,7 @@ public class WireConverterBooleanToNumber : WireComponent
 	}
 }
 
+[Group("Converter")]
 [Alias( "wire_converter_num2bool" )]
 public class WireConverterNumberToBoolean : WireComponent
 {
@@ -98,6 +104,7 @@ public class WireConverterNumberToBoolean : WireComponent
 	}
 }
 
+[Group("Converter")]
 [Alias( "wire_converter_angle2num" )]
 public class WireConverterAngleToNumber : WireComponent
 {
@@ -118,6 +125,7 @@ public class WireConverterAngleToNumber : WireComponent
 	}
 }
 
+[Group("Converter")]
 [Alias( "wire_converter_ent2pos" )]
 public class WireConverterEntityToPosition : WireComponent
 {

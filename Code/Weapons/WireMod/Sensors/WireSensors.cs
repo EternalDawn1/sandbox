@@ -1,3 +1,4 @@
+[Group("Sensors")]
 [Alias( "wire_sensor_range" )]
 public class WireSensorRange : WireComponent
 {
@@ -37,6 +38,7 @@ public class WireSensorRange : WireComponent
 	}
 }
 
+[Group("Sensors")]
 [Alias( "wire_sensor_speed" )]
 public class WireSensorSpeed : WireComponent
 {
@@ -55,6 +57,7 @@ public class WireSensorSpeed : WireComponent
 	}
 }
 
+[Group("Sensors")]
 [Alias( "wire_sensor_angle" )]
 public class WireSensorAngle : WireComponent
 {
@@ -74,6 +77,7 @@ public class WireSensorAngle : WireComponent
 	}
 }
 
+[Group("Sensors")]
 [Alias( "wire_sensor_position" )]
 public class WireSensorPosition : WireComponent
 {
@@ -93,6 +97,7 @@ public class WireSensorPosition : WireComponent
 	}
 }
 
+[Group("Sensors")]
 [Alias( "wire_sensor_target" )]
 public class WireSensorTarget : WireComponent
 {

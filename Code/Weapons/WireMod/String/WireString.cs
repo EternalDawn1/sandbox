@@ -1,3 +1,4 @@
+[Group("String")]
 [Alias( "wire_string_concat" )]
 public class WireStringConcat : WireComponent
 {
@@ -16,6 +17,7 @@ public class WireStringConcat : WireComponent
 	}
 }
 
+[Group("String")]
 [Alias( "wire_string_length" )]
 public class WireStringLength : WireComponent
 {
@@ -32,6 +34,7 @@ public class WireStringLength : WireComponent
 	}
 }
 
+[Group("String")]
 [Alias( "wire_string_sub" )]
 public class WireStringSub : WireComponent
 {
@@ -58,6 +61,7 @@ public class WireStringSub : WireComponent
 	}
 }
 
+[Group("String")]
 [Alias( "wire_string_find" )]
 public class WireStringFind : WireComponent
 {
@@ -76,6 +80,7 @@ public class WireStringFind : WireComponent
 	}
 }
 
+[Group("String")]
 [Alias( "wire_string_replace" )]
 public class WireStringReplace : WireComponent
 {
@@ -96,6 +101,7 @@ public class WireStringReplace : WireComponent
 	}
 }
 
+[Group("String")]
 [Alias( "wire_string_upper" )]
 public class WireStringToUpper : WireComponent
 {
@@ -112,6 +118,7 @@ public class WireStringToUpper : WireComponent
 	}
 }
 
+[Group("String")]
 [Alias( "wire_string_lower" )]
 public class WireStringToLower : WireComponent
 {
@@ -128,6 +135,7 @@ public class WireStringToLower : WireComponent
 	}
 }
 
+[Group("String")]
 [Alias( "wire_string_trim" )]
 public class WireStringTrim : WireComponent
 {
@@ -144,6 +152,7 @@ public class WireStringTrim : WireComponent
 	}
 }
 
+[Group("String")]
 [Alias( "wire_string_format" )]
 public class WireStringFormat : WireComponent
 {
@@ -169,6 +178,7 @@ public class WireStringFormat : WireComponent
 	}
 }
 
+[Group("String")]
 [Alias( "wire_string_compare" )]
 public class WireStringCompare : WireComponent
 {

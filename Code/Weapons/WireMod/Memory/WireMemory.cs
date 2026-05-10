@@ -1,3 +1,4 @@
+[Group("Memory")]
 [Alias( "wire_memory_cell" )]
 public class WireMemoryCell : WireComponent
 {
@@ -22,6 +23,7 @@ public class WireMemoryCell : WireComponent
 	}
 }
 
+[Group("Memory")]
 [Alias( "wire_memory_latch" )]
 public class WireMemoryLatch : WireComponent
 {
@@ -46,6 +48,7 @@ public class WireMemoryLatch : WireComponent
 	}
 }
 
+[Group("Memory")]
 [Alias( "wire_memory_toggle" )]
 public class WireMemoryToggle : WireComponent
 {
@@ -70,6 +73,7 @@ public class WireMemoryToggle : WireComponent
 	}
 }
 
+[Group("Memory")]
 [Alias( "wire_memory_counter" )]
 public class WireMemoryCounter : WireComponent
 {
@@ -109,6 +113,7 @@ public class WireMemoryCounter : WireComponent
 	}
 }
 
+[Group("Memory")]
 [Alias( "wire_memory_register" )]
 public class WireMemoryRegister : WireComponent
 {

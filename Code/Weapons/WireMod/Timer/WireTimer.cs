@@ -1,3 +1,4 @@
+[Group("Timer")]
 [Alias( "wire_timer_delay" )]
 public class WireTimerDelay : WireComponent
 {
@@ -44,6 +45,7 @@ public class WireTimerDelay : WireComponent
 	}
 }
 
+[Group("Timer")]
 [Alias( "wire_timer_pulse" )]
 public class WireTimerPulse : WireComponent
 {
@@ -79,6 +81,7 @@ public class WireTimerPulse : WireComponent
 	}
 }
 
+[Group("Timer")]
 [Alias( "wire_timer_oscillator" )]
 public class WireTimerOscillator : WireComponent
 {
@@ -108,6 +111,7 @@ public class WireTimerOscillator : WireComponent
 	}
 }
 
+[Group("Timer")]
 [Alias( "wire_timer_timer" )]
 public class WireTimerTimer : WireComponent
 {
@@ -163,6 +167,7 @@ public class WireTimerTimer : WireComponent
 	}
 }
 
+[Group("Timer")]
 [Alias( "wire_timer_toggle" )]
 public class WireTimerToggle : WireComponent
 {
@@ -185,6 +190,7 @@ public class WireTimerToggle : WireComponent
 	}
 }
 
+[Group("Timer")]
 [Alias( "wire_timer_edge" )]
 public class WireTimerEdge : WireComponent
 {
@@ -206,6 +212,7 @@ public class WireTimerEdge : WireComponent
 	}
 }
 
+[Group("Timer")]
 [Alias( "wire_timer_random" )]
 public class WireTimerRandom : WireComponent
 {

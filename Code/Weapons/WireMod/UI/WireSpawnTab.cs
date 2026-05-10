@@ -28,17 +28,18 @@ public class WireSpawnTab : BaseSpawnMenu
             .ThenBy(t => t.Title)
             .ToList();
 
-        var grouped = allTypes.GroupBy(t => t.Group);
+        var grouped = allTypes.GroupBy(t => t.Group ?? "Other");
         foreach (var group in grouped)
         {
             var groupName = group.Key;
-            var icon = CategoryIcons.GetValueOrDefault(groupName, "⚡");
+            var icon = "⚡";
+            CategoryIcons.TryGetValue(groupName, out icon);
             var items = group.Select(t => new WireEntityItem
             {
                 Title = t.Title,
                 Icon = t.Icon,
                 ClassName = t.ClassName,
-                Group = t.Group
+                Group = groupName
             }).ToList();
 
             var capturedItems = items;

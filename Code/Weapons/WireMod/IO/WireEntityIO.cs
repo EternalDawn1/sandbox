@@ -1,3 +1,4 @@
+[Group("Entity")]
 [Alias( "wire_entity_input" )]
 public class WireEntityInput : WireComponent, IPlayerControllable
 {
@@ -24,6 +25,7 @@ public class WireEntityInput : WireComponent, IPlayerControllable
 	}
 }
 
+[Group("Entity")]
 [Alias( "wire_entity_output" )]
 public class WireEntityOutput : WireComponent
 {
@@ -45,6 +47,7 @@ public class WireEntityOutput : WireComponent
 	}
 }
 
+[Group("Entity")]
 [Alias( "wire_entity_controller" )]
 public class WireEntityController : WireComponent
 {

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 
+[Group("Array")]
 [Alias( "wire_array_cell" )]
 public class WireArrayCell : WireComponent
 {
@@ -28,6 +29,7 @@ public class WireArrayCell : WireComponent
 	}
 }
 
+[Group("Array")]
 [Alias( "wire_array_table" )]
 public class WireArrayTable : WireComponent
 {
@@ -81,6 +83,7 @@ public class WireArrayTable : WireComponent
 	}
 }
 
+[Group("Array")]
 [Alias( "wire_array_sort" )]
 public class WireArraySort : WireComponent
 {

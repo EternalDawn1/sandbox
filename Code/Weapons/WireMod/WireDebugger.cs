@@ -1,3 +1,4 @@
+[Group("Debug")]
 [Alias( "wire_debugger" )]
 public class WireDebugger : WireComponent
 {
@@ -27,6 +28,7 @@ public class WireDebugger : WireComponent
 	}
 }
 
+[Group("Debug")]
 [Alias( "wire_hud" )]
 public class WireHUD : WireComponent
 {

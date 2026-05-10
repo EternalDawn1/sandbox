@@ -1,3 +1,4 @@
+[Group("Vehicle")]
 [Alias( "wire_vehicle_controller" )]
 public class WireVehicleController : WireComponent, IPlayerControllable
 {
@@ -40,6 +41,7 @@ public class WireVehicleController : WireComponent, IPlayerControllable
 	}
 }
 
+[Group("Vehicle")]
 [Alias( "wire_vehicle_seat" )]
 public class WireVehicleSeat : WireComponent, IPlayerControllable
 {

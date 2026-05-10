@@ -1,3 +1,4 @@
+[Group("Gates")]
 [Alias( "wire_gate_and" )]
 public class WireGateAnd : WireComponent
 {
@@ -16,6 +17,7 @@ public class WireGateAnd : WireComponent
 	}
 }
 
+[Group("Gates")]
 [Alias( "wire_gate_or" )]
 public class WireGateOr : WireComponent
 {
@@ -34,6 +36,7 @@ public class WireGateOr : WireComponent
 	}
 }
 
+[Group("Gates")]
 [Alias( "wire_gate_not" )]
 public class WireGateNot : WireComponent
 {
@@ -50,6 +53,7 @@ public class WireGateNot : WireComponent
 	}
 }
 
+[Group("Gates")]
 [Alias( "wire_gate_nand" )]
 public class WireGateNand : WireComponent
 {
@@ -68,6 +72,7 @@ public class WireGateNand : WireComponent
 	}
 }
 
+[Group("Gates")]
 [Alias( "wire_gate_nor" )]
 public class WireGateNor : WireComponent
 {
@@ -86,6 +91,7 @@ public class WireGateNor : WireComponent
 	}
 }
 
+[Group("Gates")]
 [Alias( "wire_gate_xor" )]
 public class WireGateXor : WireComponent
 {
@@ -104,6 +110,7 @@ public class WireGateXor : WireComponent
 	}
 }
 
+[Group("Gates")]
 [Alias( "wire_gate_xnor" )]
 public class WireGateXnor : WireComponent
 {

@@ -1,3 +1,4 @@
+[Group("IO Outputs")]
 [Alias( "wire_output_lamp" )]
 public class WireOutputLamp : WireComponent
 {
@@ -28,6 +29,7 @@ public class WireOutputLamp : WireComponent
 	}
 }
 
+[Group("IO Outputs")]
 [Alias( "wire_output_sound" )]
 public class WireOutputSound : WireComponent
 {
@@ -72,6 +74,7 @@ public class WireOutputSound : WireComponent
 	}
 }
 
+[Group("IO Outputs")]
 [Alias( "wire_output_textscreen" )]
 public class WireOutputTextScreen : WireComponent
 {
