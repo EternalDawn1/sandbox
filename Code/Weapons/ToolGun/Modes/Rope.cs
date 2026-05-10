@@ -1,7 +1,8 @@
 ﻿﻿
 [Icon( "🐍" )]
+[Title( "#tool.name.rope" )]
 [ClassName( "rope" )]
-[Group( "Constraints" )]
+[Group( "#tool.group.constraints" )]
 public class Rope : BaseConstraintToolMode
 {
 	[Range( -500, 500 )]
@@ -92,6 +93,8 @@ public class Rope : BaseConstraintToolMode
 
 		go2.NetworkSpawn( true, null );
 		go1.NetworkSpawn( true, null );
+
+		Track( go1, go2 );
 
 		var undo = Player.Undo.Create();
 		undo.Name = "Rope";

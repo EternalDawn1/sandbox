@@ -18,7 +18,7 @@ public partial class BaseBulletWeapon : BaseWeapon
 		CameraRecoilFrequency = 1f,
 	};
 
-	[Property, Group( "Bullet" ), ClientEditable, Range( 0f, 500000f, 10f )]
+	[Property, Group( "Bullet" ), ClientEditable, Range( 0f, 500000f ), Step( 10f )]
 	public float ShootForce { get; set; } = 100000f;
 
 	protected TimeSince TimeSinceShoot = 0;
@@ -70,33 +70,16 @@ public partial class BaseBulletWeapon : BaseWeapon
 
 		AddShootDelay( fireRate );
 
-		Vector3 forward;
-		Ray traceRay;
-		GameObject ignoreRoot;
-
-		if ( HasOwner )
-		{
-			// Player-held: shoot from eye with aim cone spread
-			var aimConeAmount = GetAimConeAmount( config.AimConeRecovery );
-			forward = Owner.EyeTransform.Rotation.Forward
-				.WithAimCone(
-					config.AimConeBase.x + aimConeAmount * config.AimConeSpread.x,
-					config.AimConeBase.y + aimConeAmount * config.AimConeSpread.y
-				);
-			traceRay = Owner.EyeTransform.ForwardRay with { Forward = forward };
-			ignoreRoot = Owner.GameObject;
-		}
-		else
-		{
-			// Standalone: shoot straight from the weapon's muzzle
-			var muzzle = WeaponModel?.MuzzleTransform?.WorldTransform ?? WorldTransform;
-			forward = muzzle.Rotation.Forward;
-			traceRay = new Ray( muzzle.Position, forward );
-			ignoreRoot = GameObject;
-		}
+		var aimConeAmount = GetAimConeAmount( config.AimConeRecovery );
+		var forward = AimRay.Forward
+			.WithAimCone(
+				config.AimConeBase.x + aimConeAmount * config.AimConeSpread.x,
+				config.AimConeBase.y + aimConeAmount * config.AimConeSpread.y
+			);
+		var traceRay = AimRay with { Forward = forward };
 
 		var tr = Scene.Trace.Ray( traceRay, config.Range )
-			.IgnoreGameObjectHierarchy( ignoreRoot )
+			.IgnoreGameObjectHierarchy( AimIgnoreRoot )
 			.WithoutTags( "playercontroller" )
 			.Radius( config.BulletRadius )
 			.UseHitboxes()
@@ -140,16 +123,8 @@ public partial class BaseBulletWeapon : BaseWeapon
 
 		if ( !noEvents )
 		{
-			if ( ViewModel.IsValid() )
-			{
-				ViewModel.RunEvent<ViewModel>( x => x.OnAttack() );
-				ViewModel.RunEvent<ViewModel>( x => x.CreateRangedEffects( this, hitpoint, origin ) );
-			}
-			else if ( WorldModel.IsValid() )
-			{
-				WorldModel.RunEvent<WorldModel>( x => x.OnAttack() );
-				WorldModel.RunEvent<WorldModel>( x => x.CreateRangedEffects( this, hitpoint, origin ) );
-			}
+			WeaponModel.GameObject.RunEvent<WeaponModel>( x => x.OnAttack() );
+			WeaponModel.GameObject.RunEvent<WeaponModel>( x => x.CreateRangedEffects( this, hitpoint, origin ) );
 
 			if ( ShootSound.IsValid() )
 			{
@@ -166,7 +141,14 @@ public partial class BaseBulletWeapon : BaseWeapon
 		if ( !hit || !hitObject.IsValid() )
 			return;
 
-		var prefab = hitSurface.PrefabCollection.BulletImpact ?? hitSurface.GetBaseSurface()?.PrefabCollection.BulletImpact;
+		var baseSurface = hitSurface.GetBaseSurface();
+		var bulletSound = hitSurface.SoundCollection.Bullet ?? baseSurface?.SoundCollection.Bullet;
+		if ( bulletSound.IsValid() )
+		{
+			Sound.Play( bulletSound, hitpoint );
+		}
+
+		var prefab = hitSurface.PrefabCollection.BulletImpact ?? baseSurface?.PrefabCollection.BulletImpact;
 
 		// Still null?
 		if ( prefab is null )

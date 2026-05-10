@@ -1,8 +1,9 @@
 ﻿using Sandbox.UI;
 
 [Icon( "🎈" )]
+[Title( "#tool.name.balloon" )]
 [ClassName( "balloon" )]
-[Group( "Building" )]
+[Group( "#tool.group.building" )]
 public class Balloon : ToolMode
 {
 	public override bool UseSnapGrid => true;
@@ -24,14 +25,52 @@ public class Balloon : ToolMode
 	public Color Tint { get; set; } = Color.White;
 
 	public override string Description => "#tool.hint.balloon.description";
-	public override string PrimaryAction => "#tool.hint.balloon.place_rope";
-	public override string SecondaryAction => "#tool.hint.balloon.place";
 
 	Color _previewTint = Color.Random;
+
+	protected override void OnStart()
+	{
+		base.OnStart();
+
+		RegisterAction( ToolInput.Primary, () => "#tool.hint.balloon.place_rope", OnPlaceWithRope );
+		RegisterAction( ToolInput.Secondary, () => "#tool.hint.balloon.place", OnPlaceWithoutRope );
+	}
 
 	protected override void OnEnabled()
 	{
 		base.OnEnabled();
+		_previewTint = Color.Random;
+	}
+
+	void OnPlaceWithRope()
+	{
+		var select = TraceSelect();
+		if ( !select.IsValid() ) return;
+
+		var thrusterDef = ResourceLibrary.Get<BalloonDefinition>( Definition );
+		if ( thrusterDef == null ) return;
+
+		var pos = select.WorldTransform();
+		var placementTx = new Transform( pos.Position );
+
+		Spawn( select, thrusterDef.Prefab, placementTx, true, _previewTint );
+		ShootEffects( select );
+		_previewTint = Color.Random;
+	}
+
+	void OnPlaceWithoutRope()
+	{
+		var select = TraceSelect();
+		if ( !select.IsValid() ) return;
+
+		var thrusterDef = ResourceLibrary.Get<BalloonDefinition>( Definition );
+		if ( thrusterDef == null ) return;
+
+		var pos = select.WorldTransform();
+		var placementTx = new Transform( pos.Position );
+
+		Spawn( select, thrusterDef.Prefab, placementTx, false, _previewTint );
+		ShootEffects( select );
 		_previewTint = Color.Random;
 	}
 
@@ -42,24 +81,11 @@ public class Balloon : ToolMode
 		var select = TraceSelect();
 		if ( !select.IsValid() ) return;
 
-		var pos = select.WorldTransform();
-		var placementTx = new Transform( pos.Position );
-
 		var thrusterDef = ResourceLibrary.Get<BalloonDefinition>( Definition );
 		if ( thrusterDef == null ) return;
 
-		if ( Input.Pressed( "attack1" ) )
-		{
-			Spawn( select, thrusterDef.Prefab, placementTx, true, _previewTint );
-			ShootEffects( select );
-			_previewTint = Color.Random;
-		}
-		else if ( Input.Pressed( "attack2" ) )
-		{
-			Spawn( select, thrusterDef.Prefab, placementTx, false, _previewTint );
-			ShootEffects( select );
-			_previewTint = Color.Random;
-		}
+		var pos = select.WorldTransform();
+		var placementTx = new Transform( pos.Position );
 
 		var previewTint = Tint == Color.White ? _previewTint : Tint;
 		DebugOverlay.GameObject( thrusterDef.Prefab.GetScene(), transform: placementTx, castShadows: true, color: previewTint.WithAlpha( 0.9f ) );
@@ -133,6 +159,11 @@ public class Balloon : ToolMode
 		{
 			c.GravityScale = Force;
 		}
+
+		var props = go.GetOrAddComponent<PhysicalProperties>();
+		props.GravityScale = Force;
+
+		Track( go );
 
 		var undo = Player.Undo.Create();
 		undo.Name = "Balloon";

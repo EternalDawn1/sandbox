@@ -28,7 +28,9 @@ public class ControlSystem : GameObjectSystem<ControlSystem>
 
 	IEnumerable<BaseChair> GetSortedSeats()
 	{
-		foreach ( var chair in Scene.GetAll<BaseChair>() )
+		var chairs = Scene.GetAll<BaseChair>();
+
+		foreach ( var chair in chairs )
 		{
 			if ( !chair.IsValid() || !chair.IsOccupied )
 				_occupiedSince.Remove( chair );
@@ -36,14 +38,17 @@ public class ControlSystem : GameObjectSystem<ControlSystem>
 				_occupiedSince.TryAdd( chair, 0 );
 		}
 
-		return Scene.GetAll<BaseChair>()
+		return chairs
 			.Where( c => c.IsValid() && c.IsOccupied )
 			.OrderBy( c => (float)_occupiedSince.GetValueOrDefault( c, default ) );
 	}
 
 	void RunControl( BaseChair chair, LinkedGameObjectBuilder builder )
 	{
-		var player = chair.GetOccupant();
+		var controller = chair.GetOccupant();
+		if ( !controller.IsValid() ) return;
+
+		var player = controller.GetComponent<Player>();
 		if ( !player.IsValid() ) return;
 
 		using var scope = ClientInput.PushScope( player );
@@ -52,7 +57,10 @@ public class ControlSystem : GameObjectSystem<ControlSystem>
 		{
 			foreach ( var controllable in o.GetComponentsInChildren<IPlayerControllable>() )
 			{
-				controllable?.OnControl();
+				if ( controllable is null ) continue;
+				if ( !controllable.CanControl( player ) ) continue;
+
+				controllable.OnControl();
 			}
 		}
 	}

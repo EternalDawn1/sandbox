@@ -4,7 +4,7 @@ public class HoverballEntity : Component, IPlayerControllable
 	/// <summary>
 	/// Is the hoverball on?
 	/// </summary>
-	[Property, Sync]
+	[Property, Sync, ClientEditable]
 	public bool IsEnabled { get; private set; } = true;
 
 	/// <summary>
@@ -46,6 +46,9 @@ public class HoverballEntity : Component, IPlayerControllable
 	[Property]
 	public GameObject OnEffect { get; set; }
 
+	[Property, ClientEditable, Metadata( SoundDefinition.Hoverball )] public SoundDefinition EnableSound { get; set; }
+	[Property, ClientEditable, Metadata( SoundDefinition.Hoverball )] public SoundDefinition DisableSound { get; set; }
+
 	private float _zVelocity;
 	private bool _toggleWasHeld;
 
@@ -58,8 +61,12 @@ public class HoverballEntity : Component, IPlayerControllable
 		var rb = GetComponent<Rigidbody>();
 		if ( rb.IsValid() )
 			rb.Gravity = !IsEnabled;
+	}
 
-		OnEffect?.Enabled = IsEnabled;
+	protected override void OnUpdate()
+	{
+		if ( OnEffect.IsValid() )
+			OnEffect.Enabled = IsEnabled;
 	}
 
 	public void OnStartControl() { }
@@ -125,6 +132,11 @@ public class HoverballEntity : Component, IPlayerControllable
 	{
 		IsEnabled = !IsEnabled;
 
+		if ( IsEnabled )
+			EnableSound?.Play( WorldPosition );
+		else
+			DisableSound?.Play( WorldPosition );
+
 		var rb = GetComponent<Rigidbody>();
 		if ( !rb.IsValid() ) return;
 
@@ -137,7 +149,5 @@ public class HoverballEntity : Component, IPlayerControllable
 		{
 			rb.Gravity = true;
 		}
-
-		OnEffect?.Enabled = IsEnabled;
 	}
 }

@@ -26,6 +26,17 @@ public sealed partial class GameManager
 	}
 
 	/// <summary>
+	/// RPC to kick a player. Caller must be host or have admin permission.
+	/// </summary>
+	[Rpc.Host]
+	public static void RpcKickPlayer( Connection target, string reason = "Kicked" )
+	{
+		if ( !Rpc.Caller.HasPermission( "admin" ) ) return;
+
+		Current.Kick( target, reason );
+	}
+
+	/// <summary>
 	/// Kicks a player by name or Steam ID. Optionally provide a reason.
 	/// Usage: kick [name|steamid] [reason]
 	/// </summary>
@@ -59,5 +70,19 @@ public sealed partial class GameManager
 		{
 			Log.Warning( $"Could not find player '{target}'" );
 		}
+	}
+
+	/// <summary>
+	/// Sets a boolean convar and broadcasts the change to all players via chat.
+	/// Only callable by the host.
+	/// </summary>
+	public static void SetConVar( string name, bool value )
+	{
+		if ( !Networking.IsHost ) return;
+
+		ConsoleSystem.Run( name, value ? "true" : "false" );
+
+		var chat = Game.ActiveScene?.Get<Chat>();
+		chat?.AddSystemText( $"{name} set to {(value ? "On" : "Off")}", "⚙️" );
 	}
 }

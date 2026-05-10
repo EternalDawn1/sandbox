@@ -1,7 +1,8 @@
 ﻿
 [Icon( "🎱" )]
+[Title( "#tool.name.ballsocket" )]
 [ClassName( "ballsocket" )]
-[Group( "Constraints" )]
+[Group( "#tool.group.constraints" )]
 public class BallSocket : BaseConstraintToolMode
 {
 	[Property, Sync]
@@ -36,6 +37,8 @@ public class BallSocket : BaseConstraintToolMode
 
 		go2.NetworkSpawn();
 		go1.NetworkSpawn();
+
+		Track( go1, go2 );
 
 		var undo = Player.Undo.Create();
 		undo.Name = "Ballsocket";

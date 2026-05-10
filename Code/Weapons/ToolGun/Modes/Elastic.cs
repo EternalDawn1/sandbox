@@ -1,6 +1,7 @@
 ﻿[Icon( "🌀" )]
+[Title( "#tool.name.elastic" )]
 [ClassName( "elastic" )]
-[Group( "Constraints" )]
+[Group( "#tool.group.constraints" )]
 public class Elastic : BaseConstraintToolMode
 {
 	[Range( 0, 15 )]
@@ -61,6 +62,8 @@ public class Elastic : BaseConstraintToolMode
 
 		go2.NetworkSpawn();
 		go1.NetworkSpawn();
+
+		Track( go1, go2 );
 
 		var undo = Player.Undo.Create();
 		undo.Name = "Elastic";

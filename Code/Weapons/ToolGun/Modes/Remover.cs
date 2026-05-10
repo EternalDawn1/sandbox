@@ -1,11 +1,18 @@
 ﻿﻿[Icon( "🧨" )]
+[Title( "#tool.name.remover" )]
 [ClassName( "remover" )]
-[Group( "Tools" )]
+[Group( "#tool.group.tools" )]
 public class Remover : ToolMode
 {
 	public override bool TraceHitboxes => true;
 	public override string Description => "#tool.hint.remover.description";
-	public override string PrimaryAction => "#tool.hint.remover.remove";
+
+	protected override void OnStart()
+	{
+		base.OnStart();
+
+		RegisterAction( ToolInput.Primary, () => "#tool.hint.remover.remove", OnRemove );
+	}
 
 	bool CanDestroy( GameObject go )
 	{
@@ -15,22 +22,17 @@ public class Remover : ToolMode
 		return true;
 	}
 
-	public override void OnControl()
+	void OnRemove()
 	{
-		base.OnControl();
+		var select = TraceSelect();
+		if ( !select.IsValid() ) return;
 
-		if ( Input.Pressed( "attack1" ) )
-		{
-			var select = TraceSelect();
-			if ( !select.IsValid() ) return;
+		var target = select.GameObject?.Network?.RootGameObject;
+		if ( !target.IsValid() ) return;
+		if ( !CanDestroy( target ) ) return;
 
-			var target = select.GameObject?.Network?.RootGameObject;
-			if ( !target.IsValid() ) return;
-			if ( !CanDestroy( target ) ) return;
-
-			Remove( target );
-			ShootEffects( select );
-		}
+		Remove( target );
+		ShootEffects( select );
 	}
 
 	[Rpc.Host]

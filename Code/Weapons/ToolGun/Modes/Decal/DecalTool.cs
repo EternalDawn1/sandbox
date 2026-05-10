@@ -1,24 +1,41 @@
 ﻿﻿
 using Sandbox.UI;
 
-[Title( "Decal" )]
+[Title( "#tool.name.decal" )]
 [Icon( "🖌️" )]
 [ClassName( "decaltool" )]
-[Group( "Render" )]
+[Group( "#tool.group.render" )]
 public class DecalTool : ToolMode
 {
 	[Property, ResourceSelect( Extension = "decal", AllowPackages = true ), Title( "Decal" )]
 	public string Decal { get; set; }
 
 	public override string Description => "#tool.hint.decaltool.description";
-	public override string PrimaryAction => "#tool.hint.decaltool.place";
-	public override string SecondaryAction => "#tool.hint.decaltool.paint";
 
 	TimeSince timeSinceShoot = 0;
 
-	public override void OnControl()
+	protected override void OnStart()
 	{
-		base.OnControl();
+		base.OnStart();
+
+		RegisterAction( ToolInput.Primary, () => "#tool.hint.decaltool.place", OnPlace );
+		RegisterAction( ToolInput.Secondary, () => "#tool.hint.decaltool.paint", OnPaint, InputMode.Down );
+	}
+
+	void OnPlace()
+	{
+		var select = TraceSelect();
+		if ( !select.IsValid() ) return;
+
+		var resource = ResourceLibrary.Get<DecalDefinition>( Decal );
+		if ( resource == null ) return;
+
+		SpawnDecal( select, resource );
+	}
+
+	void OnPaint()
+	{
+		if ( timeSinceShoot < 0.05f ) return;
 
 		var select = TraceSelect();
 		if ( !select.IsValid() ) return;
@@ -26,16 +43,8 @@ public class DecalTool : ToolMode
 		var resource = ResourceLibrary.Get<DecalDefinition>( Decal );
 		if ( resource == null ) return;
 
-		if ( Input.Pressed( "attack1" ) )
-		{
-			SpawnDecal( select, resource );
-		}
-
-		if ( Input.Down( "attack2" ) && timeSinceShoot > 0.05f )
-		{
-			timeSinceShoot = 0;
-			SpawnDecal( select, resource );
-		}
+		timeSinceShoot = 0;
+		SpawnDecal( select, resource );
 	}
 
 	uint _layer = 0;
@@ -44,6 +53,7 @@ public class DecalTool : ToolMode
 	public void SpawnDecal( SelectionPoint point, DecalDefinition def )
 	{
 		if ( def == null ) return;
+
 		var pos = point.WorldTransform();
 
 		var go = new GameObject( true, "decal" );

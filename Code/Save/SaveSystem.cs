@@ -145,7 +145,7 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 			return false;
 		}
 
-		Scene.RunEvent<ISaveEvents>( x => x.BeforeSave( path ) );
+		Scene.RunEvent<Global.ISaveEvents>( x => x.BeforeSave( path ) );
 
 		var baseline = BuildCompositeBaseline();
 		if ( baseline is null )
@@ -202,7 +202,7 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 			return false;
 		}
 
-		Scene.RunEvent<ISaveEvents>( x => x.AfterSave( path ) );
+		Scene.RunEvent<Global.ISaveEvents>( x => x.AfterSave( path ) );
 		return true;
 	}
 
@@ -304,7 +304,7 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 			await MountRequiredPackages( pkgArray );
 		}
 
-		Scene.RunEvent<ISaveEvents>( x => x.BeforeLoad( path ) );
+		Scene.RunEvent<Global.ISaveEvents>( x => x.BeforeLoad( path ) );
 
 		Json.Patch savedPatch = null;
 		if ( saveRoot["Patch"] is JsonObject patchNode )
@@ -337,6 +337,8 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 		await Task.Delay( 50 );
 
 		_suppressSystemScene = true; // Make sure we don't load two system scenes.....
+
+		CleanupSystem.PreserveBaselineForSaveLoad();
 
 		var options = new SceneLoadOptions();
 		options.SetScene( patchedSceneFile );
@@ -378,7 +380,7 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 			RestoreNetworkOwnership( newSystem.Scene, ownershipNode );
 		}
 
-		newSystem.Scene.RunEvent<ISaveEvents>( x => x.AfterLoad( path ) );
+		newSystem.Scene.RunEvent<Global.ISaveEvents>( x => x.AfterLoad( path ) );
 		return true;
 	}
 

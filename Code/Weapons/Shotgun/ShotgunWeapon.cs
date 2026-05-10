@@ -1,6 +1,6 @@
 ﻿using Sandbox.Rendering;
 
-public class ShotgunWeapon : BaseBulletWeapon
+public class ShotgunWeapon : IronSightsWeapon
 {
 	[Property] public float PrimaryFireRate { get; set; } = 0.8f;
 	[Property] public int PelletCount { get; set; } = 8;
@@ -31,23 +31,8 @@ public class ShotgunWeapon : BaseBulletWeapon
 
 		AddShootDelay( PrimaryFireRate );
 
-		Vector3 eyeForward;
-		Ray eyeRay;
-		GameObject ignoreRoot;
-
-		if ( HasOwner )
-		{
-			eyeForward = Owner.EyeTransform.Rotation.Forward;
-			eyeRay = Owner.EyeTransform.ForwardRay;
-			ignoreRoot = Owner.GameObject;
-		}
-		else
-		{
-			var muzzle = WeaponModel?.MuzzleTransform?.WorldTransform ?? WorldTransform;
-			eyeForward = muzzle.Rotation.Forward;
-			eyeRay = new Ray( muzzle.Position, eyeForward );
-			ignoreRoot = GameObject;
-		}
+		var eyeForward = AimRay.Forward;
+		var eyeRay = AimRay;
 
 		for ( var i = 0; i < PelletCount; i++ )
 		{
@@ -59,7 +44,7 @@ public class ShotgunWeapon : BaseBulletWeapon
 				);
 
 			var tr = Scene.Trace.Ray( eyeRay with { Forward = forward }, Bullet.Range )
-				.IgnoreGameObjectHierarchy( ignoreRoot )
+				.IgnoreGameObjectHierarchy( AimIgnoreRoot )
 				.WithoutTags( "playercontroller" )
 				.Radius( Bullet.BulletRadius )
 				.UseHitboxes()

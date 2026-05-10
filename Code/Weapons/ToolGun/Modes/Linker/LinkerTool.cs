@@ -1,8 +1,8 @@
 
 [Icon( "🔗" )]
-[Title( "Linker" )]
+[Title( "#tool.name.linker" )]
 [ClassName( "linker" )]
-[Group( "Constraints" )]
+[Group( "#tool.group.constraints" )]
 public class LinkerTool : BaseConstraintToolMode
 {
 	public override string Description => Stage == 1 ? "#tool.hint.linker.stage1" : "#tool.hint.linker.stage0";
@@ -29,6 +29,8 @@ public class LinkerTool : BaseConstraintToolMode
 
 		go2.NetworkSpawn();
 		go1.NetworkSpawn();
+
+		Track( go1, go2 );
 
 		var undo = Player.Undo.Create();
 		undo.Name = "Link";

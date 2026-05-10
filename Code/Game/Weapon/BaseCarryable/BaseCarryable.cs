@@ -8,7 +8,8 @@ using Sandbox.Rendering;
 /// <param name="Tags"></param>
 /// <param name="Position"></param>
 /// <param name="Origin"></param>
-public record struct TraceAttackInfo( GameObject Target, float Damage, TagSet Tags = null, Vector3 Position = default, Vector3 Origin = default )
+/// <param name="Hitbox"></param>
+public record struct TraceAttackInfo( GameObject Target, float Damage, TagSet Tags = null, Vector3 Position = default, Vector3 Origin = default, Hitbox Hitbox = null )
 {
 	/// <summary>
 	/// Constructs a <see cref="TraceAttackInfo"/> from a trace and input damage.
@@ -22,7 +23,7 @@ public record struct TraceAttackInfo( GameObject Target, float Damage, TagSet Ta
 			tags.Add( tr.Hitbox?.Tags );
 		}
 
-		return new TraceAttackInfo( tr.GameObject, damage, tags, tr.HitPosition, tr.StartPosition );
+		return new TraceAttackInfo( tr.GameObject, damage, tags, tr.HitPosition, tr.StartPosition, tr.Hitbox );
 	}
 }
 
@@ -40,12 +41,18 @@ public partial class BaseCarryable : Component, IKillIcon
 	public GameObject WorldModel { get; protected set; }
 
 	/// <summary>
+	/// Optional explicit muzzle point. Used when no WeaponModel is present (e.g. standalone/seat mode).
+	/// If unset, falls back to the WeaponModel muzzle or the weapon's own GameObject.
+	/// </summary>
+	[Property] public GameObject MuzzleGameObject { get; set; }
+
+	/// <summary>
 	/// Used for overriding the display icon
 	/// </summary>
 	public virtual string InventoryIconOverride => null;
 
 	/// <summary>
-	/// Wether this weapon should be avoided when determining an item to swap to
+	/// Whether this weapon should be avoided when determining an item to swap to
 	/// </summary>
 	public virtual bool ShouldAvoid => false;
 
@@ -71,9 +78,14 @@ public partial class BaseCarryable : Component, IKillIcon
 			if ( Scene.Camera.RenderExcludeTags.Contains( "firstperson" ) ) go = default;
 
 			if ( !go.IsValid() ) go = WorldModel;
-			if ( !go.IsValid() ) return null;
+			if ( !go.IsValid() ) go = GameObject;
 
-			return go.GetComponent<WeaponModel>();
+			var wm = go.GetComponentInChildren<WeaponModel>();
+			if ( wm.IsValid() )
+				return wm;
+
+			// Standalone weapons may have a WorldModel in their hierarchy without the stored reference
+			return GameObject.GetComponentInChildren<WeaponModel>();
 		}
 	}
 
@@ -91,13 +103,70 @@ public partial class BaseCarryable : Component, IKillIcon
 	public bool HasOwner => Owner.IsValid();
 
 	/// <summary>
+	/// When true, seated aim uses the scene camera direction instead of the weapon's muzzle direction.
+	/// Override in weapons that support player-directed aim (e.g. RPG tracked mode, Physgun aim mode).
+	/// </summary>
+	public virtual bool IsTargetedAim => false;
+
+	/// <summary>
+	/// Unified aim ray for all weapons. Returns the correct ray based on context:
+	/// first-person held, third-person held, seated (targeted or muzzle), or standalone.
+	/// </summary>
+	public Ray AimRay
+	{
+		get
+		{
+			if ( HasOwner )
+			{
+				var owner = Owner;
+				if ( owner.Controller.IsValid() && owner.Controller.ThirdPerson && Scene.Camera.IsValid() )
+					return Scene.Camera.Transform.World.ForwardRay;
+
+				return owner.EyeTransform.ForwardRay;
+			}
+
+			var seated = ClientInput.Current;
+			if ( seated.IsValid() && IsTargetedAim && Scene.Camera.IsValid() )
+				return Scene.Camera.Transform.World.ForwardRay;
+
+			var muzzle = MuzzleTransform.WorldTransform;
+			return new Ray( muzzle.Position, muzzle.Rotation.Forward );
+		}
+	}
+
+	/// <summary>
+	/// The root GameObject to ignore when tracing from AimRay.
+	/// </summary>
+	public GameObject AimIgnoreRoot => HasOwner ? Owner.GameObject : GameObject;
+
+	/// <summary>
+	/// The effective attacker to use in damage attribution.
+	/// Returns the owning player's GameObject if held, the seated player's GameObject if
+	/// controlled from a contraption seat, or this weapon's own GameObject as a last resort.
+	/// </summary>
+	protected GameObject EffectiveAttacker
+	{
+		get
+		{
+			if ( HasOwner ) return Owner.GameObject;
+			var seatedPlayer = ClientInput.Current;
+			if ( seatedPlayer.IsValid() ) return seatedPlayer.GameObject;
+			var killSource = GetComponentInParent<IKillSource>( true );
+			if ( killSource is Component c ) return c.GameObject;
+			return GameObject;
+		}
+	}
+
+	/// <summary>
 	/// Where shoot effects come from. Either the point on the world model or the viewmodel, whichever is currently being used.
 	/// </summary>
 	public GameObject MuzzleTransform
 	{
 		get
 		{
-			return WeaponModel?.MuzzleTransform ?? GameObject;
+			if ( WeaponModel?.MuzzleTransform.IsValid() ?? false ) return WeaponModel.MuzzleTransform;
+			if ( MuzzleGameObject.IsValid() ) return MuzzleGameObject;
+			return GameObject;
 		}
 	}
 
@@ -156,8 +225,8 @@ public partial class BaseCarryable : Component, IKillIcon
 
 			if ( controller.ThirdPerson )
 			{
-				var tr = Scene.Trace.Ray( controller.EyeTransform.ForwardRay, 4096 )
-									.IgnoreGameObjectHierarchy( controller.GameObject )
+				var tr = Scene.Trace.Ray( AimRay, 4096 )
+									.IgnoreGameObjectHierarchy( AimIgnoreRoot )
 									.Run();
 
 				aimPos = Scene.Camera.PointToScreenPixels( tr.EndPosition );
@@ -257,13 +326,14 @@ public partial class BaseCarryable : Component, IKillIcon
 		if ( !attack.Target.IsValid() )
 			return;
 
-		// Use owner as attacker when held by a player; fall back to the weapon itself (standalone mode)
-		var attacker = HasOwner ? Owner.GameObject : GameObject;
+		// Use owner as attacker when held by a player, seated player when controlled from a
+		// contraption seat, or fall back to the weapon itself (standalone/world weapon)
+		var attacker = EffectiveAttacker;
 
 		var damagable = attack.Target.GetComponentInParent<IDamageable>();
 		if ( damagable is not null )
 		{
-			var info = new DamageInfo( attack.Damage, attacker, GameObject );
+			var info = new DamageInfo( attack.Damage, attacker, GameObject, attack.Hitbox );
 			info.Position = attack.Position;
 			info.Origin = attack.Origin;
 			info.Tags = attack.Tags;
@@ -273,7 +343,8 @@ public partial class BaseCarryable : Component, IKillIcon
 
 		if ( attack.Target.GetComponentInChildren<Rigidbody>() is var rb && rb.IsValid() )
 		{
-			rb.ApplyForce( (attack.Position - attack.Origin) * 1000f );
+			// TODO: Scale this based on damage?
+			rb.ApplyImpulseAt( attack.Position, Vector3.Direction( attack.Origin, attack.Position ) * rb.Mass * 100 );
 		}
 	}
 
@@ -285,7 +356,7 @@ public partial class BaseCarryable : Component, IKillIcon
 		return false;
 	}
 
-	public virtual void OnPlayerDeath( IPlayerEvent.DiedParams args )
+	public virtual void OnPlayerDeath( PlayerDiedParams args )
 	{
 	}
 }

@@ -37,7 +37,6 @@
         "SeatedCameraDistance": 128,
         "SeatedCameraHeight": 40,
         "SeatedCameraPositionSpeed": 3,
-        "SeatedCameraRollSpeed": 2,
         "SeatedCameraVelocityScale": 0.15
       },
       {
@@ -174,7 +173,7 @@
             "TargetColor": "0,1,0,1",
             "CacheToDisk": true
           },
-          "compiled": "textures/generated/imagefile/df06905f3db7ee89.vtex"
+          "compiled": null
         }
       },
       {
@@ -299,6 +298,30 @@
       {
         "__type": "Sandbox.Movement.SitMoveMode",
         "__guid": "b50161a7-01f2-4249-9102-efbc916e97d1",
+        "__enabled": true,
+        "Flags": 0,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null
+      },
+      {
+        "__type": "AmmoInventory",
+        "__guid": "8fb19f14-699d-44d5-9cfe-77fd1aee679e",
+        "__enabled": true,
+        "Flags": 0,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null
+      },
+      {
+        "__type": "PlayerLoadout",
+        "__guid": "e2db282f-053d-4c45-8229-dc0677aafcc8",
         "__enabled": true,
         "Flags": 0,
         "OnComponentDestroy": null,
@@ -2831,7 +2854,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "Voice",
-        "Position": "8,0,60.19917",
+        "Position": "8,0,60.1991692",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "",
@@ -2897,7 +2920,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "World",
-        "Position": "0,0,77.72417",
+        "Position": "0,0,82",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "",
@@ -2991,7 +3014,7 @@
             "OnTriggerExit": null,
             "Radius": 11.313708,
             "RollingResistance": null,
-            "Start": "0,0,60.68629",
+            "Start": "0,0,60.6862907",
             "Static": false,
             "Surface": null,
             "SurfaceVelocity": "0,0,0"
@@ -3104,6 +3127,7 @@
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
         "IncludedBodies": "",
+        "DeferGeneration": false,
         "CustomBounds": false
       }
     },

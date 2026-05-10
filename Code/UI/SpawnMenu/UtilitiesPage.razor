@@ -3,34 +3,12 @@
 @inherits UtilityPage
 @namespace Sandbox
 @attribute [Icon( "🔧" )]
-@attribute [Title( "Utilities" )]
-@attribute [Group( "Utilities" )]
+@attribute [Title( "#spawnmenu.utility.utilities" )]
+@attribute [Group( "#spawnmenu.utility.group.utilities" )]
 @attribute [Order( 0 )]
 
 <root class="page" style="flex-direction: column;">
-    <div class="control-row" @onclick=@(() => SetTheme( "dark" ))>
-        <label class="left">☀️ Light Mode</label>
-        <label class="right">Enable light UI theme</label>
-    </div>
-    <div class="control-row" @onclick=@(() => SetTheme( "light" ))>
-        <label class="left">🌙 Dark Mode</label>
-        <label class="right">Enable dark UI theme</label>
-    </div>
-    <div class="control-row" @onclick=@(() => ResetTheme())>
-        <label class="left">♻️ Reset Theme</label>
-        <label class="right">Restore default appearance</label>
+    <div class="control-row" @onclick=@(() => ConsoleSystem.Run( "kill" ))>
+        <div class="left"><label>🚿 </label><label>#spawnmenu.utility.kill_me</label></div>
     </div>
 </root>
-
-@code
-{
-    void SetTheme( string theme )
-    {
-        SpawnMenuHost.SetTheme( theme );
-    }
-
-    void ResetTheme()
-    {
-        SpawnMenuHost.SetTheme( "dark" );
-    }
-}

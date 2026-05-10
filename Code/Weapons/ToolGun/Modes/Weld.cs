@@ -1,7 +1,8 @@
 
 [Icon( "🥽" )]
+[Title( "#tool.name.weld" )]
 [ClassName( "weld" )]
-[Group( "Constraints" )]
+[Group( "#tool.group.constraints" )]
 public class Weld : BaseConstraintToolMode
 {
 	[Property, Sync]
@@ -247,6 +248,8 @@ public class Weld : BaseConstraintToolMode
 
 		go2.NetworkSpawn();
 		go1.NetworkSpawn();
+
+		Track( go1, go2 );
 
 		var undo = Player.Undo.Create();
 		undo.Name = "Weld";

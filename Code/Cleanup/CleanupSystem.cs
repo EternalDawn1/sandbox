@@ -23,10 +23,9 @@ public sealed class CleanupSystem : GameObjectSystem<CleanupSystem>, ISceneLoadi
 	/// </summary>
 	private readonly Dictionary<Guid, string> _baselineObjectData = new();
 
-	/// <summary>
-	/// The resource path of the loaded scene, used to reload the baseline.
-	/// </summary>
-	private string _loadedScenePath;
+	private static bool _restorePersistedBaseline;
+	private static HashSet<Guid> _persistedBaselineIds;
+	private static Dictionary<Guid, string> _persistedBaselineData;
 
 	/// <summary>
 	/// Whether a baseline has been captured.
@@ -37,28 +36,49 @@ public sealed class CleanupSystem : GameObjectSystem<CleanupSystem>, ISceneLoadi
 	{
 	}
 
+	/// <summary>
+	/// Call from SaveSystem before Game.ChangeScene() to snapshot the current baseline
+	/// </summary>
+	public static void PreserveBaselineForSaveLoad()
+	{
+		if ( Current is null || !Current.HasBaseline ) return;
+
+		_restorePersistedBaseline = true;
+		_persistedBaselineIds = new HashSet<Guid>( Current._baselineObjectIds );
+		_persistedBaselineData = new Dictionary<Guid, string>( Current._baselineObjectData );
+	}
+
 	void ISceneLoadingEvents.BeforeLoad( Scene scene, SceneLoadOptions options )
 	{
 		// Clear any existing baseline when a new scene is loading
 		_baselineObjectIds.Clear();
 		_baselineObjectData.Clear();
-		_loadedScenePath = null;
 	}
 
 	async Task ISceneLoadingEvents.OnLoad( Scene scene, SceneLoadOptions options, LoadingContext context )
 	{
+		// We don't care if the game is not playing
+		if ( !Game.IsPlaying ) return;
+
 		// Wait for next frame to ensure all objects are spawned
 		await Task.Yield();
 
 		// Could be null if the scene was unloaded before this runs
 		if ( !Scene.IsValid() ) return;
 
-		CaptureBaseline();
-
-		var sceneFile = options.GetSceneFile();
-		if ( sceneFile is not null && !string.IsNullOrEmpty( sceneFile.ResourcePath ) )
+		// When loading a save, restore the baseline captured before the scene was destroyed
+		if ( _restorePersistedBaseline && _persistedBaselineIds is not null )
 		{
-			_loadedScenePath = sceneFile.ResourcePath;
+			_baselineObjectIds.UnionWith( _persistedBaselineIds );
+			foreach ( var kvp in _persistedBaselineData )
+				_baselineObjectData.TryAdd( kvp.Key, kvp.Value );
+
+			_restorePersistedBaseline = false;
+			Log.Info( $"CleanupSystem: Restored persisted baseline with {_baselineObjectIds.Count} objects." );
+		}
+		else
+		{
+			CaptureBaseline();
 		}
 	}
 
@@ -275,7 +295,7 @@ public sealed class CleanupSystem : GameObjectSystem<CleanupSystem>, ISceneLoadi
 	[Rpc.Host]
 	public static void RpcCleanUpAll()
 	{
-		if ( !Rpc.Caller.IsHost ) return;
+		if ( !Rpc.Caller.HasPermission( "admin" ) ) return;
 
 		Current?.Cleanup();
 	}
@@ -283,7 +303,7 @@ public sealed class CleanupSystem : GameObjectSystem<CleanupSystem>, ISceneLoadi
 	[Rpc.Host]
 	public static void RpcCleanUpTarget( Connection target )
 	{
-		if ( !Rpc.Caller.IsHost ) return;
+		if ( !Rpc.Caller.HasPermission( "admin" ) ) return;
 
 		CleanupPlayer( target );
 	}
@@ -304,4 +324,5 @@ public sealed class CleanupSystem : GameObjectSystem<CleanupSystem>, ISceneLoadi
 
 		Notices.SendNotice( caller, "cleaning_services", Color.Green, $"Cleaned up {count} objects" );
 	}
+
 }

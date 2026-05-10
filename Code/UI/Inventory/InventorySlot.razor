@@ -1,9 +1,13 @@
 ﻿@using Sandbox;
 @using Sandbox.UI;
+@namespace Sandbox
 @inherits Panel
 
 <root>
-    <InputHint class="index" Action=@($"Slot{Index + 1}")></InputHint>
+    @if ( !Input.UsingController )
+    {
+        <label class="index">@(Index + 1)</label>
+    }
 
     @{
         var weapon = GetWeapon();
@@ -156,5 +160,5 @@
         GameManager.GiveSpawnerWeaponAt( data.Type, data.Path, Index, data.Data as string, data.Icon, data.Title );
     }
 
-    protected override int BuildHash() => HashCode.Combine(GetWeapon(), Hovered, Active);
+    protected override int BuildHash() => HashCode.Combine(GetWeapon(), Hovered, Active, Input.UsingController);
 }

@@ -1,8 +1,8 @@
 ﻿[Hide]
-[Title( "Hydraulic" )]
+[Title( "#tool.name.hydraulic" )]
 [Icon( "⚙️" )]
 [ClassName( "HydraulicTool" )]
-[Group( "Building" )]
+[Group( "#tool.group.building" )]
 public class HydraulicTool : BaseConstraintToolMode
 {
 	public override string Description => Stage == 1 ? "#tool.hint.hydraulictool.stage1" : "#tool.hint.hydraulictool.stage0";
@@ -103,6 +103,8 @@ public class HydraulicTool : BaseConstraintToolMode
 		go2.NetworkSpawn( true, null );
 		go1.NetworkSpawn( true, null );
 		jointGo.NetworkSpawn( true, null );
+
+		Track( go1, go2, jointGo );
 
 		var undo = Player.Undo.Create();
 		undo.Name = "Hydraulic";
@@ -225,6 +227,8 @@ public class HydraulicTool : BaseConstraintToolMode
 		ballAnchor.NetworkSpawn( true, null );
 		sliderB.NetworkSpawn( true, null );
 		sliderA.NetworkSpawn( true, null );
+
+		Track( goA, goB, ballAnchor, ballTarget, sliderA, sliderB );
 
 		var undo = Player.Undo.Create();
 		undo.Name = "Hydraulic (Ball Joints)";
