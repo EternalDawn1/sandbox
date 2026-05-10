@@ -10,9 +10,6 @@ public class UndoSystem : GameObjectSystem<UndoSystem>
 	{
 	}
 
-	/// <summary>
-	/// Get the undo stack for a specific SteamId
-	/// </summary>
 	public PlayerStack For( long steamId )
 	{
 		if ( !stacks.TryGetValue( steamId, out var stack ) )
@@ -23,17 +20,11 @@ public class UndoSystem : GameObjectSystem<UndoSystem>
 		return stack;
 	}
 
-	/// <summary>
-	/// Call this when a player disconnects to prevent memory leaks!
-	/// </summary>
 	public void RemovePlayer( long steamId )
 	{
 		stacks.Remove( steamId );
 	}
 
-	/// <summary>
-	/// Remove a GameObject from all player undo stacks.
-	/// </summary>
 	public void Remove( GameObject go )
 	{
 		foreach ( var stack in stacks.Values )
@@ -42,27 +33,23 @@ public class UndoSystem : GameObjectSystem<UndoSystem>
 		}
 	}
 
-	/// <summary>
-	/// Per-player undo stack
-	/// </summary>
 	public class PlayerStack
 	{
 		long steamId;
 		List<Entry> entries = new();
-		const int MaxUndoSteps = 128; // Bounded history prevents indefinite memory leaks
+		List<Entry> redoStack = new();
+		const int MaxUndoSteps = 128;
 
 		public PlayerStack( long steamId )
 		{
 			this.steamId = steamId;
 		}
 
-		/// <summary>
-		/// Create a new undo entry
-		/// </summary>
 		public Entry Create()
 		{
 			var entry = new Entry( steamId );
 			entries.Add( entry );
+			redoStack.Clear();
 
 			if ( entries.Count > MaxUndoSteps )
 			{
@@ -72,9 +59,6 @@ public class UndoSystem : GameObjectSystem<UndoSystem>
 			return entry;
 		}
 
-		/// <summary>
-		/// Run the undo
-		/// </summary>
 		public void Undo()
 		{
 			while ( entries.Count > 0 )
@@ -83,52 +67,74 @@ public class UndoSystem : GameObjectSystem<UndoSystem>
 				entries.RemoveAt( entries.Count - 1 );
 
 				if ( entry.Run() )
+				{
+					redoStack.Add( entry );
 					return;
+				}
 			}
 		}
 
-		/// <summary>
-		/// Remove a GameObject from all entries in this stack.
-		/// </summary>
+		public void Redo()
+		{
+			while ( redoStack.Count > 0 )
+			{
+				var entry = redoStack[^1];
+				redoStack.RemoveAt( redoStack.Count - 1 );
+
+				if ( entry.Run( sendNotice: false ) )
+				{
+					entries.Add( entry );
+					if ( entries.Count > MaxUndoSteps )
+						entries.RemoveAt( 0 );
+
+					var c = Connection.All.FirstOrDefault( x => x.SteamId == steamId );
+					if ( c is not null )
+					{
+						using ( Rpc.FilterInclude( c ) )
+						{
+							RedoNotice( entry.Name );
+						}
+					}
+					return;
+				}
+			}
+		}
+
 		public void Remove( GameObject go )
 		{
 			foreach ( var entry in entries )
 				entry.Remove( go );
+			foreach ( var entry in redoStack )
+				entry.Remove( go );
+		}
+
+		[Rpc.Broadcast]
+		public static void RedoNotice( string title )
+		{
+			Notices.AddNotice( "cached", "#3273eb", $"Redo {title}".Trim(), 5 );
+			Sound.Play( "sounds/ui/ui.undo.sound" );
 		}
 	}
 
-	/// <summary>
-	/// An undo entry
-	/// </summary>
 	public class Entry
 	{
-		/// <summary>
-		/// The name of the undo, should fit the format "Undo something". Like "Undo Spawn Prop".
-		/// </summary>
 		public string Name { get; set; }
 		public string Icon { get; set; }
 
-		long SteamId;
+		long steamId;
 
 		HashSet<GameObject> gameObjects = new();
 
 		internal Entry( long steamId )
 		{
-			SteamId = steamId;
+			this.steamId = steamId;
 		}
 
-		/// <summary>
-		/// Add a GameObject that should be destroyed when the undo is undone
-		/// </summary>
 		public void Add( GameObject go )
 		{
 			gameObjects.Add( go );
 		}
 
-		/// <summary>
-		/// Add a collection of GameObjects that should be destroyed when the undo is undone
-		/// </summary>
-		/// <param name="gos"></param>
 		public void Add( params IEnumerable<GameObject> gos )
 		{
 			foreach ( var go in gos )
@@ -137,17 +143,11 @@ public class UndoSystem : GameObjectSystem<UndoSystem>
 			}
 		}
 
-		/// <summary>
-		/// Remove a GameObject from this entry so it will no longer be destroyed on undo.
-		/// </summary>
 		public void Remove( GameObject go )
 		{
 			gameObjects.Remove( go );
 		}
 
-		/// <summary>
-		/// Run this undo
-		/// </summary>
 		public bool Run( bool sendNotice = true )
 		{
 			var actioned = false;
@@ -166,7 +166,7 @@ public class UndoSystem : GameObjectSystem<UndoSystem>
 
 			if ( sendNotice )
 			{
-				var c = Connection.All.FirstOrDefault( x => x.SteamId == SteamId );
+				var c = Connection.All.FirstOrDefault( x => x.SteamId == steamId );
 				if ( c is not null )
 				{
 					using ( Rpc.FilterInclude( c ) )

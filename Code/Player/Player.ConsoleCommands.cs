@@ -71,4 +71,14 @@ public sealed partial class Player
 
 		player.Undo.Undo();
 	}
+
+	[ConCmd( "redo", ConVarFlags.Server )]
+	public static void RunRedo( Connection source )
+	{
+		var player = Player.FindForConnection( source );
+		if ( !player.IsValid() )
+			return;
+
+		player.Undo.Redo();
+	}
 }
