@@ -1,7 +1,8 @@
 [Icon( "🔩" )]
-[Title( "#tool.name.axis" )]
+[Title( "Axis" )]
 [ClassName( "axis" )]
-[Group( "#tool.group.constraints" )]
+[Group( "Constraints" )]
+[Description( "Create axis (hinge) constraints between two props. Click first prop, then second prop to create a hinge connection." )]
 public class AxisTool : BaseConstraintToolMode
 {
 	[Property, Sync]
@@ -10,9 +11,9 @@ public class AxisTool : BaseConstraintToolMode
 	[Property, Sync]
 	public float Friction { get; set; } = 0f;
 
-	public override string Description => Stage == 1 ? "#tool.hint.axis.stage1" : "#tool.hint.axis.stage0";
-	public override string PrimaryAction => Stage == 1 ? "#tool.hint.axis.finish" : "#tool.hint.axis.source";
-	public override string ReloadAction => "#tool.hint.axis.remove";
+	public override string Description => Stage == 1 ? "Click second prop to create hinge" : "Click first prop to set hinge origin";
+	public override string PrimaryAction => Stage == 1 ? "Create Hinge" : "Set Origin";
+	public override string ReloadAction => "Remove Hinges";
 
 	protected override IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target )
 	{

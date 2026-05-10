@@ -1,7 +1,8 @@
 [Icon( "🎨" )]
-[Title( "#tool.name.color" )]
+[Title( "Color" )]
 [ClassName( "color" )]
-[Group( "#tool.group.render" )]
+[Group( "Render" )]
+[Description( "Change the color/tint of props. Click to apply color, right-click to copy color from a prop." )]
 public class ColorTool : ToolMode
 {
 	[Property, Sync]
@@ -13,10 +14,10 @@ public class ColorTool : ToolMode
 	[Property, Sync]
 	public bool ApplyToAll { get; set; } = true;
 
-	public override string Description => "#tool.hint.color.description";
-	public override string PrimaryAction => "#tool.hint.color.apply";
-	public override string SecondaryAction => "#tool.hint.color.copy";
-	public override string ReloadAction => "#tool.hint.color.reset";
+	public override string Description => "Click to apply color to prop";
+	public override string PrimaryAction => "Apply Color";
+	public override string SecondaryAction => "Copy Color";
+	public override string ReloadAction => "Reset Color";
 
 	public override void OnControl()
 	{

@@ -1,7 +1,8 @@
 [Icon( "💡" )]
-[Title( "#tool.name.lamp" )]
+[Title( "Lamp" )]
 [ClassName( "lamp" )]
-[Group( "#tool.group.building" )]
+[Group( "Building" )]
+[Description( "Place lights and lamps. Click to spawn a light source at the target location." )]
 public class LampTool : ToolMode
 {
 	[Property, Sync]
@@ -22,9 +23,9 @@ public class LampTool : ToolMode
 	[Property, Sync]
 	public bool SpotLight { get; set; } = false;
 
-	public override string Description => "#tool.hint.lamp.description";
-	public override string PrimaryAction => "#tool.hint.lamp.place";
-	public override string ReloadAction => "#tool.hint.lamp.remove";
+	public override string Description => "Click to place a light";
+	public override string PrimaryAction => "Place Light";
+	public override string ReloadAction => "Remove Light";
 
 	public override void OnControl()
 	{

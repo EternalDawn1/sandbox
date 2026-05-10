@@ -1,7 +1,8 @@
 [Icon( "🔘" )]
-[Title( "#tool.name.button" )]
+[Title( "Button" )]
 [ClassName( "button" )]
-[Group( "#tool.group.building" )]
+[Group( "Building" )]
+[Description( "Place wire buttons. Click to spawn a button that can be wired to other components." )]
 public class ButtonTool : ToolMode
 {
 	[Property, Sync]
@@ -10,9 +11,9 @@ public class ButtonTool : ToolMode
 	[Property, Sync]
 	public bool ToggleMode { get; set; } = false;
 
-	public override string Description => "#tool.hint.button.description";
-	public override string PrimaryAction => "#tool.hint.button.place";
-	public override string ReloadAction => "#tool.hint.button.remove";
+	public override string Description => "Click to place a wire button";
+	public override string PrimaryAction => "Place Button";
+	public override string ReloadAction => "Remove Button";
 
 	public override void OnControl()
 	{

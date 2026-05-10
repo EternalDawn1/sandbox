@@ -1,7 +1,8 @@
 [Icon( "🔊" )]
-[Title( "#tool.name.sound" )]
+[Title( "Sound" )]
 [ClassName( "sound" )]
-[Group( "#tool.group.building" )]
+[Group( "Building" )]
+[Description( "Place sound emitters. Click to spawn a sound source at the target location." )]
 public class SoundTool : ToolMode
 {
 	[Property, ClientEditable, Metadata( SoundDefinition.Thruster )]
@@ -19,9 +20,9 @@ public class SoundTool : ToolMode
 	[Property, Sync]
 	public bool Loop { get; set; } = false;
 
-	public override string Description => "#tool.hint.sound.description";
-	public override string PrimaryAction => "#tool.hint.sound.place";
-	public override string ReloadAction => "#tool.hint.sound.remove";
+	public override string Description => "Click to place a sound emitter";
+	public override string PrimaryAction => "Place Sound";
+	public override string ReloadAction => "Remove Sound";
 
 	public override void OnControl()
 	{

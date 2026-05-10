@@ -1,15 +1,16 @@
 [Icon( "🏗️" )]
-[Title( "#tool.name.pulley" )]
+[Title( "Pulley" )]
 [ClassName( "pulley" )]
-[Group( "#tool.group.constraints" )]
+[Group( "Constraints" )]
+[Description( "Create pulley constraints between two props. Click first prop, then second prop to create a pulley connection." )]
 public class PulleyTool : BaseConstraintToolMode
 {
 	[Property, Sync]
 	public bool EnableCollision { get; set; } = false;
 
-	public override string Description => Stage == 1 ? "#tool.hint.pulley.stage1" : "#tool.hint.pulley.stage0";
-	public override string PrimaryAction => Stage == 1 ? "#tool.hint.pulley.finish" : "#tool.hint.pulley.source";
-	public override string ReloadAction => "#tool.hint.pulley.remove";
+	public override string Description => Stage == 1 ? "Click second prop to create pulley" : "Click first prop to set pulley origin";
+	public override string PrimaryAction => Stage == 1 ? "Create Pulley" : "Set Origin";
+	public override string ReloadAction => "Remove Pulleys";
 
 	protected override IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target )
 	{

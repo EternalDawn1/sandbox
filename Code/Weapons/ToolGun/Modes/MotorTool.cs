@@ -1,7 +1,8 @@
 [Icon( "⚙️" )]
-[Title( "#tool.name.motor" )]
+[Title( "Motor" )]
 [ClassName( "motor" )]
-[Group( "#tool.group.constraints" )]
+[Group( "Constraints" )]
+[Description( "Create motor constraints between two props. Click first prop, then second prop to create a motorized hinge connection." )]
 public class MotorTool : BaseConstraintToolMode
 {
 	[Property, Sync]
@@ -13,9 +14,9 @@ public class MotorTool : BaseConstraintToolMode
 	[Property, Sync]
 	public bool FreeSpin { get; set; } = false;
 
-	public override string Description => Stage == 1 ? "#tool.hint.motor.stage1" : "#tool.hint.motor.stage0";
-	public override string PrimaryAction => Stage == 1 ? "#tool.hint.motor.finish" : "#tool.hint.motor.source";
-	public override string ReloadAction => "#tool.hint.motor.remove";
+	public override string Description => Stage == 1 ? "Click second prop to create motor" : "Click first prop to set motor origin";
+	public override string PrimaryAction => Stage == 1 ? "Create Motor" : "Set Origin";
+	public override string ReloadAction => "Remove Motors";
 
 	protected override IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target )
 	{

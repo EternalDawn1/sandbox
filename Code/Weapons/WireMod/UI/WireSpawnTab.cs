@@ -1,4 +1,4 @@
-[Title( "#spawnmenu.tab.wiremod" ), Order( 50 ), Icon( "⚡" )]
+[Title( "Wiremod" ), Order( 50 ), Icon( "⚡" )]
 public class WireSpawnTab : BaseSpawnMenu
 {
     static Dictionary<string, string> CategoryIcons = new()
