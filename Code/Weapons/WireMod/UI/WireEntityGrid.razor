@@ -1,0 +1,34 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+@namespace Sandbox
+
+<div class="wire-body">
+    @if (Types != null && Types.Count > 0)
+    {
+        <div class="wire-header">
+            <span class="wire-header-icon">@Types.First().Icon</span>
+            <span class="wire-header-title">@Types.First().Group</span>
+            <span class="wire-header-count">@Types.Count items</span>
+        </div>
+        <div class="wire-grid">
+            @foreach (var entity in Types)
+            {
+                <div class="wire-icon-cell" @onclick="@(() => SpawnComponent(entity))">
+                    <span class="wire-icon">@entity.Icon</span>
+                    <span class="wire-label">@entity.Title</span>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code
+{
+    public List<WireEntityItem> Types { get; set; } = new();
+
+    void SpawnComponent(WireEntityItem entity)
+    {
+        WireSpawnSystem.SpawnComponent(entity.ClassName);
+    }
+}

@@ -11,6 +11,11 @@ VerticalMenu
 	padding: 8px;
 	overflow-x: hidden;
 	overflow-y: scroll;
+	height: 100%;
+
+	>*{
+		flex-shrink: 0;
+	}
 
 	h2
 	{
