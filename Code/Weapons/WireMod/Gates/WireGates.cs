@@ -2,6 +2,8 @@
 [Alias( "wire_gate_and" )]
 public class WireGateAnd : WireComponent
 {
+	protected override Model GetDefaultModel() => Model.Cube;
+
 	protected override void RegisterPorts()
 	{
 		AddInput( "A", WirePortType.Number, WireValue.FromNumber( 0 ) );
@@ -21,6 +23,8 @@ public class WireGateAnd : WireComponent
 [Alias( "wire_gate_or" )]
 public class WireGateOr : WireComponent
 {
+	protected override Model GetDefaultModel() => Model.Cube;
+
 	protected override void RegisterPorts()
 	{
 		AddInput( "A", WirePortType.Number, WireValue.FromNumber( 0 ) );
@@ -40,6 +44,8 @@ public class WireGateOr : WireComponent
 [Alias( "wire_gate_not" )]
 public class WireGateNot : WireComponent
 {
+	protected override Model GetDefaultModel() => Model.Cube;
+
 	protected override void RegisterPorts()
 	{
 		AddInput( "A", WirePortType.Number, WireValue.FromNumber( 0 ) );
@@ -57,6 +63,8 @@ public class WireGateNot : WireComponent
 [Alias( "wire_gate_nand" )]
 public class WireGateNand : WireComponent
 {
+	protected override Model GetDefaultModel() => Model.Cube;
+
 	protected override void RegisterPorts()
 	{
 		AddInput( "A", WirePortType.Number, WireValue.FromNumber( 0 ) );
@@ -76,6 +84,8 @@ public class WireGateNand : WireComponent
 [Alias( "wire_gate_nor" )]
 public class WireGateNor : WireComponent
 {
+	protected override Model GetDefaultModel() => Model.Cube;
+
 	protected override void RegisterPorts()
 	{
 		AddInput( "A", WirePortType.Number, WireValue.FromNumber( 0 ) );
@@ -95,6 +105,8 @@ public class WireGateNor : WireComponent
 [Alias( "wire_gate_xor" )]
 public class WireGateXor : WireComponent
 {
+	protected override Model GetDefaultModel() => Model.Cube;
+
 	protected override void RegisterPorts()
 	{
 		AddInput( "A", WirePortType.Number, WireValue.FromNumber( 0 ) );
@@ -114,6 +126,8 @@ public class WireGateXor : WireComponent
 [Alias( "wire_gate_xnor" )]
 public class WireGateXnor : WireComponent
 {
+	protected override Model GetDefaultModel() => Model.Cube;
+
 	protected override void RegisterPorts()
 	{
 		AddInput( "A", WirePortType.Number, WireValue.FromNumber( 0 ) );

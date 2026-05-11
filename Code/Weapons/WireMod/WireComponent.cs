@@ -12,27 +12,63 @@ public abstract class WireComponent : Component
 	[Sync]
 	public bool Enabled_Wire { get; set; } = true;
 
+	[Property]
+	public Model Model { get; set; }
+
+	[Property]
+	public Color Tint { get; set; } = Color.White;
+
 	protected virtual float TickRate => 0f;
 
 	private float _lastTick;
+	private ModelRenderer _renderer;
 
 	protected override void OnEnabled()
 	{
 		base.OnEnabled();
 		RegisterPorts();
-		WireSystem.Instance?.Register( this );
+		WireSystem.Instance?.Register(this);
+		EnsureVisual();
 	}
 
 	protected override void OnDisabled()
 	{
 		base.OnDisabled();
 		DisconnectAll();
-		WireSystem.Instance?.Unregister( this );
+		WireSystem.Instance?.Unregister(this);
 	}
+
+	private void EnsureVisual()
+	{
+		if (_renderer.IsValid()) return;
+
+		_renderer = GetComponentInChildren<ModelRenderer>(true);
+		if (_renderer.IsValid()) return;
+
+		var model = Model ?? GetDefaultModel();
+		if (model == null) return;
+
+		_renderer = GameObject.AddComponent<ModelRenderer>();
+		_renderer.Model = model;
+		_renderer.Tint = Tint;
+	}
+
+	public void RefreshVisual()
+	{
+		if (!_renderer.IsValid())
+		{
+			EnsureVisual();
+			return;
+		}
+
+		_renderer.Tint = Tint;
+	}
+
+	protected virtual Model GetDefaultModel() => null;
 
 	protected virtual void RegisterPorts() { }
 
-	protected void AddInput( string name, WirePortType type, WireValue defaultValue = default )
+	protected void AddInput(string name, WirePortType type, WireValue defaultValue = default)
 	{
 		var port = new WirePort
 		{
@@ -40,12 +76,12 @@ public abstract class WireComponent : Component
 			Type = type,
 			Owner = this,
 			IsInput = true,
-			Value = defaultValue.Type == WirePortType.Any ? WireValue.FromNumber( 0 ) : defaultValue
+			Value = defaultValue.Type == WirePortType.Any ? WireValue.FromNumber( 0) : defaultValue
 		};
 		Inputs[name] = port;
 	}
 
-	protected void AddOutput( string name, WirePortType type, WireValue defaultValue = default )
+	protected void AddOutput(string name, WirePortType type, WireValue defaultValue = default)
 	{
 		var port = new WirePort
 		{
@@ -53,39 +89,39 @@ public abstract class WireComponent : Component
 			Type = type,
 			Owner = this,
 			IsInput = false,
-			Value = defaultValue.Type == WirePortType.Any ? WireValue.FromNumber( 0 ) : defaultValue
+			Value = defaultValue.Type == WirePortType.Any ? WireValue.FromNumber(0) : defaultValue
 		};
 		Outputs[name] = port;
 	}
 
 	public void DisconnectAll()
 	{
-		foreach ( var port in Inputs.Values )
+		foreach (var port in Inputs.Values)
 			port.DisconnectAll();
-		foreach ( var port in Outputs.Values )
+		foreach (var port in Outputs.Values)
 			port.DisconnectAll();
 	}
 
-	public WirePort GetInput( string name ) => Inputs.TryGetValue( name, out var port ) ? port : null;
-	public WirePort GetOutput( string name ) => Outputs.TryGetValue( name, out var port ) ? port : null;
+	public WirePort GetInput(string name) => Inputs.TryGetValue(name, out var port) ? port : null;
+	public WirePort GetOutput(string name) => Outputs.TryGetValue(name, out var port) ? port : null;
 
-	public void SetInputValue( string name, WireValue value )
+	public void SetInputValue(string name, WireValue value)
 	{
-		if ( Inputs.TryGetValue( name, out var port ) )
+		if (Inputs.TryGetValue(name, out var port))
 			port.Value = value;
 	}
 
-	public WireValue GetOutputValue( string name )
+	public WireValue GetOutputValue(string name)
 	{
-		if ( Outputs.TryGetValue( name, out var port ) )
+		if (Outputs.TryGetValue(name, out var port))
 			return port.Value;
 		return WireValue.Default;
 	}
 
 	internal void Tick()
 	{
-		if ( !Enabled_Wire ) return;
-		if ( TickRate > 0 && Time.Now - _lastTick < TickRate ) return;
+		if (!Enabled_Wire) return;
+		if (TickRate > 0 && Time.Now - _lastTick < TickRate) return;
 		_lastTick = Time.Now;
 
 		ReadInputs();
@@ -104,35 +140,35 @@ public sealed class WireSystem : GameObjectSystem<WireSystem>
 
 	public static WireSystem Instance { get; private set; }
 
-	public WireSystem( Scene scene ) : base( scene )
+	public WireSystem(Scene scene) : base(scene)
 	{
 		Instance = this;
-		Listen( Stage.StartUpdate, 0, OnTick, "WireSystem" );
+		Listen(Stage.StartUpdate, 0, OnTick, "WireSystem");
 	}
 
 	private void OnTick()
 	{
-		foreach ( var comp in _components.ToList() )
+		foreach (var comp in _components.ToList())
 		{
-			if ( comp.IsValid() && comp.Enabled_Wire )
+			if (comp.IsValid() && comp.Enabled_Wire)
 				comp.Tick();
 		}
 	}
 
-	public void Register( WireComponent component )
+	public void Register(WireComponent component)
 	{
-		if ( !_components.Contains( component ) )
-			_components.Add( component );
+		if (!_components.Contains(component))
+			_components.Add(component);
 	}
 
-	public void Unregister( WireComponent component )
+	public void Unregister(WireComponent component)
 	{
-		_components.Remove( component );
+		_components.Remove(component);
 	}
 
 	public void Clear()
 	{
-		foreach ( var comp in _components.ToList() )
+		foreach (var comp in _components.ToList())
 			comp.DisconnectAll();
 		_components.Clear();
 	}
